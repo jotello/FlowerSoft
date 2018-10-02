@@ -1,0 +1,47 @@
+section#sidebar
+    // Intro
+    section#intro
+        a.logo(href='#')
+            img(src='/images/logo.png', alt='')
+        header
+            h2
+                a(href="/") FlowerSoft
+            p
+                a(href='http://moleculer.services') Arreglos florales
+                |  en tienda y a domicilio 
+    // Posts List
+    section
+        h2 Los mas vendidos
+        ul.posts
+            each post in bestOfPosts
+                li
+                    article
+                        header
+                            h3
+                                a(href='/post/' + encodeObjectID(post._id) + '/' + slugify(post.title))= post.title
+                            time.published= moment(post.createdAt).format('LLL')
+                        a.image(href='/post/' + encodeObjectID(post._id) + '/' + slugify(post.title))
+                            img(src="/images/covers/" + post.coverPhoto, alt='')
+    // About
+    section.blurb
+        h2 FlowerSoft
+        p
+            | Somos una florería con más de 15 años de experiencia creando hermosos arreglos florales con reparto a domicilio. En nuestra florería tenemos productos de primera calidad y un servicio integral donde cuidamos de cada detalle para que su experiencia sea inolvidable.
+        //
+            ul class="actions">
+            <li><a href="#" class="button">Learn More</a></li>
+            </ul
+    // Footer
+    section#footer
+        ul.icons
+            li
+                a.fa-twitter(href='https://twitter.com/MoleculerJS')
+                    span.label Twitter
+            li
+                a.fa-github(href='https://github.com/moleculerjs')
+                    span.label Github
+            li
+                a.fa-envelope(href='mailto:hello@moleculer.services')
+                    span.label Email
+        p.copyright
+            | © UTFSM.
