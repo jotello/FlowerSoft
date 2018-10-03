@@ -1,0 +1,21 @@
+header#header
+    h1
+        a(href='/') FlowerSoft
+    nav.links
+        ul
+            li
+                a(href='/category/General') Categorias
+            li
+                a(href='/category/Tech') Formas de Pago
+            li
+                a(href='/category/Social') Social
+            li
+                a(href='/category/News') Noticias
+    nav.main
+        ul
+            li.search
+                a.fa-search(href='#search') Search
+                form#search(method='get', action='/search')
+                    input(type='text', name='query', placeholder='Search', value=query)
+            li.menu
+                a.fa-bars(href='#menu') Menu
