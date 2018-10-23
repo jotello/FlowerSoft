@@ -1,0 +1,60 @@
+http:
+  port: 8080
+admin:
+  port: 9876
+  hostname: localhost
+apiEndpoints:
+  pedidos_req:
+    host: localhost
+    methods: "GET,POST,PUT,DELETE"
+    paths: ['/pedidos/']
+  usuarios_req:
+    host: localhost
+    methods: "GET,POST,PUT,DELETE"
+    paths: ['/usuarios/']
+  catalogo_req:
+    host: localhost
+    methods: "GET,POST,PUT,DELETE"
+    paths: ['/catalogo/']
+
+serviceEndpoints:
+  pedidos_resp:
+    url: 'http://localhost:3002/api'
+  usuarios_resp:
+    url: 'http://localhost:3003/api/'
+  catalogo_resp:
+    url: 'http://localhost:3004/api/'
+policies:
+  - basic-auth
+  - cors
+  - expression
+  - key-auth
+  - log
+  - oauth2
+  - proxy
+  - rate-limit
+pipelines:
+  pedidos_pipeline:
+    apiEndpoints:
+      - pedidos_req
+    policies:
+      - proxy:
+        - action:
+            serviceEndpoint: pedidos_resp
+            changeOrigin: true
+  usuarios_pipeline:
+    apiEndpoints:
+      - usuarios_req
+    policies:
+      - proxy:
+        - action:
+            serviceEndpoint: usuarios_resp
+            changeOrigin: true
+  catalogo_pipeline:
+    apiEndpoints:
+      - catalogo_req
+    policies:
+      - proxy:
+        - action:
+            serviceEndpoint: catalogo_resp
+            changeOrigin: true
