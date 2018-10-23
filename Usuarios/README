@@ -15,3 +15,8 @@ Servicios: en cada carpeta se encuentra el código necesario y suficiente para c
 -Usuarios
 
 -Catalogo
+
+Servicio: Usuarios - Maneja la vista, controlador y base de datos referente a los usuarios
+
+La base de dato fue construida con mongodb
+
