@@ -1,0 +1,67 @@
+extends templates/default
+link(rel='stylesheet', href='/stylesheets/style.css')
+
+block content
+  #todo
+    center
+      h1 ¿Qué Necesitas?
+      br
+    #izquierda
+      img(style='width:250px; height:250px',src='/images/1.jpg')
+      br
+      | Canasto Francés En Tonos Amarillos
+      br
+      button.btn.btn-primary(type='submit') Agregar al Carro
+    #derecha
+      img(style='width:250px; height:250px',src='/images/2.jpg')
+      br
+      | Canasto Francés En Tonos Blanco Azulados
+      br
+      button.btn.btn-primary(type='submit') Agregar al Carro
+    #contenido
+      p
+        img(style='width:250px; height:250px',src='/images/3.jpg')
+        br
+        | Arreglo Floral Tulipanes Y Gerberas
+        br
+        button.btn.btn-primary(type='submit') Agregar al Carro
+    #izquierda
+      img(style='width:250px; height:250px',src='/images/4.jpg')
+      br
+      | Canasto Francés En Tonos Amarillos
+      br
+      button.btn.btn-primary(type='submit') Agregar al Carro
+    #derecha
+      img(style='width:250px; height:250px',src='/images/5.jpg')
+      br
+      | Canasto Francés En Tonos Amarillos
+      br
+      button.btn.btn-primary(type='submit') Agregar al Carro
+    #contenido
+      p
+        img(style='width:250px; height:250px',src='/images/6.jpg')
+        br
+        | Canasto Francés En Tonos Amarillos
+        br
+      button.btn.btn-primary(type='submit') Agregar al Carro
+    #izquierda
+      img(style='width:250px; height:250px',src='/images/7.jpg')
+      br
+      | Canasto Francés En Tonos Amarillos
+      br
+      button.btn.btn-primary(type='submit') Agregar al Carro
+    #derecha
+      img(style='width:250px; height:250px',src='/images/8.jpg')
+      br
+      | Canasto Francés En Tonos Amarillos
+      br
+      button.btn.btn-primary(type='submit') Agregar al Carro
+    #contenido
+      p
+        img(style='width:250px; height:250px',src='/images/9.jpg')
+        br
+        | Canasto Francés En Tonos Amarillos
+        br
+      button.btn.btn-primary(type='submit') Agregar al Carro
+  if isAuthenticated
+    p= 'Bienvenido' + user.nombre
