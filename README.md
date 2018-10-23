@@ -17,7 +17,8 @@ Servicios: en cada carpeta se encuentra el código necesario y suficiente para c
 
 -Catalogo
 
-Para iniciar FloweSoft (con los 3 microservicios ejecutandose y el API Gateway): 
+Para iniciar FlowerSoft (con los 3 microservicios ejecutandose y el API Gateway): 
+----------------------------------------------------------------------------------
 
 `cd Web-Application`
 `npm start`
