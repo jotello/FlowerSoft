@@ -1,6 +1,6 @@
 ## FLOWERSOFT
 
-#Integrantes:
+# Integrantes:
 -----------------
 	* José Tello
 	* Rosa Llanos León
