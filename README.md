@@ -2,9 +2,9 @@
 
 # Integrantes:
 -----------------
-	* José Tello
-	* Rosa Llanos León
-	* Maximiliano Bombin 
+	1. José Tello
+	2. Rosa Llanos León
+	3. Maximiliano Bombin 
 
 Aplicación con arquitectura de microservicios
 
