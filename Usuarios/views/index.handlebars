@@ -1,3 +1,73 @@
-<h2 class=page-header>Home </h2>
+	{{#if errors}}
+		{{#each errors}}
+			<div class="alert alert-danger">{{msg}}</div>
+		{{/each}}			
+	{{/if}}	
 
-<p> Bienvenido </p>
+<div class="container bootstrap snippet">
+    <div class="row">
+  		<div class="col-sm-10"><h1>{{user.name}}</h1></div>
+    </div>
+    <div class="row">
+  		<div class="col-sm-3"><!--left col-->
+    </div>  
+
+      <div class="text-center">
+        <img src="http://ssl.gstatic.com/accounts/ui/avatar_2x.png" class="avatar img-circle img-thumbnail" alt="avatar">
+		<h6>Creación de cuenta: {{user.creation_date}}</h6>
+		<h6>Último login: {{user.last_login}} </h6>	
+        <input type="file" class="text-center center-block file-upload">
+      </div></hr><br>
+          
+        </div><!--/col-3-->
+    	<div class="col-sm-9">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#home">Perfil</a></li>
+                <li><a data-toggle="tab" href="#messages">Historial de Pedidos</a></li>
+			</ul>
+		</div>
+	</div>
+
+		<br>
+		<br>
+
+          <div class="tab-content">
+            <div class="tab-pane active" id="home">
+                <hr>
+                  <form class="form" action="/users/{{user._id}}" method="post" id="registrationForm">
+                      <div class="form-group">
+                          <div class="col-xs-6">
+                              <label for="name"><h4>Nombre</h4></label>
+                              <input type="text" class="form-control" name="name" id="first_name" value={{user.name}}>
+                          </div>
+                      </div>
+                      <div class="form-group">
+                          
+                          <div class="col-xs-6">
+                            <label for="last_name"><h4>Apellido</h4></label>
+                              <input type="text" class="form-control" name="last_name" id="last_name" value={{user.last_name}}>
+                          </div>
+                      </div>
+                 		<div class="form-group">
+                          
+                          <div class="col-xs-6">
+                            <label for="rut"><h4>Rut</h4></label>
+                              <input type="text" class="form-control" name="rut" id="rut" value={{user.rut}}>
+                          </div> 
+						<div class="col-xs-6">
+                            <label for="rut"><h4>Correo electrónico</h4></label>
+                              <input type="email" class="form-control" name="email" id="email" value={{user.email}}>
+                          </div>                     
+                      <div class="form-group">
+
+                      <div class="form-group">
+                           <div class="col-xs-12">
+                                <br>
+                              	<button class="btn btn-lg btn-success" type="submit"><i class="glyphicon glyphicon-ok-sign"></i> Save</button>
+                               	<!--<button class="btn btn-lg" type="cancel"><i class="glyphicon glyphicon-repeat"></i>Cancelar</button>-->
+                            </div>
+                      </div>
+              	</form>
+              		<!--<a href="/users/{{user._id}}/change_pass">cambiar contraseña</a> -->
+			</div> 
+		</div>

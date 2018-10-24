@@ -1,10 +1,10 @@
-##FLOWERSOFT
+## FLOWERSOFT
 
-#Integrantes:
+# Integrantes:
 -----------------
-	* José Tello
-	* Rosa Llanos León
-	* Maximiliano Bombin 
+	1. José Tello
+	2. Rosa Llanos León
+	3. Maximiliano Bombin 
 
 Aplicación con arquitectura de microservicios
 
@@ -17,7 +17,8 @@ Servicios: en cada carpeta se encuentra el código necesario y suficiente para c
 
 -Catalogo
 
-Para iniciar FloweSoft (con los 3 microservicios ejecutandose y el API Gateway): 
+Para iniciar FlowerSoft (con los 3 microservicios ejecutandose y el API Gateway): 
+----------------------------------------------------------------------------------
 
 `cd Web-Application`
 `npm start`
