@@ -60,13 +60,6 @@ app.use(cookieParser());
 //Set Static Folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-//Express Session
-app.use(session({
-    secret: 'secret',
-    resave: false,
-    saveUninitialized: false
-}));
-
 //Express Validator
 app.use(expressValidator({
     errorFormatter: function (param, msg, value) {
@@ -82,6 +75,13 @@ app.use(expressValidator({
             value: value
         };
     }
+}));
+
+//Express Session
+app.use(session({
+    secret: 'secret',
+    resave: false,
+    saveUninitialized: false
 }));
 
 //Flash

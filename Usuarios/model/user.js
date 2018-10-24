@@ -49,3 +49,53 @@ module.exports.comparePassword = function (candidatePassword, hash, callback) {
     });
 };
 
+module.exports.updateUser = function(id, changes, callback)
+{
+    console.log('modificando');
+    console.log('id');
+    console.log(changes);
+    var query = {_id: id}
+    User.updateOne(query, changes, callback);
+};
+
+
+
+module.exports.deleteById = function(id, callback)
+{
+    console.log('Eliminando por id');
+    console.log('id');
+    console.log(id);
+    var query = {_id: id};
+    User.findOneAndRemove(query, callback);    
+}
+
+module.exports.deleteByEmail = function(email, callback)
+{
+    console.log('Eliminando por email');
+    console.log('email');
+    console.log(email);
+    var query = {email: email};
+    User.findOneAndRemove(query, callback);    
+}
+
+
+
+
+/*
+module.exports.updatePass = function (user_id, newPassword, callback) {
+    bcrypt.genSalt(10, function (err, salt) {
+        bcrypt.hash(newPassword, salt, function (err, hash) {
+            finalPassword = hash;
+            query = {_id: user_id}
+            changes = {$set: {password: finalPassword}};
+            console.log('CAMBIANDO LA PASS');
+            console.log(user_id);            
+            console.log(finalPassword);
+            User.updateOne(query, changes, callback);
+        });
+    });
+};
+
+*/
+
+
