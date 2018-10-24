@@ -1,8 +1,35 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+.navbar-default {
+    background-color: #fbd341;
+    border-color: #fbd341;
 }
-
-a {
-  color: #00B7FF;
+.navbar-default1 {
+    background-color: #f0f0f0;
+    border-color: #f0f0f0;
+}
+.navbar {
+    position: relative;
+    min-height: 50px;
+    margin-bottom: 0px;
+    border: 1px solid transparent;
+}
+#todo {
+   width:100%;  
+}
+#izquierda, #derecha {
+   width:380px;  
+}
+#contenido {  	
+   width:330px;  
+}
+#izquierda {  	
+   float: left;  
+}    
+#derecha {  	
+   float: right;  
+}
+#contenido {  	
+   margin-left: 450px;
+}
+#izquierda, #derecha {
+   margin-left: 50px;  
 }
