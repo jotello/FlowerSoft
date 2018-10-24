@@ -1,3 +1,19 @@
 extends templates/default
 link(rel='stylesheet', href='/stylesheets/style.css')
 
+block content
+  
+  br
+  br
+  #todo
+    center
+      h1 Registro
+      form(action='/localhost:8080/usuarios', method='POST')
+       input(placeholder='rut', name='rut', type='text')
+       input(placeholder='nombre', name='nombre', type='text')
+       input(placeholder='apellido', name='apellido', type='text')
+       input(placeholder='correo', name='correo', type='text')
+       input(placeholder='password', name='password', type='text')
+       button(type='submit') Submit
+
+

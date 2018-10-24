@@ -7,19 +7,19 @@ apiEndpoints:
   pedidos_req:
     host: localhost
     methods: "GET,POST,PUT,DELETE"
-    paths: ['/pedidos/']
+    paths: ['/pedidos/*']
   usuarios_req:
     host: localhost
     methods: "GET,POST,PUT,DELETE"
-    paths: ['/usuarios/']
+    paths: ['/usuarios/*']
   catalogo_req:
     host: localhost
     methods: "GET,POST,PUT,DELETE"
-    paths: ['/catalogo/']
+    paths: ['/catalogo/*']
 
 serviceEndpoints:
   pedidos_resp:
-    url: 'http://localhost:3002/api'
+    url: 'http://localhost:3002/api/'
   usuarios_resp:
     url: 'http://localhost:3003/api/'
   catalogo_resp:
