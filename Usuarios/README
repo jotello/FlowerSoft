@@ -1,22 +1,189 @@
+Taller de Produccion de Software 2018-2
+------------------------------------------------------------------------
 FLOWERSOFT
-
-Integrantes:
-	-José Tello
-	-Rosa Llanos León
-	-Maximiliano Bombin 
-
-Aplicación con arquitectura de microservicios
+----------------------------------------------------------------------
+SERVICIO USUARIOS
+    por: Maximiliano Bombin
 
 
-Servicios: en cada carpeta se encuentra el código necesario y suficiente para correr cada servicio por separado
- 
--Pedidos
+-------------------------------------------------
+BASE DE DATOS: MongoDB
+-------------------------------------------------
+INSTALAR:
 
--Usuarios
+1-Descargar el adecuado db para su sistema operativo desde el siguiente link https://www.db.com/download-center/community
+2-Instalelo siguiendo las instrucciones del installer
+3-Cree manualmente la carpeta 'data' en su carpeta raiz ('C:' en Windows, '/' en GNU/Linux, 'Macintosh HD' (volumen principal) en Mac), 
+luego dentro de 'data' cree la carpeta 'db' ('C:\data\db' o '/data/db').
 
--Catalogo
 
-Servicio: Usuarios - Maneja la vista, controlador y base de datos referente a los usuarios
+ACTIVAR:
 
-La base de dato fue construida con mongodb
+1-Inicie una terminal.
+1-Dirijase a la carpeta en la que instalo db, dentro de esa carpeta entre a la carpeta 'bin'
+2-ejecute el comando 'mongod'
+
+*Puede agregar la carpeta 'bin' (su ruta completa incluida 'bin') a la variable PATH para poder ejecutar el comando
+'mongod' en cualquier lugar.
+
+
+USAR Y REVISAR DIRECTAMENTE:
+
+1-Inicio una terminal
+2-Dirijase a la carpeta en la que instalo db, dentro de esa carpeta entre a la carpeta 'bin'
+3-Ejecute el comando 'mongo'
+
+*Si ya agrego esta ruta a PATH, puede ejecutar 'mongo' desde cualquier lugar.
+
+
+NOTAS:
+    -Las bases de datos en MongoDB se crean automaticamente, si es que no existen, al iniciar una conexion con ellas.
+    Al ejecutar el servicio "Usuarios", la base de datos del servicio, 'users-service-db', se creara automaticamente.
+
+    -La mismo se aplica a las tablas: estas se crean cuando se guarda un elemento de tal tipo por primera vez.
+    Al ejecutar una instruccion POST, para crear un usuario, esta operacion creara la tabla 'users'
+
+    -Para trabajar con MongoDB desde Node.js, se ocupa el paquete 'mongoose'.
+
+ALGUNOS COMANDOS:
+
+-show databases:
+    Muestra las bases de datos existentes
+
+-use ${base_de_datos}:
+    Selecciona la base de datos ${base_de_datos}.
+
+-show collections:
+    Muestra las tablas que existen en la base de datos seleccionada con 'use ${base_de_datos}'.
+
+-db.${tabla}.find():
+    Muestra todos los registros presentes en ${tabla}.
+
+-db.${tabla}.find().pretty():
+    Muestra todos los registros presentes en ${tabla} de manera mas ordenada y legible
+
+-db.${tabla}.find({name: 'Mario').pretty()
+    Muestra todos los registros cuyo campo 'name' tiene como valor 'Mario'
+    y por el comando 'pretty()', los muestra de manera legible.
+
+-db.${tabla}.drop()
+    Elimina la tabla ${tabla}.
+
+
+MODELO:
+
+Un registro de usuario estandar; es la vista completa de un objeto usuario presente en la base de datos.
+
+Usuario = {
+    profile_name: String,
+    rut: String,
+    names: String,
+    family_name: String,
+    email: String,
+    password: String,
+    creation_date: {
+        type: Date,
+        default: Date.now()
+    },
+    last_login: {
+        type: Date,
+        default: Date.now()
+    }
+}
+
+el campo profile_name se genera al crearse un usuario, a partir de las siguiente estructura:
+
+profile_name = email_sin_dominio + '.' + dominio_mail[0] + '.' + dominio_de_alto_nivel[-1]
+
+Ejemplo: max@gmail.com
+    profile_name = max + . + g + . + m = max.g.m
+
+El Esquema Joi se usa para validar entradas, en el se definen las propiedades que debe cumplir cada req.body para que la solicitud sea valida y exitosa.
+Hay una version tanto para una solicitud post, como para una put.
+El Esquema Joi tambien representa la estructura de un usuario desde la perspectiva del cliente de la api; Es su vista parcial de objeto.
+
+Esquema Joi = {
+    post: {
+        rut: Joi.string().min(8).required(),
+        names: Joi.string().min(2).required(),
+        family_name: Joi.string().min(2).required(),
+        email: Joi.string().email().required(),
+        password: Joi.string().min(4).required(),
+    },
+    put: {
+        rut: Joi.string().min(8),
+        names: Joi.string().min(2),
+        family_name: Joi.string().min(2),
+        email: Joi.string().email(),
+        password: Joi.string().min(4)
+    }
+};
+
+---------------------------------------------------------------
+APLICACION
+-----------------------------------------------------------------
+
+INICIAR:
+
+1-Abra una terminal
+2-Dirijase a la carpeta 'Usuarios'
+3-Ejecute el comando 'npm run dev'
+
+ESTRUCTURA:
+
+-El servicio ocupa el PORT= 3003.
+-Ocupa la ruta /api/users
+    -Ejemplo de ruta localhost:3003/api/users/
+
+-Cuenta con 3 archivos en la carpeta 'src'
+    -'app.js': El punto de entrada
+    -'db.js': Codigo asociado a la base de datos y al modelo.
+    -'users.js: Codigo de manejo de solicitudes a la api.
+                POST '/' = devuelve el usuario creado    
+                GET '/' = devuelve todos los usuarios 
+                GET '/:profile_name' = devuelve el usuario con el correspondiente profile_name
+                PUT '/:profile_name' = devuelve el usuario actualizado 
+                DELETE '/:profile_name' = devuelve el usuario eliminado
+
+
+EJEMPLOS PARA POSTMAN (en orden)
+
+-POST localhost:3003/api/users/
+    req.body = {"names":"Juan Pedro", "family_name":"Varela Verdugo", "rut":"19.312.420-4", "email":"juan@gmail.com", "password":"hola"}
+
+-POST localhost:3003/api/users/
+    req.body = {"names":"Luis Pedro", "family_name":"Mera Bordachar", "rut":"19.312.420-4", "email":"luis@outlook.com", "password":"chao"}
+
+-GET localhost:3003/api/users/juan.g.m 
+
+-GET localhost:3003/api/users/luis.o.m
+
+-PUT localhost:3003/api/users/luis.o.m
+    req.body = {"email":"luis@gmail.com"}
+
+    *cambiar el mail cambiara el profile_name, es decir, su ruta de GET cambiara.
+    En este caso por luis.g.m
+
+-PUT localhost:3003/api/users/luis.o.m
+    req.body = {"names":"Luis Jorge"}    
+
+-PUT localhost:3003/api/users/juan.g.m
+    req.body = {"rut": "19.312.420-5", "names": "Luis Marcelo", "family_name":"Mera Guevara", "email":"juan@oulook.cl", "password":"chaochao"}
+
+-DELETE localhost:3003/api/users/juan.o.l
+
+-DELETE localhost:3003/api/luis.g.m
+
+En caso de status 400 notFound y 404 badRequest, se devuelve un objeto con un propiedades message y data, de la siguiente manera:
+{
+    message: mensajeCorrespondiente,
+    data: {} //vacio
+}
+
+
+
+    
+
+
+
 
