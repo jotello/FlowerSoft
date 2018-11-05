@@ -8,7 +8,7 @@ router.get('/', function(req, res, next) {
 
 var db = require('../queries');
 
-
+router.get('/api/catalogo', db.catalogo);
 router.get('/api/catalogo/:id', db.selectCatalogo);
 router.post('/api/catalogo', db.insertCatalogo);
 router.put('/api/catalogo/:id', db.updateCatalogo);
