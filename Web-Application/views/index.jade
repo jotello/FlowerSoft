@@ -22,11 +22,9 @@ html
            
   .wrapper
       form.form-signin
-        h2.form-signin-heading.text-center Registro de Usuario
+        h2.form-signin-heading.text-center Login
         input.form-control(type='text', name='username', placeholder='Email', required='', autofocus='')
-        input.form-control(type='text', name='nombre', placeholder='Nombre', required='', autofocus='')
-        input.form-control(type='text', name='rut', placeholder='Rut', required='', autofocus='')
         input.form-control(type='password', name='password', placeholder='Password', required='')
         
-        button.btn.btn-lg.btn-block(type='submit') Crear cuenta
-        
+        button.btn.btn-lg.btn-block(type='submit') Ingresar
+        a.text-center(href='/registro') ¿No se ha registrado? Crear cuenta
