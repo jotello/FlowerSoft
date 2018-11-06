@@ -55,14 +55,28 @@ html
             a(href='/dashboard/logout')
               i.fa.fa-lg
               |  Logout
-          
-    center
+
     .container-fluid
-      h1 Lista de Pedidos
-      ul.list-group
-      each item in pedidos
-       li.list-group-item
-        | Pedido :#{item.id}
-        | Detalle: #{item.detalle}  
-        a(href='/dashboard/pedido/delete/#{item.id}', type='button', onclick='window.location.reload()') Eliminar
-        a(href='/dashboard/pedido/edit/#{item.id}', type='button') Editar
+          h2 Lista de Pedidos
+          .table-responsive
+            table#mytable.table.table-bordred.table-striped
+              thead
+                tr
+                  th Nro.
+                  th Detalle
+                  th Fecha
+                  th Edit
+                  th Delete
+              tbody
+                each item in pedidos
+                  tr
+                    td #{item.id}
+                    td #{item.detalle}
+                    td #{item.fecha}
+                    td
+                      a.btn.btn-primary-btn-xs(href='/dashboard/pedido/edit/#{item.id}', type='button', onclick='window.location.reload()')
+                        span.glyphicon.glyphicon-pencil
+                    td
+                      a.btn.btn-primary-btn-xs(href='/dashboard/pedido/delete/#{item.id}', type='button', onclick='window.location.reload()') 
+                        span.glyphicon.glyphicon-trash
+                          

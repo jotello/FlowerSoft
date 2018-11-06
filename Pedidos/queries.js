@@ -57,8 +57,8 @@ function getSinglePedido(req, res, next) {
 }
 
 function createPedido(req, res, next) {
-  db.none('insert into pedido(detalle, fecha)' +
-      'values(${detalle}, ${fecha})',
+  db.none('insert into pedido(total, detalle, fecha_entrega, ID_CLIENTE, nombre_cliente)' +
+      'values(${total}, ${detalle}, ${fecha}, ${ID_CLIENTE}, ${nombre_cliente})',
     req.body)
     .then(function () {
       res.status(200)
@@ -73,8 +73,8 @@ function createPedido(req, res, next) {
 }
 
 function updatePedido(req, res, next) {
-  db.none('update pedido set detalle=$1, fecha=$2 where id=$3',
-    [req.body.detalle, req.body.fecha, parseInt(req.params.id)])
+  db.none('update pedido set total=$1, detalle=$2, fecha=$3 where id=$3',
+    [req.body.total, req.body.detalle, req.body.fecha, parseInt(req.params.id)])
     .then(function () {
       res.status(200)
         .json({

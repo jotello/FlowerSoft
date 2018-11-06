@@ -110,6 +110,16 @@ li {
   width: 500px;
 }
 
+.table-responsive{
+  width: 75%;
+  height: 100%;
+  float: right;
+}
+
+td {
+  background: #fff;
+}
+
 .nav-side-menu {
   margin-top: 35px;
   overflow: auto;
@@ -119,7 +129,7 @@ li {
   background-color: #2e353d;
   position: fixed;
   top: 0px;
-  width: 300px;
+  width: 25%;
   height: 100%;
   color: #e1ffff;
 }
