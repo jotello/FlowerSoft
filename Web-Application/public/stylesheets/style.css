@@ -10,6 +10,27 @@
     letter-spacing: 4px;
     border-radius: 0;
 }
+#todo {
+   width:100%;  
+}
+#izquierda, #derecha {
+   width:380px;  
+}
+#contenido {    
+   width:330px;  
+}
+#izquierda {    
+   float: left;  
+}    
+#derecha {    
+   float: right;  
+}
+#contenido {    
+   margin-left: 450px;
+}
+#izquierda, #derecha {
+   margin-left: 50px;  
+}
 
 .navbar li a, .navbar .navbar-brand {
     color: #fbd341 !important;

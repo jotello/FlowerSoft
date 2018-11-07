@@ -5,7 +5,12 @@ var request = require('request');
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	//Rosa debe poblar esta vista con los productos
-  res.render('dashboard', { title: 'Dashboard' });
+	request('http://localhost:8080/catalogo/', function(error, response, body) {
+		var catalogo = JSON.parse(body);
+        res.render('dashboard', {title: 'Inicio', catalogo: catalogo.data});
+        console.log(catalogo.data);
+    });
+  //res.render('dashboard', { title: 'Dashboard' });
 });
 
 

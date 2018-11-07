@@ -6,6 +6,7 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+
 var db = require('../queries');
 
 router.get('/api/catalogo', db.catalogo);

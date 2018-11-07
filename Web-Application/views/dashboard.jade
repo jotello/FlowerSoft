@@ -25,7 +25,7 @@ html
               span.icon-bar
               span.icon-bar
             a.navbar-brand(href='#')
-              img.logo(style='width:100px; height:55px',src='/images/logo1.png')
+              img.logo(style='width:90px; height:30px',src='/images/logo1.png')
           #myNavbar.collapse.navbar-collapse
 
   .nav-side-menu
@@ -55,6 +55,65 @@ html
             a(href='/dashboard/logout')
               i.fa.fa-lg
               |  Logout
-          
-    
 
+    .container-fluid
+          h2 Lista de Pedidos
+          .table-responsive
+            table#mytable.table.table-bordred.table-striped
+              thead
+                tr
+                  th id
+                  th tipo
+                  th nombre
+                  th precio
+              tbody
+                each item in catalogo
+                  tr
+                    td #{item.id}
+                    td #{item.tipo} 
+                    td #{item.nombre}
+                    td #{item.precio}  
+    .container
+      #todo
+        br
+        h1(align='center')  ¿Qué Necesitas?
+        br
+      #derecha
+        img(style='width:250px; height:250px',src='/images/2.jpg')
+        br
+        | Canasto Francés En Tonos Blanco Azulados
+        br
+        button.btn.btn-primary(type='submit') Agregar al Carro
+      #contenido
+        p
+          img(style='width:250px; height:250px',src='/images/3.jpg')
+          br
+          | Arreglo Floral Tulipanes Y Gerberas
+          br
+          button.btn.btn-primary(type='submit') Agregar al Carro
+      #derecha
+        img(style='width:250px; height:250px',src='/images/5.jpg')
+        br
+        | Canasto Francés En Tonos Amarillos
+        br
+        button.btn.btn-primary(type='submit') Agregar al Carro
+      #contenido
+        p
+          img(style='width:250px; height:250px',src='/images/6.jpg')
+          br
+          | Canasto Francés En Tonos Amarillos
+          br
+        button.btn.btn-primary(type='submit') Agregar al Carro
+      #derecha
+        img(style='width:250px; height:250px',src='/images/8.jpg')
+        br
+        | Canasto Francés En Tonos Amarillos
+        br
+        button.btn.btn-primary(type='submit') Agregar al Carro
+      #contenido
+        p
+          img(style='width:250px; height:250px',src='/images/9.jpg')
+          br
+          | Canasto Francés En Tonos Amarillos
+          br
+        button.btn.btn-primary(type='submit') Agregar al Carro       
