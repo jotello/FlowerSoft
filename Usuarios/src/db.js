@@ -27,6 +27,7 @@ const UserJoiSchema = module.exports.joiSchema = {
         family_name: Joi.string().min(2).required(),
         email: Joi.string().email().required(),
         password: Joi.string().min(4).required(),
+        confirmPassword: Joi.any().valid(Joi.ref('password')).required().options({ language: { any: { allowOnly: 'must match password' } } })
     },
     put: {
         rut: Joi.string().min(8),

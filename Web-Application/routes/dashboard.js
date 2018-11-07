@@ -59,7 +59,7 @@ router.post('/pedido/update', function(req, res, next){
   		console.log('Upload successful!  Server responded with:', body);
 	};
 	res.redirect('/dashboard/pedidos');
-})
+});
 
 router.get('/crearPedido', function(req, res, next) {
 	//Rosa debe poblar esta vista con los productos

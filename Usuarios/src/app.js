@@ -3,6 +3,11 @@ const path = require('path');
 const morgan = require('morgan');
 const db = require(path.join(__dirname, 'db'));
 const passport = require('passport');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const flash = require('connect-flash');
+
 
 // CONNECTING TO DB
 db.connectToUsersDatabase();
@@ -12,17 +17,44 @@ const usersRoutes = require(path.join(__dirname, 'users'));
 //INITIALIZANDO LA APP
 const app = express();
 
+
+// MIDDLEWARES
+//Express-session
+app.use(session({
+    secret: 'thesecret',
+    saveUninitialized: false,
+    resave: false
+}));
+
 //passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-// MIDDLEWARES
+//Body-parser
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+//Cookie-parser
+app.use(cookieParser());
+
+
 //Express
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 //Morgan
 app.use(morgan('dev'));
+
+//Flash
+app.use(flash());
+
+app.use(function (req, res, next) {
+    res.locals.success_msg = req.flash('success_msg');
+    res.locals.error_msg = req.flash('error_msg');
+    res.locals.error = req.flash('error');
+    res.locals.user = req.user || null;
+    next();
+});
 
 // ROUTES
 app.use('/api/users', usersRoutes);

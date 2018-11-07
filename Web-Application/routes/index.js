@@ -13,12 +13,51 @@ router.get('/registro', function(req, res, next) {
 
 router.post('/login', function(req, res, next) {
 
+  console.log('en web app login');
   const email = req.body.email;
   const password = req.body.password;
 
-  request.post('http://localhost:8080/users')
+  console.log(req.body.email);
+  console.log(req.body.password);
 
 
+  request.post({url: 'http://localhost:8080/users/login', 
+  form: {"email":email, "password":password}}, 
+  function(err, httpResponse, body) {
+    console.log('en el callback');
+    if(err) throw err;
+
+    console.log('httpResponse', httpResponse);
+    console.log('body', body);
+    console.log('body type', typeof(body));
+    console.log('login exitoso');
+    console.log('a parsear');
+    
+    var results = JSON.parse(body);
+
+    console.log('parseado');
+    
+    console.log(results);
+    console.log(results.message);
+    console.log(results.data);
+    console.log('statusCode:', httpResponse.statusCode);
+
+    if(httpResponse.statusCode == 200)
+    {
+      console.log('Login correcto');
+    }
+  });
+  res.redirect('/');
+});
+
+
+router.get('/logout', (req, res, next) => {
+  request.get({url: 'http://localhost:8080/users/logout', 
+  form: {}},
+  function(err, httpResponse, body)
+  {
+      console.log('loggedout');
+  });
 });
 
 router.post('/registro', (req, res, next) => {
@@ -38,19 +77,16 @@ router.post('/registro', (req, res, next) => {
   console.log(rut);
   console.log(email);
   console.log(password);
+  console.log(confirmPassword);
 
   request.post('http://localhost:8080/users/').form({
     "names": names,
     "family_name": family_name,
     "rut": rut,
     "email": email,
-    "password": password
-  }),
-  (err, httpResponse, body) => {
-    if(err) throw err;
-
-    console.log('Upload successful! Server responde with:',body);
-  };
+    "password": password,
+    "confirmPassword": confirmPassword
+  });
   res.redirect('/');
 });
 
