@@ -13,7 +13,7 @@ INSTALAR:
 
 1-Descargar el adecuado db para su sistema operativo desde el siguiente link https://www.db.com/download-center/community
 2-Instalelo siguiendo las instrucciones del installer
-3-Cree manualmente la carpeta 'data' en su carpeta raiz ('C:' en Windows, '/' en GNU/Linux, 'Macintosh HD' (volumen principal) en Mac), 
+3-Cree manualmente la carpeta 'data' en su carpeta raiz ('C:' en Windows, '/' en GNU/Linux, 'Macintosh HD' (volumen principal) en Mac),
 luego dentro de 'data' cree la carpeta 'db' ('C:\data\db' o '/data/db').
 
 
@@ -139,10 +139,10 @@ ESTRUCTURA:
     -'app.js': El punto de entrada
     -'db.js': Codigo asociado a la base de datos y al modelo.
     -'users.js: Codigo de manejo de solicitudes a la api.
-                POST '/' = devuelve el usuario creado    
-                GET '/' = devuelve todos los usuarios 
+                POST '/' = devuelve el usuario creado
+                GET '/' = devuelve todos los usuarios
                 GET '/:profile_name' = devuelve el usuario con el correspondiente profile_name
-                PUT '/:profile_name' = devuelve el usuario actualizado 
+                PUT '/:profile_name' = devuelve el usuario actualizado
                 DELETE '/:profile_name' = devuelve el usuario eliminado
 
 
@@ -154,7 +154,7 @@ EJEMPLOS PARA POSTMAN (en orden)
 -POST localhost:3003/api/users/
     req.body = {"names":"Luis Pedro", "family_name":"Mera Bordachar", "rut":"19.312.420-4", "email":"luis@outlook.com", "password":"chao"}
 
--GET localhost:3003/api/users/juan.g.m 
+-GET localhost:3003/api/users/juan.g.m
 
 -GET localhost:3003/api/users/luis.o.m
 
@@ -165,7 +165,7 @@ EJEMPLOS PARA POSTMAN (en orden)
     En este caso por luis.g.m
 
 -PUT localhost:3003/api/users/luis.o.m
-    req.body = {"names":"Luis Jorge"}    
+    req.body = {"names":"Luis Jorge"}
 
 -PUT localhost:3003/api/users/juan.g.m
     req.body = {"rut": "19.312.420-5", "names": "Luis Marcelo", "family_name":"Mera Guevara", "email":"juan@oulook.cl", "password":"chaochao"}
@@ -179,11 +179,3 @@ En caso de status 400 notFound y 404 badRequest, se devuelve un objeto con un pr
     message: mensajeCorrespondiente,
     data: {} //vacio
 }
-
-
-
-    
-
-
-
-
