@@ -13,4 +13,4 @@ CREATE TABLE pedido (
 );
 
 INSERT INTO pedido (total, detalle, fecha_entrega, ID_CLIENTE, nombre_cliente)
-  VALUES (10000, '2 arreglos de 5000', 'Para el 09/09/2019', 1, "Rosa Llanos");
+  VALUES (10000, '2 arreglos de 5000', 'Para el 09/09/2019', 1, 'Rosa Llanos');

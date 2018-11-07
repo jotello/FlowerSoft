@@ -12,7 +12,7 @@ router.get('/', function(req, res, next) {
 router.get('/pedidos/', function(req, res, next){
 	request('http://localhost:8080/pedidos/', function(error, response, body) {
 		var pedidos = JSON.parse(body);
-        res.render('pedidos', {title: 'Inicio', pedidos: pedidos.data});
+        res.render('pedidos', {title: 'Lista de pedidos', pedidos: pedidos.data});
     });
 	//res.render('inicio', {title: 'Inicio', pedidos: array.data});
 });
@@ -42,7 +42,11 @@ router.post('/pedido/update', function(req, res, next){
 	var id = req.body.id;
 	var detalle = req.body.detalle;
 	var fecha = req.body.fecha;
-	request.put('http://localhost:8080/pedidos/'+id).form({"detalle":detalle, "fecha" :fecha}), 
+	var total = req.body.total;
+	var id_cliente = req.body.id_cliente;
+	var cliente = req.body.cliente;
+
+	request.put('http://localhost:8080/pedidos/'+id).form({"total" : total, "detalle":detalle, "fecha" :fecha, "cliente" : cliente}), 
 	function optionalCallback(err, httpResponse, body) {
   		if (err) {
     		return console.error('upload failed:', err);
@@ -58,9 +62,12 @@ router.get('/crearPedido', function(req, res, next) {
 });
 
 router.post('/crearPedido', function(req, res, next){
+	var total = req.body.total;
+	var id_cliente = req.body.id_cliente;
+	var cliente = req.body.cliente;
 	var detalle = req.body.detalle;
 	var fecha = req.body.fecha;
-	request.post('http://localhost:8080/pedidos/').form({"detalle":detalle, "fecha" :fecha}), 
+	request.post('http://localhost:8080/pedidos/').form({"total":total, "detalle":detalle, "fecha" :fecha, "ID_CLIENTE" : id_cliente, "nombre_cliente" : cliente}), 
 	function optionalCallback(err, httpResponse, body) {
   		if (err) {
     		return console.error('upload failed:', err);

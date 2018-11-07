@@ -57,9 +57,14 @@ html
               |  Logout
           
     center
-       
-      h1 Creacion de pedidos
-      form(action='/dashboard/crearPedido', method='POST')
-       input(placeholder='detalle', name='detalle', type='text')
-       input(placeholder='fecha', name='fecha', type='text')
-       button(onclick='myFunction()', type='submit') Crear
+      .container-fluid 
+          .wrapper
+            form.form-signin(action='/dashboard/crearPedido', method='POST')
+              h2.form-signin-heading.text-center Creación de pedido
+              input.form-control(type='text', name='detalle', placeholder='Ingrese el detalle del pedido', required='', autofocus='')
+              input.form-control(type='text', name='fecha', placeholder='Ingrese la fecha de entrega', required='', autofocus='')
+              input.form-control(type='text', name='total', placeholder='Total a cobrar', required='', autofocus='')
+              input.form-control(type='text', name='id_cliente', placeholder='Ingrese el id del cliente', required='')
+              input.form-control(type='text', name='cliente', placeholder='Ingrese el nombre del cliente', required='')
+        
+              button.btn.btn-lg.btn-block(type='submit') Enviar
