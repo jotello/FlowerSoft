@@ -19,12 +19,12 @@ router.get('/pedidos/', function(req, res, next){
 
 router.get('/pedido/delete/:id', function(req, res, next){
 	var id = req.params.id;
-	request.delete('http://localhost:8080/pedidos/'+id, 
+	request.delete('http://localhost:8080/pedidos/'+id,
 		function optionalCallback(err, httpResponse, body){
 			if (err) {
     		return console.error('Delete failed:', err);
   			}
-  			console.log('Delete successful!  Server responded with:', body);	
+  			console.log('Delete successful!  Server responded with:', body);
 		}
 	);
 	res.redirect('/dashboard/pedidos');
@@ -42,7 +42,7 @@ router.post('/pedido/update', function(req, res, next){
 	var id = req.body.id;
 	var detalle = req.body.detalle;
 	var fecha = req.body.fecha;
-	request.put('http://localhost:8080/pedidos/'+id).form({"detalle":detalle, "fecha" :fecha}), 
+	request.put('http://localhost:8080/pedidos/'+id).form({"detalle":detalle, "fecha" :fecha}),
 	function optionalCallback(err, httpResponse, body) {
   		if (err) {
     		return console.error('upload failed:', err);
@@ -57,10 +57,10 @@ router.get('/crearPedido', function(req, res, next) {
   res.render('crear_pedido', { title: 'Crear Pedido' });
 });
 
-router.post('/crearPedido', function(req, res, next){
+router.post('/crearPedido', function(req, res, next) {
 	var detalle = req.body.detalle;
 	var fecha = req.body.fecha;
-	request.post('http://localhost:8080/pedidos/').form({"detalle":detalle, "fecha" :fecha}), 
+	request.post('http://localhost:8080/pedidos/').form({"detalle":detalle, "fecha" :fecha}),
 	function optionalCallback(err, httpResponse, body) {
   		if (err) {
     		return console.error('upload failed:', err);
@@ -69,6 +69,5 @@ router.post('/crearPedido', function(req, res, next){
 	};
 	res.redirect('/dashboard/pedidos');
 });
-
 
 module.exports = router;

@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
 const db = require(path.join(__dirname, 'db'));
+const passport = require('passport');
 
 // CONNECTING TO DB
 db.connectToUsersDatabase();
@@ -10,6 +11,10 @@ const usersRoutes = require(path.join(__dirname, 'users'));
 
 //INITIALIZANDO LA APP
 const app = express();
+
+//passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 // MIDDLEWARES
 //Express
@@ -28,5 +33,3 @@ app.set('port', 3003);
 app.listen(app.get('port'), () => {
     console.log(`Server on port ${app.get('port')}`);
 });
-
-
