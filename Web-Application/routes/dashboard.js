@@ -5,7 +5,12 @@ var request = require('request');
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	//Rosa debe poblar esta vista con los productos
-  res.render('dashboard', { title: 'Dashboard' });
+	request('http://localhost:8080/catalogo/', function(error, response, body) {
+		var catalogo = JSON.parse(body);
+        res.render('dashboard', {title: 'Inicio', catalogo: catalogo.data});
+        console.log(catalogo.data);
+    });
+  //res.render('dashboard', { title: 'Dashboard' });
 });
 
 
@@ -19,12 +24,12 @@ router.get('/pedidos/', function(req, res, next){
 
 router.get('/pedido/delete/:id', function(req, res, next){
 	var id = req.params.id;
-	request.delete('http://localhost:8080/pedidos/'+id, 
+	request.delete('http://localhost:8080/pedidos/'+id,
 		function optionalCallback(err, httpResponse, body){
 			if (err) {
     		return console.error('Delete failed:', err);
   			}
-  			console.log('Delete successful!  Server responded with:', body);	
+  			console.log('Delete successful!  Server responded with:', body);
 		}
 	);
 	res.redirect('/dashboard/pedidos');
@@ -46,7 +51,7 @@ router.post('/pedido/update', function(req, res, next){
 	var id_cliente = req.body.id_cliente;
 	var cliente = req.body.cliente;
 
-	request.put('http://localhost:8080/pedidos/'+id).form({"total" : total, "detalle":detalle, "fecha" :fecha, "cliente" : cliente}), 
+	request.put('http://localhost:8080/pedidos/'+id).form({"total" : total, "detalle":detalle, "fecha" :fecha, "cliente" : cliente}),
 	function optionalCallback(err, httpResponse, body) {
   		if (err) {
     		return console.error('upload failed:', err);
@@ -60,6 +65,7 @@ router.get('/crearPedido', function(req, res, next) {
 	//Rosa debe poblar esta vista con los productos
   res.render('crear_pedido', { title: 'Crear Pedido' });
 });
+
 
 router.post('/crearPedido', function(req, res, next){
 	var total = req.body.total;
@@ -76,6 +82,5 @@ router.post('/crearPedido', function(req, res, next){
 	};
 	res.redirect('/dashboard/pedidos');
 });
-
 
 module.exports = router;

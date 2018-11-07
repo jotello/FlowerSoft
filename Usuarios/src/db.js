@@ -41,7 +41,7 @@ const db_url = 'mongodb://localhost/users-service-db';
 
 const User = module.exports.modelUser = mongoose.model('user', UserSchema);
 
-module.exports.connectToUsersDatabase = function () { 
+module.exports.connectToUsersDatabase = function () {
     mongoose.connect(db_url, { useNewUrlParser: true })
     .then(db => console.log('Db connected'))
     .catch(err => console.log(err));
@@ -60,11 +60,11 @@ module.exports.createUser = function (userData, callback) {
         if(err) throw err;
 
         bcrypt.hash(userData.password, salt, (err, hash) => {
-            console.log('hash:', hash);            
+            console.log('hash:', hash);
             if (err) throw err;
 
             newUser.password = hash;
-            newUser.save(callback);             
+            newUser.save(callback);
         });
     });
 };
@@ -73,25 +73,25 @@ module.exports.findAllUsers = function (callback) {
     User.find(callback);
  };
 
- module.exports.findUserById = function (id, callback) { 
+ module.exports.findUserById = function (id, callback) {
     User.findById(id, callback);
  };
 
- module.exports.findUserByProfileName = function (profile_name, callback) { 
+ module.exports.findUserByProfileName = function (profile_name, callback) {
     query = {profile_name: profile_name};
     User.findOne(query, callback);
  };
 
- module.exports.findUserByEmail = function (email, callback) { 
-    query = {email: email};     
+ module.exports.findUserByEmail = function (email, callback) {
+    query = {email: email};
     User.findOne(query, callback);
  };
 
- module.exports.updateUserByProfileName = function (profile_name, changeQuery, emailChanged, callback) { 
+ module.exports.updateUserByProfileName = function (profile_name, changeQuery, emailChanged, callback) {
     query = {profile_name: profile_name};
-    
-    if(emailChanged) { 
-       changeQuery.profile_name = this.makeProfileName(changeQuery.email); 
+
+    if(emailChanged) {
+       changeQuery.profile_name = this.makeProfileName(changeQuery.email);
        console.log('profile name changed:', changeQuery.profile_name);
     }
 
@@ -99,9 +99,9 @@ module.exports.findAllUsers = function (callback) {
     if(changeQuery.password) {
         bcrypt.genSalt(10, (err, salt) => {
             if(err) throw err;
-    
+
             bcrypt.hash(changeQuery.password, salt, (err, hash) => {
-                console.log('hash:', hash);            
+                console.log('hash:', hash);
                 if (err) throw err;
 
                 changeQuery.password = hash;
@@ -114,17 +114,17 @@ module.exports.findAllUsers = function (callback) {
     }
  };
 
- module.exports.updateUserByEmail = async function (email, changeQuery, callback) { 
+ module.exports.updateUserByEmail = async function (email, changeQuery, callback) {
     query = {email: email};
     console.log('query', query);
-    console.log('change query', changeQuery);   
-    
+    console.log('change query', changeQuery);
+
     if(changeQuery.password) {
         bcrypt.genSalt(10, (err, salt) => {
             if(err) throw err;
-    
+
             bcrypt.hash(changeQuery.password, salt, (err, hash) => {
-                console.log('hash:', hash);            
+                console.log('hash:', hash);
                 if (err) throw err;
 
                 changeQuery.password = hash;
@@ -137,21 +137,21 @@ module.exports.findAllUsers = function (callback) {
     }
 };
 
- module.exports.deleteUserByEmail = function (email, callback) { 
+ module.exports.deleteUserByEmail = function (email, callback) {
     query = {email: email};
     User.findOneAndDelete(query, callback);
  };
 
- module.exports.makeProfileName = function(email) { 
+ module.exports.makeProfileName = function(email) {
     const splittedEmail = email.split('@');
     const splittedDomain = splittedEmail[1].split('.');
     return splittedEmail[0] + '.' + splittedEmail[1][0] + '.'  + splittedDomain[1][splittedDomain[1].length - 1];
  };
 
- function transformRut(raw_rut) { 
-    
- }
-
- function validateRut(rut) {
-
+ module.exports.comparePassword = function (candidatePassword, hash, callback) {
+     console.log('comparando');
+     bcrypt.compare(candidatePassword, hash, function (err, isMatch) {
+         if (err) throw err;
+         callback(null, isMatch);
+     });
  };

@@ -4,10 +4,10 @@ html
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
     link(rel='stylesheet', href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css")
-    script(src="https://code.jquery.com/jquery-2.2.3.min.js")  
+    script(src="https://code.jquery.com/jquery-2.2.3.min.js")
     script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js")
   body
-    
+
 
   nav.navbar.navbar-default.navbar-fixed-top
         .container
@@ -19,14 +19,15 @@ html
             a.navbar-brand(href='#')
               img.logo(style='width:100px; height:55px',src='/images/logo1.png')
           #myNavbar.collapse.navbar-collapse
-           
+
   .wrapper
-      form.form-signin
+      form.form-signin(action='/registro', method='POST')
         h2.form-signin-heading.text-center Registro de Usuario
-        input.form-control(type='text', name='username', placeholder='Email', required='', autofocus='')
-        input.form-control(type='text', name='nombre', placeholder='Nombre', required='', autofocus='')
+        input.form-control(type='text', name='names', placeholder='Nombres', required='', autofocus='')
+        input.form-control(type='text', name='family_name', placeholder='Apellidos', required='', autofocus='')
         input.form-control(type='text', name='rut', placeholder='Rut', required='', autofocus='')
-        input.form-control(type='password', name='password', placeholder='Password', required='')
-        
+        input.form-control(type='text', name='email', placeholder='Email', required='', autofocus='')
+        input.form-control(type='password', name='password', placeholder='Contraseña', required='')
+        input.form-control(type='password', name='confirmPassword', placeholder='confirme contraseña', required='')
+
         button.btn.btn-lg.btn-block(type='submit') Crear cuenta
-        

@@ -11,7 +11,7 @@ apiEndpoints:
   usuarios_req:
     host: localhost
     methods: "GET,POST,PUT,DELETE"
-    paths: ['/usuarios/*']
+    paths: ['/users/*']
   catalogo_req:
     host: localhost
     methods: "GET,POST,PUT,DELETE"
