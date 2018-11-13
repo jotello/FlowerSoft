@@ -22,7 +22,7 @@ module.exports = {
 };
 
 function catalogo(req, res, next) {
-var query = connection.query('SELECT *FROM catalogo', function(error, result){
+var query = connection.query('SELECT * FROM catalogo', function(error, result){
    if(error){
       throw error;
    }else{
@@ -34,7 +34,8 @@ var query = connection.query('SELECT *FROM catalogo', function(error, result){
 }
 
 function insertCatalogo(req, res, next) {
-var query = connection.query('INSERT INTO catalogo(nombre, tipo, precio) VALUES(?, ?, ?)', ['rosas', 'flores', '1230'], function(error, result){
+var query = connection.query('INSERT INTO catalogo(nombre, tipo, precio) VALUES(?, ?, ?)', [req.body.nombre, req.body.tipo, req.body.precio], 
+   function(error, result){
    if(error){
       throw error;
    }else{
@@ -46,7 +47,8 @@ var query = connection.query('INSERT INTO catalogo(nombre, tipo, precio) VALUES(
 }
 
 function updateCatalogo(req, res, next) {
-var query = connection.query("UPDATE catalogo SET nombre = 'Margaritas' WHERE nombre = 'Canyon'", function(error, result){
+var query = connection.query('UPDATE catalogo SET precio = ? WHERE nombre = ?', [req.body.precio, req.body.nombre], 
+   function(error, result){
    if(error){
       throw error;
    }else{
@@ -57,19 +59,20 @@ var query = connection.query("UPDATE catalogo SET nombre = 'Margaritas' WHERE no
 );}
 
 function deleteCatalogo(req, res, next) {
-var query = connection.query('DELETE FROM catalogo WHERE id=1;', function(error, result){
+var query = connection.query('DELETE FROM catalogo WHERE id = ? ',[req.body.id],
+ function(error, result){
    if(error){
       throw error;
    }else{
       console.log(result);
-      res.json(result);
       res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
    }
  }
 );}
 
 function selectCatalogo(req, res, next) {
-var query = connection.query('SELECT nombre, tipo, precio FROM catalogo WHERE id = ?', [4], function(error, result){
+var query = connection.query('SELECT nombre, tipo, precio FROM catalogo WHERE id = ?', [parseInt(req.params.id)], 
+   function(error, result){
       if(error){
          throw error;
       }else{
