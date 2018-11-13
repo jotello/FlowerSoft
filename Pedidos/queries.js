@@ -73,7 +73,7 @@ function createPedido(req, res, next) {
 }
 
 function updatePedido(req, res, next) {
-  db.none('update pedido set total=$1, detalle=$2, fecha=$3, nombre_cliente=$4 where id=$5',
+  db.none('update pedido set total=$1, detalle=$2, fecha_entrega=$3, nombre_cliente=$4 where id=$5',
     [req.body.total, req.body.detalle, req.body.fecha, req.body.cliente, parseInt(req.params.id)])
     .then(function () {
       res.status(200)
