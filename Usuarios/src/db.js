@@ -10,6 +10,10 @@ const UserSchema = new Schema({
     family_name: String,
     email: String,
     password: String,
+    rol: {
+      type: String,
+      default: 'cliente'
+    },
     creation_date: {
         type: Date,
         default: Date.now()
@@ -18,6 +22,7 @@ const UserSchema = new Schema({
         type: Date,
         default: Date.now()
     }
+
 });
 
 const UserJoiSchema = module.exports.joiSchema = {
@@ -27,14 +32,16 @@ const UserJoiSchema = module.exports.joiSchema = {
         family_name: Joi.string().min(2).required(),
         email: Joi.string().email().required(),
         password: Joi.string().min(4).required(),
-        confirmPassword: Joi.any().valid(Joi.ref('password')).required().options({ language: { any: { allowOnly: 'must match password' } } })
+        confirmPassword: Joi.any().valid(Joi.ref('password')).required().options({ language: { any: { allowOnly: 'must match password' } } }),
+        rol: Joi.string()
     },
     put: {
         rut: Joi.string().min(8),
         names: Joi.string().min(2),
         family_name: Joi.string().min(2),
         email: Joi.string().email(),
-        password: Joi.string().min(4)
+        password: Joi.string().min(4),
+        rol: Joi.string()
     }
 };
 
@@ -56,6 +63,7 @@ module.exports.createUser = function (userData, callback) {
     newUser.family_name = userData.family_name;
     newUser.email = userData.email;
     newUser.profile_name = this.makeProfileName(newUser.email);
+    newUser.rol = userData.rol;
 
     bcrypt.genSalt(10, (err, salt) => {
         if(err) throw err;

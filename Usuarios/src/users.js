@@ -28,7 +28,6 @@ passport.use(new LocalStrategy({
                 console.log('revise credenciales');
                 return done(null, false, { message: 'revise credenciales' });
             }
-
             User.comparePassword(password, user.password, function (err, isMatch) {
                 if (err) throw err;
 
@@ -60,12 +59,13 @@ passport.deserializeUser(function (id, done) {
 router.post('/login', (req, res, next) => {
 
     console.log('En api/users/login');
-    console.log(req.body.email);
-    console.log(req.body.password);
 
-    console.log(req.user);
-    console.log(req.isAuthenticated());
-    
+    console.log('email:', req.body.email);
+    console.log('password', req.body.password);
+
+    console.log('user:', req.user);
+    console.log('esta autenticado?:', req.isAuthenticated());
+
     passport.authenticate('local', (err, user, info) => {
 
         if(err) { return next(err); }
@@ -78,14 +78,14 @@ router.post('/login', (req, res, next) => {
             });
         }
 
-        req.logIn(user, (err) => { 
+        req.login(user, (err) => {
             if (err) { return next(err); }
 
             console.log('login exitoso');
             console.log('el usuario encontrado', user);
             console.log('su profile name:', user.profile_name);
-            console.log('el usuario logueado', req.user);            
-            
+            console.log('el usuario logueado', req.user);
+
             return res.status(200).send({
                 message: 'Login exitoso',
                 data: user
@@ -98,6 +98,7 @@ router.post('/login', (req, res, next) => {
 //POST
 router.post('/', (req, res) => {
 
+    console.log('En post de users');
     const { error }  = Joi.validate(req.body, User.joiSchema.post);
 
     if (error) {
@@ -133,6 +134,24 @@ router.post('/', (req, res) => {
 });
 
 //GET
+
+router.get('/', ensureLogged, (req, res) => {
+
+console.log('El usuario en sesion:', req.user);
+  User.findUserByProfileName(req.user.profile_name, (err, user) => {
+      if (err) throw err;
+
+      if(!user) {
+        console.log('El usuario no fue encontrado');
+          return res.status(404).send(notFoundMessage);
+      }
+      console.log('el usuario encontrado:', user);
+      res.status(200).send(user);
+  });
+
+})
+
+/*
 router.get('/', (req, res) => {
     User.findAllUsers((err, users) => {
         if (err) throw err;
@@ -141,12 +160,13 @@ router.get('/', (req, res) => {
         res.status(200).send(users);
     });
 });
+*/
 
 //GET: logout
 
 router.get('/logout', ensureLogged, (req, res) => {
     console.log('en logout');
-    const user = req.user; 
+    const user = req.user;
     req.logout();
     console.log('loggedout');
     res.status(200).send(user);
@@ -249,9 +269,10 @@ function ensureLogged(req, res, next)
     } else {
         res.status(401).send({
             message: 'Unathorized',
-            data: {}
+            data: {},
+            status: 401
         });
-    }  
+    }
 }
 
 
