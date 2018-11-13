@@ -2,8 +2,8 @@ const express = require('express');
 const path = require('path');
 const morgan = require('morgan');
 const db = require(path.join(__dirname, 'db'));
-const passport = require('passport');
 const session = require('express-session');
+const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const flash = require('connect-flash');
@@ -19,16 +19,13 @@ const app = express();
 
 
 // MIDDLEWARES
+
 //Express-session
 app.use(session({
     secret: 'thesecret',
     saveUninitialized: false,
     resave: false
 }));
-
-//passport
-app.use(passport.initialize());
-app.use(passport.session());
 
 //Body-parser
 app.use(bodyParser.json());
@@ -55,6 +52,10 @@ app.use(function (req, res, next) {
     res.locals.user = req.user || null;
     next();
 });
+
+//passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 // ROUTES
 app.use('/api/users', usersRoutes);

@@ -149,7 +149,14 @@ ESTRUCTURA:
 EJEMPLOS PARA POSTMAN (en orden)
 
 -POST localhost:3003/api/users/
-    req.body = {"names":"Juan Pedro", "family_name":"Varela Verdugo", "rut":"19.312.420-4", "email":"juan@gmail.com", "password":"hola"}
+    req.body = {"names":"Juan Pedro", "family_name":"Varela Verdugo", "rut":"19.312.420-4", "email":"juan@gmail.com", "password":"hola",
+    "confirmPassword":"hola", "rol":"admin"}
+
+-POST localhost:3003/api/users/
+    req.body = {"names":"María Pedro", "family_name":"Varela Verdugo", "rut":"19.312.420-4", "email":"maria@gmail.com", "password":"hola",
+    "confirmPassword":"hola"}
+        *valor de "rol" default:
+            "rol":"cliente"
 
 -POST localhost:3003/api/users/
     req.body = {"names":"Luis Pedro", "family_name":"Mera Bordachar", "rut":"19.312.420-4", "email":"luis@outlook.com", "password":"chao"}
