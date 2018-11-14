@@ -47,7 +47,7 @@ var query = connection.query('INSERT INTO catalogo(nombre, tipo, precio) VALUES(
 }
 
 function updateCatalogo(req, res, next) {
-var query = connection.query('UPDATE catalogo SET precio = ? WHERE nombre = ?', [req.body.precio, req.body.nombre], 
+var query = connection.query('UPDATE catalogo SET precio =? , nombre =? WHERE id = ?', [req.body.precio, req.body.nombre, parseInt(req.params.id)], 
    function(error, result){
    if(error){
       throw error;
@@ -71,7 +71,7 @@ var query = connection.query('DELETE FROM catalogo WHERE id = ? ',[req.body.id],
 );}
 
 function selectCatalogo(req, res, next) {
-var query = connection.query('SELECT nombre, tipo, precio FROM catalogo WHERE id = ?', [parseInt(req.params.id)], 
+var query = connection.query('SELECT * FROM catalogo WHERE id = ?', [parseInt(req.params.id)], 
    function(error, result){
       if(error){
          throw error;
@@ -79,7 +79,7 @@ var query = connection.query('SELECT nombre, tipo, precio FROM catalogo WHERE id
          var resultado = result;
          if(resultado.length > 0){
             console.log(resultado[0].nombre + ' ' + resultado[0].tipo + ' / ' + resultado[0].precio);
-            res.send(JSON.stringify({"status": 200, "error": null, "data": resultado[0].nombre + ' ' + resultado[0].tipo + ' / ' + resultado[0].precio}));
+            res.send(JSON.stringify({"status": 200, "data": resultado[0]}));
          }else{
             console.log('Registro no encontrado');
          }

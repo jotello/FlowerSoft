@@ -56,31 +56,14 @@ html
               i.fa.fa-lg
               |  Logout
 
-    .container-fluid
-      h4 Lista de Pedidos
-      .table-responsive
-        table#mytable.table.table-bordred.table-striped
-          thead
-            tr
-              th Nro.
-              th Detalle
-              th Fecha
-              th Total
-              th Cliente
-              th Editar
-              th Eliminar
-          tbody
-            each item in pedidos
-              tr
-              td #{item.id}
-              td #{item.detalle}
-              td #{item.fecha_entrega}
-              td #{item.total}
-              td #{item.nombre_cliente}
-              td
-                a.btn.btn-primary-btn-xs(href='/dashboard/pedido/edit/#{item.id}', type='button', onclick='window.location.reload()')
-                  span.glyphicon.glyphicon-pencil
-              td
-                a.btn.btn-primary-btn-xs(href='/dashboard/pedido/delete/#{item.id}', type='button', onclick='window.location.reload()') 
-                  span.glyphicon.glyphicon-trash
-                          
+    center
+      .container-fluid 
+          .wrapper
+            form.form-signin(action='/dashboard/producto/update', method='POST')
+              h2.form-signin-heading.text-center Editar pedido
+              input.form-control(id='id', name='id', type='hidden', value='#{producto.id}')
+              input.form-control(type='text', name='nombre', placeholder='#{producto.nombre}')
+              input.form-control(name='tipo', type = 'hidden', value='#{producto.tipo}')
+              input.form-control(type='text', name='precio', placeholder='#{producto.precio}')
+
+              button.btn.btn-lg.btn-block(type='submit') Enviar

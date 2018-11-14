@@ -62,8 +62,61 @@ router.post('/pedido/update', function(req, res, next){
 });
 
 router.get('/crearPedido', function(req, res, next) {
-	//Rosa debe poblar esta vista con los productos
   res.render('crear_pedido', { title: 'Crear Pedido' });
+});
+
+router.get('/crearProducto', function(req, res, next) {
+  res.render('crear_producto', { title: 'Crear Producto' });
+});
+
+router.post('/crearProducto', function(req, res, next){
+	var tipo = req.body.tipo;
+	var nombre = req.body.nombre;
+	var precio = req.body.precio;
+	request.post('http://localhost:8080/catalogo/').form({"tipo":tipo, "nombre":nombre, "precio" :precio}), 
+	function optionalCallback(err, httpResponse, body) {
+  		if (err) {
+    		return console.error('upload failed:', err);
+  		}
+  		console.log('Upload successful!  Server responded with:', body);
+	};
+	res.redirect('/dashboard');
+});
+
+router.get('/producto/delete/:id', function(req, res, next){
+	var id = req.params.id;
+	request.delete('http://localhost:8080/catalogo/'+id).form({"id" : id}),
+		function optionalCallback(err, httpResponse, body){
+			if (err) {
+    		return console.error('Delete failed:', err);
+  			}
+  			console.log('Delete successful!  Server responded with:', body);
+	};
+	res.redirect('/dashboard');
+}); //Funcionando
+
+router.get('/producto/edit/:id', function(req, res, next){
+	var id = req.params.id;
+	request('http://localhost:8080/catalogo/'+id, function(error, response, body) {
+		var producto = JSON.parse(body);
+        res.render('edit_producto', {producto: producto.data});
+    });
+});
+
+router.post('/producto/update', function(req, res, next){
+	var id = req.body.id;
+	var tipo = req.body.tipo;
+	var nombre = req.body.nombre;
+	var precio = req.body.precio;
+
+	request.put('http://localhost:8080/catalogo/'+id).form({"tipo" : tipo, "nombre":nombre, "precio" :precio}),
+	function optionalCallback(err, httpResponse, body) {
+  		if (err) {
+    		return console.error('upload failed:', err);
+  		}
+  		console.log('Upload successful!  Server responded with:', body);
+	};
+	res.redirect('/dashboard');
 });
 
 

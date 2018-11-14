@@ -33,10 +33,16 @@ html
       i.fa.fa-bars.fa-2x.toggle-btn(data-toggle='collapse', data-target='#menu-content')
       .menu-list
         ul#menu-content.menu-content.collapse.out
-          li.active
-            a(href='/dashboard')
+          li.active(data-toggle='collapse', data-target='#dash')
+            a(href='#')
               i.fa.fa-lg
               |  Dashboard
+              span.arrow
+          ul#dash.sub-menu.collapse
+            li.active
+              a(href='/dashboard/') Ver Productos
+            li
+              a(href='/dashboard/crearProducto') Crear Producto
           li.collapsed(data-toggle='collapse', data-target='#products')
             a(href='#')
               i.fa.fa-lg
@@ -48,11 +54,11 @@ html
             li
               a(href='/dashboard/crearPedido') Crear Pedido
           li.collapsed(data-toggle='collapse', data-target='#service')
-            a(href='/dashboard/editUsuario')
+            a(href='#')
               i.fa.fa-lg
               |  Configuración 
           li.collapsed(data-toggle='collapse', data-target='#new')
-            a(href='/dashboard/logout')
+            a(href='#')
               i.fa.fa-lg
               |  Logout
 
@@ -62,14 +68,22 @@ html
             table#mytable.table.table-bordred.table-striped
               thead
                 tr
-                  th id
-                  th tipo
-                  th nombre
-                  th precio
+                  th Nro.
+                  th Tipo
+                  th Nombre
+                  th Precio
+                  th Editar
+                  th Eliminar
               tbody
                 each item in catalogo
                   tr
                     td #{item.id}
                     td #{item.tipo} 
                     td #{item.nombre}
-                    td #{item.precio}  
+                    td #{item.precio}
+                    td
+                      a.btn.btn-primary-btn-xs(href='/dashboard/producto/edit/#{item.id}', type='button', onclick='window.location.reload()')
+                        span.glyphicon.glyphicon-pencil
+                    td
+                      a.btn.btn-primary-btn-xs(href='/dashboard/producto/delete/#{item.id}', type='button', onclick='window.location.reload()') 
+                        span.glyphicon.glyphicon-trash  

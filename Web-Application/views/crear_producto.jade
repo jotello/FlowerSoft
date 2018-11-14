@@ -13,7 +13,7 @@ html
     link(href='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css', rel='stylesheet')
     link(rel='stylesheet', href='/stylesheets/style.css')
     link(rel='stylesheet', href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css")
-    script(src="https://code.jquery.com/jquery-2.2.3.min.js")  
+    script(src="https://code.jquery.com/jquery-2.2.3.min.js")
     script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js")
   body
 
@@ -29,7 +29,7 @@ html
           #myNavbar.collapse.navbar-collapse
 
   .nav-side-menu
-      
+
       i.fa.fa-bars.fa-2x.toggle-btn(data-toggle='collapse', data-target='#menu-content')
       .menu-list
         ul#menu-content.menu-content.collapse.out
@@ -40,7 +40,7 @@ html
           li.collapsed(data-toggle='collapse', data-target='#products')
             a(href='#')
               i.fa.fa-lg
-              |  Pedidos 
+              |  Pedidos
               span.arrow
           ul#products.sub-menu.collapse
             li.active
@@ -50,37 +50,19 @@ html
           li.collapsed(data-toggle='collapse', data-target='#service')
             a(href='/dashboard/editUsuario')
               i.fa.fa-lg
-              |  Configuración 
+              |  Configuración
           li.collapsed(data-toggle='collapse', data-target='#new')
             a(href='/dashboard/logout')
               i.fa.fa-lg
               |  Logout
 
-    .container-fluid
-      h4 Lista de Pedidos
-      .table-responsive
-        table#mytable.table.table-bordred.table-striped
-          thead
-            tr
-              th Nro.
-              th Detalle
-              th Fecha
-              th Total
-              th Cliente
-              th Editar
-              th Eliminar
-          tbody
-            each item in pedidos
-              tr
-              td #{item.id}
-              td #{item.detalle}
-              td #{item.fecha_entrega}
-              td #{item.total}
-              td #{item.nombre_cliente}
-              td
-                a.btn.btn-primary-btn-xs(href='/dashboard/pedido/edit/#{item.id}', type='button', onclick='window.location.reload()')
-                  span.glyphicon.glyphicon-pencil
-              td
-                a.btn.btn-primary-btn-xs(href='/dashboard/pedido/delete/#{item.id}', type='button', onclick='window.location.reload()') 
-                  span.glyphicon.glyphicon-trash
-                          
+    center
+      .container-fluid 
+          .wrapper
+            form.form-signin(action='/dashboard/crearProducto', method='POST')
+              h2.form-signin-heading.text-center Creación de producto
+              input.form-control(type='text', name='tipo', placeholder='Ingrese el tipo (flores, arreglo, etc.)', required='', autofocus='')
+              input.form-control(type='text', name='nombre', placeholder='Ingrese el nombre', required='', autofocus='')
+              input.form-control(type='text', name='precio', placeholder='Ingrese el precio del producto unitario', required='', autofocus='')
+        
+              button.btn.btn-lg.btn-block(type='submit') Enviar
