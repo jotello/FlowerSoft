@@ -6,6 +6,7 @@ const router = express.Router();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
+
 const User = require(path.join(__dirname, 'db'));
 
 const notFoundMessage = 'User not found';
@@ -18,7 +19,7 @@ passport.use(new LocalStrategy({
     usernameField: 'email'
 },
     function (email, password, done) {
-        console.log("strategy");
+        console.log("In Strategy");
         User.findUserByEmail(email, function (err, user) {
             if (err) {
                 console.log(err);
@@ -65,6 +66,7 @@ router.post('/login', (req, res, next) => {
 
     console.log('user:', req.user);
     console.log('esta autenticado?:', req.isAuthenticated());
+    console.log('session obj', req.session);
 
     passport.authenticate('local', (err, user, info) => {
 
@@ -74,7 +76,8 @@ router.post('/login', (req, res, next) => {
             console.log('login fracasado');
             return res.status(401).send({
                 message: 'email o contraseña incorrecta',
-                data: {}
+                data: {},
+                status: 404
             });
         }
 
@@ -84,7 +87,9 @@ router.post('/login', (req, res, next) => {
             console.log('login exitoso');
             console.log('el usuario encontrado', user);
             console.log('su profile name:', user.profile_name);
+            console.log('su _id es:', req.user._id);
             console.log('el usuario logueado', req.user);
+            console.log('session obj', req.session);
 
             return res.status(200).send({
                 message: 'Login exitoso',
@@ -138,6 +143,7 @@ router.post('/', (req, res) => {
 router.get('/', ensureLogged, (req, res) => {
 
 console.log('El usuario en sesion:', req.user);
+console.log('theUser:', res.locals.theUser);
   User.findUserByProfileName(req.user.profile_name, (err, user) => {
       if (err) throw err;
 
@@ -162,19 +168,24 @@ router.get('/', (req, res) => {
 });
 */
 
-//GET: logout
+//GET: LOGOUT
 
 router.get('/logout', ensureLogged, (req, res) => {
     console.log('en logout');
     const user = req.user;
     req.logout();
+    req.session.destroy();
     console.log('loggedout');
     res.status(200).send(user);
 });
 
 //GET:profile_name
 
+/*
 router.get('/:profile_name', ensureAuthenticated, (req, res) => {
+
+    console.log('Obteniendo por profile_name');
+
     User.findUserByProfileName(req.params.profile_name, (err, user) => {
         if (err) throw err;
 
@@ -184,6 +195,7 @@ router.get('/:profile_name', ensureAuthenticated, (req, res) => {
         res.status(200).send(user);
     });
 });
+*/
 
 
 
@@ -261,12 +273,17 @@ router.delete('/:profile_name', (req, res) => {
 
 function ensureLogged(req, res, next)
 {
-    console.log('asegurando la autenticacion:', req.isAuthenticated());
+    console.log('req', req);
+    console.log('asegurando la loginacion:', req.isAuthenticated());
     console.log('req.user', req.user);
+    console.log('session:', req.session);    
     console.log('el recurso solicitado:', req.params.profile_name);
+    console.log('theUser:', res.locals.theUser);
+    console.log('theSession:', res.locals.theSession);
     if(req.isAuthenticated()) {
         return next();
     } else {
+
         res.status(401).send({
             message: 'Unathorized',
             data: {},
@@ -275,12 +292,66 @@ function ensureLogged(req, res, next)
     }
 }
 
+router.get('/session/', (req, res) =>
+{
+    console.log('En session');
+    User.findAllSessions((err, sessions) => {
+        if(err) throw err;
+        
+        console.log(sessions);
+        res.status(200).send(
+            {
+                message: 'La sessiones',
+                data: sessions
+            }
+        )
+    });
+});
+
+router.get('/session/:session_id', (req, res) =>
+{
+    console.log(req.params.session_id);
+    User.findSessionById(req.params.session_id, (err, session) => {
+        if(err) throw err;
+        
+        console.log('LA SESSION:', session);
+        console.log('session type:', typeof(session));
+        s = session.session;
+        console.log('type of s:', typeof(s));
+        ps = JSON.parse(s);
+        console.log('ps:', ps);
+        const user_id = ps.passport.user;    
+
+        User.findUserById(user_id, (err, user) =>{
+            if (err) throw err;
+
+            console.log('EL USER:', user);
+
+            return res.status(200).send(
+                {
+                    session: {
+                        message: 'La session con tal id',
+                        data: session
+                    },
+                    user: user
+                }
+            );
+        })
+    });
+});
 
 function ensureAuthenticated(req, res, next)
 {
+    console.log('req', req);
     console.log('asegurando la autenticacion:', req.isAuthenticated());
     console.log('req.user', req.user);
+    console.log('session:', req.session);
+    console.log('res.user', res.user);
+    console.log('res.session:', res.session);     
     console.log('el recurso solicitado:', req.params.profile_name);
+    console.log('theUser:', res.locals.theUser);
+    console.log('theUser:', res.locals.theSession);
+
     if(req.isAuthenticated() && req.user.profile_name === req.params.profile_name) {
         return next();
     } else {
@@ -290,5 +361,7 @@ function ensureAuthenticated(req, res, next)
         });
     }
 }
+
+
 
 module.exports = router;

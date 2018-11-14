@@ -45,15 +45,22 @@ const UserJoiSchema = module.exports.joiSchema = {
     }
 };
 
-const db_url = 'mongodb://localhost/users-service-db';
+const db_url_users = 'mongodb://localhost/users-service-db';
+
+let Conx;
 
 const User = module.exports.modelUser = mongoose.model('user', UserSchema);
+const Session = module.exports.modelSession = mongoose.model('session', new Schema({_id: String, session: JSON, expires: Date}), 'sessions');
 
 module.exports.connectToUsersDatabase = function () {
-    mongoose.connect(db_url, { useNewUrlParser: true })
-    .then(db => console.log('Db connected'))
+    mongoose.connect(db_url_users, { useNewUrlParser: true })
+    .then(db => {
+        console.log('db', db);
+        console.log('Db connected')
+    })
     .catch(err => console.log(err));
 };
+
 
 module.exports.createUser = function (userData, callback) {
     let newUser = new User();
@@ -164,3 +171,13 @@ module.exports.findAllUsers = function (callback) {
          callback(null, isMatch);
      });
  };
+
+ //LOGIN - SESSIONS 
+
+ module.exports.findSessionById = function (session_id, callback) {
+     Session.findById(session_id, callback);
+ }
+
+ module.exports.findAllSessions = function (callback) {
+    Session.find(callback);
+}
