@@ -11,15 +11,13 @@ const mongoose = require('mongoose');
 
 const MongoStore = require('connect-mongo')(session);
 
-
-console.log('HOOOOOOOOOOLAAAAAAAAAA');
-
 // CONNECTING TO DB
 const dbconx = db.connectToUsersDatabase();
 
 console.log()
 // IMPORTING ROUTES
 const usersRoutes = require(path.join(__dirname, 'users'));
+const authRoutes = require(path.join(__dirname, 'auth'));
 
 //INITIALIZANDO LA APP
 const app = express();
@@ -78,6 +76,7 @@ app.use((req, res, next) => {
 
 // ROUTES
 app.use('/api/users', usersRoutes);
+app.use('/api/auth', authRoutes.router);
 //PORT
 app.set('port', 3003);
 

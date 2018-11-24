@@ -5,16 +5,15 @@ const router = express.Router();
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-
-
 const User = require(path.join(__dirname, 'db'));
 
 const notFoundMessage = 'User not found';
 const badRequestMessage = 'invalid parameters';
 const emailExistMessage = 'Email in use';
 
+const auth = require(path.join(__dirname, 'auth'));
+const jwt = require('jsonwebtoken');
 //PASSPORT
-
 passport.use(new LocalStrategy({
     usernameField: 'email'
 },
@@ -55,51 +54,10 @@ passport.deserializeUser(function (id, done) {
         done(err, user);
     });
 });
-
 //POST LOGIN
-router.post('/login', (req, res, next) => {
-
-    console.log('En api/users/login');
-
-    console.log('email:', req.body.email);
-    console.log('password', req.body.password);
-
-    console.log('user:', req.user);
-    console.log('esta autenticado?:', req.isAuthenticated());
-    console.log('session obj', req.session);
-
-    passport.authenticate('local', (err, user, info) => {
-
-        if(err) { return next(err); }
-
-        if(!user) {
-            console.log('login fracasado');
-            return res.status(401).send({
-                message: 'email o contraseña incorrecta',
-                data: {},
-                status: 404
-            });
-        }
-
-        req.login(user, (err) => {
-            if (err) { return next(err); }
-
-            console.log('login exitoso');
-            console.log('el usuario encontrado', user);
-            console.log('su profile name:', user.profile_name);
-            console.log('su _id es:', req.user._id);
-            console.log('el usuario logueado', req.user);
-            console.log('session obj', req.session);
-
-            return res.status(200).send({
-                message: 'Login exitoso',
-                data: user
-            });
-        });
-    }) (req, res, next);
-    console.log('el usuario logueado', req.user);
+router.post('/login', passport.authenticate('local'), (req, res, next) => {
+  res.status(200).send(auth.createToken(req, res));
 });
-
 //POST
 router.post('/', (req, res) => {
 
@@ -137,9 +95,7 @@ router.post('/', (req, res) => {
 
     });
 });
-
 //GET
-
 router.get('/', ensureLogged, (req, res) => {
 
 console.log('El usuario en sesion:', req.user);
@@ -156,7 +112,6 @@ console.log('theUser:', res.locals.theUser);
   });
 
 })
-
 /*
 router.get('/', (req, res) => {
     User.findAllUsers((err, users) => {
@@ -167,7 +122,6 @@ router.get('/', (req, res) => {
     });
 });
 */
-
 //GET: LOGOUT
 
 router.get('/logout', ensureLogged, (req, res) => {
@@ -178,7 +132,6 @@ router.get('/logout', ensureLogged, (req, res) => {
     console.log('loggedout');
     res.status(200).send(user);
 });
-
 //GET:profile_name
 
 /*
@@ -196,9 +149,6 @@ router.get('/:profile_name', ensureAuthenticated, (req, res) => {
     });
 });
 */
-
-
-
 //PUT
 router.put('/:profile_name', (req, res) => {
     console.log('En put:', req.params.profile_name);
@@ -276,7 +226,7 @@ function ensureLogged(req, res, next)
     console.log('req', req);
     console.log('asegurando la loginacion:', req.isAuthenticated());
     console.log('req.user', req.user);
-    console.log('session:', req.session);    
+    console.log('session:', req.session);
     console.log('el recurso solicitado:', req.params.profile_name);
     console.log('theUser:', res.locals.theUser);
     console.log('theSession:', res.locals.theSession);
@@ -297,7 +247,7 @@ router.get('/session/', (req, res) =>
     console.log('En session');
     User.findAllSessions((err, sessions) => {
         if(err) throw err;
-        
+
         console.log(sessions);
         res.status(200).send(
             {
@@ -313,14 +263,14 @@ router.get('/session/:session_id', (req, res) =>
     console.log(req.params.session_id);
     User.findSessionById(req.params.session_id, (err, session) => {
         if(err) throw err;
-        
+
         console.log('LA SESSION:', session);
         console.log('session type:', typeof(session));
         s = session.session;
         console.log('type of s:', typeof(s));
         ps = JSON.parse(s);
         console.log('ps:', ps);
-        const user_id = ps.passport.user;    
+        const user_id = ps.passport.user;
 
         User.findUserById(user_id, (err, user) =>{
             if (err) throw err;
@@ -347,7 +297,7 @@ function ensureAuthenticated(req, res, next)
     console.log('req.user', req.user);
     console.log('session:', req.session);
     console.log('res.user', res.user);
-    console.log('res.session:', res.session);     
+    console.log('res.session:', res.session);
     console.log('el recurso solicitado:', req.params.profile_name);
     console.log('theUser:', res.locals.theUser);
     console.log('theUser:', res.locals.theSession);
@@ -361,7 +311,4 @@ function ensureAuthenticated(req, res, next)
         });
     }
 }
-
-
-
 module.exports = router;
