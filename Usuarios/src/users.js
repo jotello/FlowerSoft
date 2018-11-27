@@ -11,8 +11,10 @@ const notFoundMessage = 'User not found';
 const badRequestMessage = 'invalid parameters';
 const emailExistMessage = 'Email in use';
 
-const auth = require(path.join(__dirname, 'auth'));
+const myauth = require(path.join(__dirname, 'auth'));
 const jwt = require('jsonwebtoken');
+
+const request = require('request');
 //PASSPORT
 passport.use(new LocalStrategy({
     usernameField: 'email'
@@ -56,11 +58,41 @@ passport.deserializeUser(function (id, done) {
 });
 //POST LOGIN
 router.post('/login', passport.authenticate('local'), (req, res, next) => {
-  res.status(200).send(auth.createToken(req, res));
+    console.log('login');
+    const payload = {
+        id: req.user._id,
+        email: req.user.email,
+        rol: req.user.rol
+    };
+    const signOptions = {
+        issuer: 'Flowersoft-users-service',
+        subject: req.user.email,
+        audience: req.body.audience,
+    };
+    const str_payload = JSON.stringify(payload);
+    const str_signOptions = JSON.stringify(signOptions);
+
+    console.log('signOptions:', str_signOptions);
+    console.log("str_payload", str_payload);
+
+    request.post({url: 'http://localhost:3003/api/auth/sign',
+    form: {"payload":str_payload, "options":str_signOptions}},
+      (err, response, body) => {
+          if(err){ 
+              console.log('err:', err);
+          }
+
+        console.log('body:', body);
+
+        if(body === false) { 
+            res.status(403).send('forbidden');     
+        }
+        
+        return res.status(200).send(body);
+      });
 });
 //POST
 router.post('/', (req, res) => {
-
     console.log('En post de users');
     const { error }  = Joi.validate(req.body, User.joiSchema.post);
 
@@ -71,7 +103,6 @@ router.post('/', (req, res) => {
             data: {}
         });
     }
-
     User.findUserByEmail(req.body.email, (err, user) => {
         if (err) throw err;
 
@@ -96,21 +127,92 @@ router.post('/', (req, res) => {
     });
 });
 //GET
-router.get('/', ensureLogged, (req, res) => {
+router.get('/', (req, res) => {
 
-console.log('El usuario en sesion:', req.user);
-console.log('theUser:', res.locals.theUser);
-  User.findUserByProfileName(req.user.profile_name, (err, user) => {
-      if (err) throw err;
+    console.log('En get');
+    console.log('headers:', req.headers);
+    console.log('headers["authorization"]:', req.headers['authorization']);
 
-      if(!user) {
-        console.log('El usuario no fue encontrado');
-          return res.status(404).send(notFoundMessage);
-      }
-      console.log('el usuario encontrado:', user);
-      res.status(200).send(user);
-  });
+    request.post('http://localhost:3003/api/auth/check_credentials', {
+        'auth': {
+          'bearer': req.headers['authorization'].split(' ')[1]
+        }
+      },
+      (err, response, decodedAndVerifyToken) => {
+          if(err){ 
+              console.log('err:', err);
+          }
+        const data = JSON.parse(decodedAndVerifyToken);
+        if(response.statusCode === 403) { 
+            return res.status(403).send(data.message);     
+        }
+        const id = data.id;
+        console.log('id:', id);
+        User.findUserById(id, (err, user) => {
+            if (err) throw err;
 
+            if(!user) {
+                return res.status(404).send(notFoundMessage);
+            }
+
+            res.status(200).send(user); 
+        });
+      });
+    
+/*
+    const rest = myauth.verifyToken(req, res);
+
+    if(rest === null) { 
+        return res.status(403).send({
+            message: 'Forbidden: No Token',
+            data: null
+        });
+    }
+
+    console.log("req.token:", req.token);
+
+    console.log('En Users GET ');
+    const token = req.token;
+    const decodedJWT = myauth.decode(token);
+    console.log('req.token:', req.token);
+    console.log(decodedJWT);
+
+    if(decodedJWT === null)
+    {
+        res.status(500).send({
+            message: 'oops',
+            data: null
+        });
+    }
+
+    const verifyOptions = {
+        issuer: decodedJWT.payload.issuer,
+        subject: decodedJWT.payload.subject,
+        audience: decodedJWT.payload.audience,
+        expiresIn: decodedJWT.payload.expiresIn,
+        algorithm: decodedJWT.header.alg
+    }
+
+    const result = myauth.verify(token, verifyOptions);
+
+    if(result === false) {
+        return res.status(403).send({
+            message: 'Forbidden',
+            data: null
+        });
+    }
+    else {
+        user_id = result.id;
+        User.findUserById(user_id, (err, user) => {
+            if (err) throw err;
+
+            if(!user) {
+                return res.status(404).send(notFoundMessage);
+            }
+
+            res.status(200).send(user);
+        });
+    }
 })
 /*
 router.get('/', (req, res) => {
@@ -120,17 +222,12 @@ router.get('/', (req, res) => {
         //Success
         res.status(200).send(users);
     });
-});
 */
+});
+
 //GET: LOGOUT
 
-router.get('/logout', ensureLogged, (req, res) => {
-    console.log('en logout');
-    const user = req.user;
-    req.logout();
-    req.session.destroy();
-    console.log('loggedout');
-    res.status(200).send(user);
+router.get('/logout', (req, res) => {
 });
 //GET:profile_name
 
@@ -218,97 +315,7 @@ router.delete('/:profile_name', (req, res) => {
             return res.status(404).send(notFoundMessage);
         }
         res.status(200).send(user);
-    });
+    });s
 });
 
-function ensureLogged(req, res, next)
-{
-    console.log('req', req);
-    console.log('asegurando la loginacion:', req.isAuthenticated());
-    console.log('req.user', req.user);
-    console.log('session:', req.session);
-    console.log('el recurso solicitado:', req.params.profile_name);
-    console.log('theUser:', res.locals.theUser);
-    console.log('theSession:', res.locals.theSession);
-    if(req.isAuthenticated()) {
-        return next();
-    } else {
-
-        res.status(401).send({
-            message: 'Unathorized',
-            data: {},
-            status: 401
-        });
-    }
-}
-
-router.get('/session/', (req, res) =>
-{
-    console.log('En session');
-    User.findAllSessions((err, sessions) => {
-        if(err) throw err;
-
-        console.log(sessions);
-        res.status(200).send(
-            {
-                message: 'La sessiones',
-                data: sessions
-            }
-        )
-    });
-});
-
-router.get('/session/:session_id', (req, res) =>
-{
-    console.log(req.params.session_id);
-    User.findSessionById(req.params.session_id, (err, session) => {
-        if(err) throw err;
-
-        console.log('LA SESSION:', session);
-        console.log('session type:', typeof(session));
-        s = session.session;
-        console.log('type of s:', typeof(s));
-        ps = JSON.parse(s);
-        console.log('ps:', ps);
-        const user_id = ps.passport.user;
-
-        User.findUserById(user_id, (err, user) =>{
-            if (err) throw err;
-
-            console.log('EL USER:', user);
-
-            return res.status(200).send(
-                {
-                    session: {
-                        message: 'La session con tal id',
-                        data: session
-                    },
-                    user: user
-                }
-            );
-        })
-    });
-});
-
-function ensureAuthenticated(req, res, next)
-{
-    console.log('req', req);
-    console.log('asegurando la autenticacion:', req.isAuthenticated());
-    console.log('req.user', req.user);
-    console.log('session:', req.session);
-    console.log('res.user', res.user);
-    console.log('res.session:', res.session);
-    console.log('el recurso solicitado:', req.params.profile_name);
-    console.log('theUser:', res.locals.theUser);
-    console.log('theUser:', res.locals.theSession);
-
-    if(req.isAuthenticated() && req.user.profile_name === req.params.profile_name) {
-        return next();
-    } else {
-        res.status(401).send({
-            message: 'Unathorized',
-            data: {}
-        });
-    }
-}
 module.exports = router;

@@ -55,7 +55,6 @@ const Session = module.exports.modelSession = mongoose.model('session', new Sche
 module.exports.connectToUsersDatabase = function () {
     mongoose.connect(db_url_users, { useNewUrlParser: true })
     .then(db => {
-        console.log('db', db);
         console.log('Db connected')
     })
     .catch(err => console.log(err));

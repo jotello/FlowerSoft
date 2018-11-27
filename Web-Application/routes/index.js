@@ -6,9 +6,19 @@ const fs = require('fs');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 
+const publicKey = fs.readFileSync(path.join(__dirname, 'public.key'), 'utf8');
+
+console.log('publicKey initialized:', publicKey);
+
+global.wat = null;
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'FlowerSoft' });
+  console.log('renderizando index');
+  console.log('wat:', wat);
+  console.log('wat type:', typeof wat);
+  const token = global.wat;
+  res.render('index', { title: 'Flowersoft', t: global.wat});
 });
 
 router.get('/registro', function(req, res, next) {
@@ -16,56 +26,77 @@ router.get('/registro', function(req, res, next) {
 });
 
 router.post('/login', function(req, res, next) {
-
   console.log('en web app login');
   const email = req.body.email;
   const password = req.body.password;
+  const audience = "http://localhost:3005/";
   console.log(req.body.email);
   console.log(req.body.password);
 
   request.post({url: 'http://localhost:8080/users/login',
-  form: {"email":email, "password":password}},
+  form: {"email":email, "password":password, "audience":audience}},
   function(err, httpResponse, body) {
     console.log('en el callback');
     if(err) throw err;
 
-    console.log('httpResponse', httpResponse);
-    console.log('body', body);
-    console.log('body type', typeof(body));
-
     var results = JSON.parse(body);
+    console.log(results);
+    const token = results.token;
+    
+    console.log('req.body.email:', req.body.email);
+    console.log('token:', token);
+    
+    if(httpResponse.statusCode === 200){
 
-    console.log('parseado');
-
-    console.log('RESULTADOS:', results);
-    console.log(results.message);
-    const token = console.log(results.data);
-    console.log('statusCode:', httpResponse.statusCode);
-
-    if(httpResponse.statusCode === 200)
-    {
-      console.log('Login correcto');
-      console.log('token:', results.data.token);
+      decodedJWT = jwt.decode(token, {complete: true});
 
       const verifyOptions = {
-       issuer:  'Flowersoft',
-       subject: req.email,
-       audience: 'http://localhost:3005/',
-       expiresIn:  "6h",
-       algorithm:  ["RS256"]
+       issuer: decodedJWT.payload.issuer,
+       subject: decodedJWT.payload.email,
+       audience: audience,
+       expiresIn: decodedJWT.payload.expiresIn,
+       algorithm: decodedJWT.header.alg
       };
+      
+      console.log('publicKey:', publicKey);
 
-      const legit = jwt.verify(token, publicKey, verifyOptions);
-      console.log('legit:', legit);
-      console.log('token:', token);
-      //se recibe el token
-      //se decodifica
-      //se almacena en variable (¿local o global?)
-      //se muestra el catálogo (?)
-      //
+      jwt.verify(token, publicKey, verifyOptions, (err, authData) => {
+        console.log('verifying token');
+        if(err) {
+          console.log('err:', err);
+          return res.render('error', {error});
+        }
+        else {
+          global.wat = token;
+          res.redirect('/');
+        }
+      });
     }
   });
-  res.redirect('/');
+});
+
+router.get('/profile', (req, res, next) => {
+  console.log('en profile');
+  const bearerToken = global.wat;
+  
+  console.log('bearer token:', bearerToken);
+  
+  request.get('http://localhost:8080/users/', {
+    'auth': {
+      'bearer': bearerToken
+    }
+  },
+  (err, response, body) => {
+    console.log('response:', response);
+    if (err)
+    {
+      console.log('err:', err);
+    }
+    console.log('body:', body);
+
+    const user = body;
+    res.render('perfil', {user: body, token: global.wat});
+  });
 });
 
 router.post('/registro', (req, res, next) => {
@@ -87,6 +118,12 @@ router.post('/registro', (req, res, next) => {
     "confirmPassword": confirmPassword
   });
   res.redirect('/');
+});
+
+router.get('/logout', (req, res , next) => {
+
+  global.wat = null;
+  res.render('logout');
 });
 
 module.exports = router;
