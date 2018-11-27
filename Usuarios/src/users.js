@@ -78,16 +78,17 @@ router.post('/login', passport.authenticate('local'), (req, res, next) => {
     request.post({url: 'http://localhost:3003/api/auth/sign',
     form: {"payload":str_payload, "options":str_signOptions}},
       (err, response, body) => {
-          if(err){ 
+          if(err){
               console.log('err:', err);
           }
 
-        console.log('body:', body);
+        console.log('body(token):', body);
 
-        if(body === false) { 
-            res.status(403).send('forbidden');     
+        if(body === false) {
+            console.log('sending forbidden');
+            return res.status(403).send('forbidden');
         }
-        
+        console.log('sending OK(token)');
         return res.status(200).send(body);
       });
 });
@@ -139,12 +140,12 @@ router.get('/', (req, res) => {
         }
       },
       (err, response, decodedAndVerifyToken) => {
-          if(err){ 
+          if(err){
               console.log('err:', err);
           }
         const data = JSON.parse(decodedAndVerifyToken);
-        if(response.statusCode === 403) { 
-            return res.status(403).send(data.message);     
+        if(response.statusCode === 403) {
+            return res.status(403).send(data.message);
         }
         const id = data.id;
         console.log('id:', id);
@@ -155,14 +156,14 @@ router.get('/', (req, res) => {
                 return res.status(404).send(notFoundMessage);
             }
 
-            res.status(200).send(user); 
+            res.status(200).send(user);
         });
       });
-    
+
 /*
     const rest = myauth.verifyToken(req, res);
 
-    if(rest === null) { 
+    if(rest === null) {
         return res.status(403).send({
             message: 'Forbidden: No Token',
             data: null

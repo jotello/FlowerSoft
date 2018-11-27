@@ -15,9 +15,8 @@ global.wat = null;
 /* GET home page. */
 router.get('/', function(req, res, next) {
   console.log('renderizando index');
-  console.log('wat:', wat);
-  console.log('wat type:', typeof wat);
-  const token = global.wat;
+  console.log('wat:', global.wat);
+  console.log('wat type:', typeof global.wat);
   res.render('index', { title: 'Flowersoft', t: global.wat});
 });
 
@@ -37,19 +36,20 @@ router.post('/login', function(req, res, next) {
   form: {"email":email, "password":password, "audience":audience}},
   function(err, httpResponse, body) {
     console.log('en el callback');
-    if(err) throw err;
 
-    var results = JSON.parse(body);
-    console.log(results);
-    const token = results.token;
-    
-    console.log('req.body.email:', req.body.email);
-    console.log('token:', token);
-    
+    if(err)
+    {
+      console.log('IN ERROR')
+      console.log('in error:', err);
+      return res.status(500).send(err);
+    }
+
+    console.log('NOT IN ERROR');
+    console.log('unparsed body:', body);
+    const token = body;
+
     if(httpResponse.statusCode === 200){
-
       decodedJWT = jwt.decode(token, {complete: true});
-
       const verifyOptions = {
        issuer: decodedJWT.payload.issuer,
        subject: decodedJWT.payload.email,
@@ -57,9 +57,7 @@ router.post('/login', function(req, res, next) {
        expiresIn: decodedJWT.payload.expiresIn,
        algorithm: decodedJWT.header.alg
       };
-      
       console.log('publicKey:', publicKey);
-
       jwt.verify(token, publicKey, verifyOptions, (err, authData) => {
         console.log('verifying token');
         if(err) {
@@ -77,10 +75,13 @@ router.post('/login', function(req, res, next) {
 
 router.get('/profile', (req, res, next) => {
   console.log('en profile');
+  if(global.wat === null)
+  {
+    return res.redirect('/');
+  }
   const bearerToken = global.wat;
-  
+  console.log(req);
   console.log('bearer token:', bearerToken);
-  
   request.get('http://localhost:8080/users/', {
     'auth': {
       'bearer': bearerToken
@@ -93,9 +94,10 @@ router.get('/profile', (req, res, next) => {
       console.log('err:', err);
     }
     console.log('body:', body);
-
-    const user = body;
-    res.render('perfil', {user: body, token: global.wat});
+    const user = JSON.parse(body);
+    console.log('user:', user);
+    console.log('global.wat:', global.wat);
+    res.status(200).send(user);
   });
 });
 
