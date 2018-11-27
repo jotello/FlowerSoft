@@ -1,32 +1,5 @@
-doctype html
-html
-  head
-    title= title
-    script.
-      function myFunction() {
-      location.reload();
-      }
-    link#bootstrap-css(href='//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css', rel='stylesheet')
-    script(src='//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js')
-    script(src='//code.jquery.com/jquery-1.11.1.min.js')
-    // ---- Include the above in your HEAD tag --------
-    link(href='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css', rel='stylesheet')
-    link(rel='stylesheet', href='/stylesheets/style.css')
-    link(rel='stylesheet', href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css")
-    script(src="https://code.jquery.com/jquery-2.2.3.min.js")
-    script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js")
-  body
-
-  nav.navbar.navbar-default.navbar-fixed-top
-        .container
-          .navbar-header
-            button.navbar-toggle(type='button', data-toggle='collapse', data-target='#myNavbar')
-              span.icon-bar
-              span.icon-bar
-              span.icon-bar
-            a.navbar-brand(href='#')
-              img.logo(style='width:100px; height:55px',src='/images/logo1.png')
-          #myNavbar.collapse.navbar-collapse
+include templates/default
+  include templates/nav
 
   .nav-side-menu
 
@@ -63,6 +36,8 @@ html
               h2.form-signin-heading.text-center Creación de producto
               input.form-control(type='text', name='tipo', placeholder='Ingrese el tipo (flores, arreglo, etc.)', required='', autofocus='')
               input.form-control(type='text', name='nombre', placeholder='Ingrese el nombre', required='', autofocus='')
+              input.form-control(type='text', name='descrip', placeholder='Ingrese la descripción', required='', autofocus='')
+              input.form-control(type='text', name='imagen', placeholder='Ingrese la imagen', required='', autofocus='')
               input.form-control(type='text', name='precio', placeholder='Ingrese el precio del producto unitario', required='', autofocus='')
         
               button.btn.btn-lg.btn-block(type='submit') Enviar

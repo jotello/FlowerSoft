@@ -1,0 +1,65 @@
+include templates/default
+  nav.navbar.navbar-default
+      .container-fluid
+        // Brand and toggle get grouped for better mobile display
+        .navbar-header
+          button.navbar-toggle.collapsed(type='button', data-toggle='collapse', data-target='#bs-example-navbar-collapse-1', aria-expanded='false')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          a.navbar-brand(href='#') FlowerSoft
+
+        // Collect the nav links, forms, and other content for toggling
+        #bs-example-navbar-collapse-1.collapse.navbar-collapse.container-fluid
+          ul.nav.navbar-nav.navbar-right
+            li.dropdown
+              a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+                i.fas.fa-truck
+                |  Pedidos
+                span.caret
+              ul.dropdown-menu
+                li
+                  a(href='/admin') Ver pedidos
+                li.divider(role='separator')
+                li
+                  a(href='')
+                    i.fas.fa-plus-circle
+                    |  Crear Pedido
+            li.dropdown
+              a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+                i.fas.fa-clipboard-list
+                |  Productos
+                span.caret
+              ul.dropdown-menu
+                li
+                  a(href='/admin/productos') Ver productos
+                li.divider(role='separator')
+                li
+                  a(href='/admin/crear/producto') Crear Producto
+            li.dropdown
+              a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+                i.fas.fa-user
+                |  Cuenta
+                span.caret
+              ul.dropdown-menu
+                li
+                  a(href='#') Configuración
+                li.divider(role='separator')
+                li
+                  a(href='#') Salir
+        // /.navbar-collapse
+        // /.container-fluid
+
+  center
+    .container-fluid 
+        .wrapper
+          form.form-signin(action='/dashboard/crearPedido', method='POST')
+            h2.form-signin-heading.text-center Creación de pedido
+            input.form-control(type='text', name='detalle', placeholder='Ingrese el detalle del pedido', required='', autofocus='')
+            input.form-control(type='text', name='fecha', placeholder='Ingrese la fecha de entrega', required='', autofocus='')
+            input.form-control(type='text', name='total', placeholder='Total a cobrar', required='', autofocus='')
+            input.form-control(type='text', name='id_cliente', placeholder='Ingrese el id del cliente', required='')
+            input.form-control(type='text', name='cliente', placeholder='Ingrese el nombre del cliente', required='')
+      
+            button.btn.btn-lg.btn-block(type='submit') Enviar
