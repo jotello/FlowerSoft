@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('prueba:server');
 var http = require('http');
+var amqp = require('amqplib/callback_api');
 
 /**
  * Get port from environment and store in Express.
@@ -88,3 +89,14 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+amqp.connect('amqp://localhost', function(err, conn) {
+  conn.createChannel(function(err, ch) {
+    var q = 'nuevo';
+
+    ch.assertQueue(q, {durable: false});
+    // Note: on Node 6 Buffer.from(msg) should be used
+    ch.sendToQueue(q, new Buffer('nuevo'));
+    console.log(" [x] Sent 'prueba1'");
+  });
+});

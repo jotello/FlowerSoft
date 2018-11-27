@@ -2,9 +2,23 @@ var express = require('express');
 var router = express.Router();
 var request = require('request');
 
+const fs = require('fs');
+const path = require('path');
+const jwt = require('jsonwebtoken');
+
+const publicKey = fs.readFileSync(path.join(__dirname, 'public.key'), 'utf8');
+
+console.log('publicKey initialized:', publicKey);
+
+global.wat = null;
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'FlowerSoft' });
+  console.log('renderizando index');
+  console.log('wat:', wat);
+  console.log('wat type:', typeof wat);
+  const token = global.wat;
+  res.render('index', { title: 'Flowersoft', t: global.wat});
 });
 
 router.get('/registro', function(req, res, next) {
@@ -12,76 +26,76 @@ router.get('/registro', function(req, res, next) {
 });
 
 router.post('/login', function(req, res, next) {
-
   console.log('en web app login');
   const email = req.body.email;
   const password = req.body.password;
-
+  const audience = "http://localhost:3005/";
   console.log(req.body.email);
   console.log(req.body.password);
 
-
   request.post({url: 'http://localhost:8080/users/login',
-  form: {"email":email, "password":password}},
+  form: {"email":email, "password":password, "audience":audience}},
   function(err, httpResponse, body) {
     console.log('en el callback');
     if(err) throw err;
 
-    console.log('httpResponse', httpResponse);
-    console.log('body', body);
-    console.log('body type', typeof(body));
-    console.log('login exitoso');
-    console.log('a parsear');
-
     var results = JSON.parse(body);
-
-    console.log('parseado');
-
     console.log(results);
-    console.log(results.message);
-    console.log(results.data);
-    console.log('statusCode:', httpResponse.statusCode);
+    const token = results.token;
+    
+    console.log('req.body.email:', req.body.email);
+    console.log('token:', token);
+    
+    if(httpResponse.statusCode === 200){
 
-    if(httpResponse.statusCode === 200)
-    {
-      console.log('Login correcto');
+      decodedJWT = jwt.decode(token, {complete: true});
+
+      const verifyOptions = {
+       issuer: decodedJWT.payload.issuer,
+       subject: decodedJWT.payload.email,
+       audience: audience,
+       expiresIn: decodedJWT.payload.expiresIn,
+       algorithm: decodedJWT.header.alg
+      };
+      
+      console.log('publicKey:', publicKey);
+
+      jwt.verify(token, publicKey, verifyOptions, (err, authData) => {
+        console.log('verifying token');
+        if(err) {
+          console.log('err:', err);
+          return res.render('error', {error});
+        }
+        else {
+          global.wat = token;
+          res.redirect('/');
+        }
+      });
     }
   });
-  res.redirect('/');
 });
-
 
 router.get('/profile', (req, res, next) => {
-  const url = "http://localhost:8080/users/";
+  console.log('en profile');
+  const bearerToken = global.wat;
+  
+  console.log('bearer token:', bearerToken);
+  
+  request.get('http://localhost:8080/users/', {
+    'auth': {
+      'bearer': bearerToken
+    }
+  },
+  (err, response, body) => {
+    console.log('response:', response);
+    if (err)
+    {
+      console.log('err:', err);
+    }
+    console.log('body:', body);
 
-  console.log('url:', url);
-  console.log('url type:', typeof(url));
-  request.get({url: url,
-  form: {}},
-  function(err, httpResponse, body) {
-    console.log('de vuelta');
-      var results = JSON.parse(body);
-      console.log('RESULTADOS');
-      console.log('results', results);
-      console.log('body', results.body);
-      console.log('user', results.data);
-
-      if(httpResponse.statusCode === 401)
-      {
-        console.log('no autorizado');
-      }
-      res.render('index', { title: 'FlowerSoft' });
-  });
-});
-
-
-
-router.get('/logout', (req, res, next) => {
-  request.get({url: 'http://localhost:8080/users/logout',
-  form: {}},
-  function(err, httpResponse, body)
-  {
-      console.log('loggedout');
+    const user = body;
+    res.render('perfil', {user: body, token: global.wat});
   });
 });
 
@@ -95,15 +109,6 @@ router.post('/registro', (req, res, next) => {
   const password = req.body.password;
   const confirmPassword = req.body.confirmPassword;
 
-  //Validacion
-
-  console.log(names);
-  console.log(family_name);
-  console.log(rut);
-  console.log(email);
-  console.log(password);
-  console.log(confirmPassword);
-
   request.post('http://localhost:8080/users/').form({
     "names": names,
     "family_name": family_name,
@@ -115,6 +120,10 @@ router.post('/registro', (req, res, next) => {
   res.redirect('/');
 });
 
+router.get('/logout', (req, res , next) => {
 
+  global.wat = null;
+  res.render('logout');
+});
 
 module.exports = router;

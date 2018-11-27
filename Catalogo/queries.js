@@ -1,4 +1,7 @@
 var mysql = require('mysql');
+var amqp = require('amqplib/callback_api');
+var tarea = require('./new_task');
+
 var connection = mysql.createConnection({
    host: '127.0.0.1',
    user: 'root',
@@ -45,6 +48,7 @@ var query = connection.query('INSERT INTO catalogo(nombre, tipo, descripcion, im
    }
  }
 );
+console.log(tarea.insert(req.body.nombre));
 }
 
 function updateCatalogo(req, res, next) {
@@ -57,7 +61,9 @@ var query = connection.query('UPDATE catalogo SET precio =? , nombre =? WHERE id
       res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
    }
  }
-);}
+);
+console.log(tarea.update(req.body.nombre));
+}
 
 function deleteCatalogo(req, res, next) {
 var query = connection.query('DELETE FROM catalogo WHERE id = ? ',[req.body.id],
@@ -69,7 +75,9 @@ var query = connection.query('DELETE FROM catalogo WHERE id = ? ',[req.body.id],
       res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
    }
  }
-);}
+);
+console.log(tarea.delete(req.body.id));
+}
 
 function selectCatalogo(req, res, next) {
 var query = connection.query('SELECT * FROM catalogo WHERE id = ?', [parseInt(req.params.id)], 

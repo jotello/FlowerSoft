@@ -1,16 +1,33 @@
-include templates/default
-   nav.navbar.navbar-expand-sm.bg-dark.navbar-dark.justify-content-end
-      a.navbar-brand(href='#') FlowerSoft
-      button.btn.btn-success.ml-auto.invisible Always Show
-      
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css")
+    script(src="https://code.jquery.com/jquery-2.2.3.min.js")
+    script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js")
+    
+  body
+    nav.navbar.navbar-default.navbar-fixed-top
+          .container
+            .navbar-header
+              button.navbar-toggle(type='button', data-toggle='collapse', data-target='#myNavbar')
+                span.icon-bar
+                span.icon-bar
+                span.icon-bar
+              a.navbar-brand(href='#')
+                img.logo(style='width:100px; height:55px',src='/images/logo1.png')
+            #myNavbar.collapse.navbar-collapse
 
-  .wrapper
-      form.form-signin(action='/login', method='POST')
-        h2.form-signin-heading.text-center Login
-        input.form-control(type='text', name='email', placeholder='Email', required='', autofocus='')
-        input.form-control(type='password', name='password', placeholder='Password', required='')
+    .wrapper
+        form.form-signin(action='/login', method='POST')
+          h2.form-signin-heading.text-center Login
+          input.form-control(type='text', name='email', placeholder='Email', required='', autofocus='')
+          input.form-control(type='password', name='password', placeholder='Password', required='')
 
-        button.btn.btn-lg.btn-block(type='submit') Ingresar
-        a.text-center(href='/registro') ¿No se ha registrado? Crear cuenta
+          button.btn.btn-lg.btn-block(type='submit') Ingresar
+          a.text-center(href='/registro') ¿No se ha registrado? Crear cuenta
+  
+  input(type="hidden", name="t", value=t)
+  script(src="/js/scripts.js")          
 
-  include templates/footer
