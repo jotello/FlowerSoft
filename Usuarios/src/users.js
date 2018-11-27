@@ -151,11 +151,9 @@ router.get('/', (req, res) => {
         console.log('id:', id);
         User.findUserById(id, (err, user) => {
             if (err) throw err;
-
             if(!user) {
                 return res.status(404).send(notFoundMessage);
             }
-
             res.status(200).send(user);
         });
       });
@@ -195,6 +193,7 @@ router.get('/', (req, res) => {
     }
 
     const result = myauth.verify(token, verifyOptions);
+>>>>>>> 5b73673432c219799f401ad1f3d559f895aa6435
 
     if(result === false) {
         return res.status(403).send({
@@ -232,7 +231,7 @@ router.get('/logout', (req, res) => {
 });
 //GET:profile_name
 
-/*
+
 router.get('/:profile_name', ensureAuthenticated, (req, res) => {
 
     console.log('Obteniendo por profile_name');
@@ -246,8 +245,72 @@ router.get('/:profile_name', ensureAuthenticated, (req, res) => {
         res.status(200).send(user);
     });
 });
+
+/*
+router.put('/', ensureLogged, (req, res) => {
+
+    console.log('EN PUT de raiz');
+    console.log('USER:'. req.user);
+    console.log('profile:', req.user.profile_name);
+
+    User.findUserByProfileName(req.user.profile_name, (err, user) => {
+        if (err) throw err;
+
+        console.log('user:', user);
+        if(!user) {
+            return res.status(404).send({
+                message: notFoundMessage,
+                data: {}
+            });
+        }
+
+        const { error }= Joi.validate(req.body, User.joiSchema.put);
+        if (error) {
+            return res.status(400).send({
+                errors: error,
+                message: badRequestMessage
+            });
+        }
+
+        let emailChanged = false;
+        if(req.body.email && req.body.email != user.email)  {
+            User.findUserByEmail(req.body.email, (err, user) => {
+                if (err) throw  err;
+
+                if (user) {
+                    return res.status(400).send({
+                        message: emailExistMessage,
+                        data: {}
+                    });
+                }
+            });
+            emailChanged = true;
+        }
+
+        console.log('emailChanged', emailChanged);
+        User.updateUserByProfileName(req.params.profile_name, req.body, emailChanged, (err, raw) => {
+            console.log('raw:', raw);
+            if (err) throw err;
+
+            const callback = (err, user) => {
+                if (err) throw err;
+
+                console.log('Sending the user');
+                console.log(user);
+                res.status(200).send(user);
+            };
+
+            if (emailChanged) {
+                User.findUserByEmail (req.body.email, callback);
+            }
+            else {
+                User.findUserByProfileName(req.params.profile_name, callback);
+            }
+        });
+    });
+});
+
 */
-//PUT
 router.put('/:profile_name', (req, res) => {
     console.log('En put:', req.params.profile_name);
     User.findUserByProfileName(req.params.profile_name, (err, user) => {
