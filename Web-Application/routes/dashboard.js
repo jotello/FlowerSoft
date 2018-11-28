@@ -4,6 +4,7 @@ var request = require('request');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+	console.log('en get the dashboard');
 	//Rosa debe poblar esta vista con los productos
 	request('http://localhost:8080/catalogo/', function(error, response, body) {
 		var catalogo = JSON.parse(body);

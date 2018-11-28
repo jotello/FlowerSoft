@@ -157,160 +157,14 @@ router.get('/', (req, res) => {
             res.status(200).send(user);
         });
       });
-
-/*
-    const rest = myauth.verifyToken(req, res);
-
-    if(rest === null) {
-        return res.status(403).send({
-            message: 'Forbidden: No Token',
-            data: null
-        });
-    }
-
-    console.log("req.token:", req.token);
-
-    console.log('En Users GET ');
-    const token = req.token;
-    const decodedJWT = myauth.decode(token);
-    console.log('req.token:', req.token);
-    console.log(decodedJWT);
-
-    if(decodedJWT === null)
-    {
-        res.status(500).send({
-            message: 'oops',
-            data: null
-        });
-    }
-
-    const verifyOptions = {
-        issuer: decodedJWT.payload.issuer,
-        subject: decodedJWT.payload.subject,
-        audience: decodedJWT.payload.audience,
-        expiresIn: decodedJWT.payload.expiresIn,
-        algorithm: decodedJWT.header.alg
-    }
-
-    const result = myauth.verify(token, verifyOptions);
->>>>>>> 5b73673432c219799f401ad1f3d559f895aa6435
-
-    if(result === false) {
-        return res.status(403).send({
-            message: 'Forbidden',
-            data: null
-        });
-    }
-    else {
-        user_id = result.id;
-        User.findUserById(user_id, (err, user) => {
-            if (err) throw err;
-
-            if(!user) {
-                return res.status(404).send(notFoundMessage);
-            }
-
-            res.status(200).send(user);
-        });
-    }
-})
-/*
-router.get('/', (req, res) => {
-    User.findAllUsers((err, users) => {
-        if (err) throw err;
-
-        //Success
-        res.status(200).send(users);
-    });
-*/
 });
 
 //GET: LOGOUT
 
 router.get('/logout', (req, res) => {
 });
-//GET:profile_name
-
-
-router.get('/:profile_name', ensureAuthenticated, (req, res) => {
-
-    console.log('Obteniendo por profile_name');
-
-    User.findUserByProfileName(req.params.profile_name, (err, user) => {
-        if (err) throw err;
-
-        if(!user) {
-            return res.status(404).send(notFoundMessage);
-        }
-        res.status(200).send(user);
-    });
-});
 
 /*
-router.put('/', ensureLogged, (req, res) => {
-
-    console.log('EN PUT de raiz');
-    console.log('USER:'. req.user);
-    console.log('profile:', req.user.profile_name);
-
-    User.findUserByProfileName(req.user.profile_name, (err, user) => {
-        if (err) throw err;
-
-        console.log('user:', user);
-        if(!user) {
-            return res.status(404).send({
-                message: notFoundMessage,
-                data: {}
-            });
-        }
-
-        const { error }= Joi.validate(req.body, User.joiSchema.put);
-        if (error) {
-            return res.status(400).send({
-                errors: error,
-                message: badRequestMessage
-            });
-        }
-
-        let emailChanged = false;
-        if(req.body.email && req.body.email != user.email)  {
-            User.findUserByEmail(req.body.email, (err, user) => {
-                if (err) throw  err;
-
-                if (user) {
-                    return res.status(400).send({
-                        message: emailExistMessage,
-                        data: {}
-                    });
-                }
-            });
-            emailChanged = true;
-        }
-
-        console.log('emailChanged', emailChanged);
-        User.updateUserByProfileName(req.params.profile_name, req.body, emailChanged, (err, raw) => {
-            console.log('raw:', raw);
-            if (err) throw err;
-
-            const callback = (err, user) => {
-                if (err) throw err;
-
-                console.log('Sending the user');
-                console.log(user);
-                res.status(200).send(user);
-            };
-
-            if (emailChanged) {
-                User.findUserByEmail (req.body.email, callback);
-            }
-            else {
-                User.findUserByProfileName(req.params.profile_name, callback);
-            }
-        });
-    });
-});
-
-*/
 router.put('/:profile_name', (req, res) => {
     console.log('En put:', req.params.profile_name);
     User.findUserByProfileName(req.params.profile_name, (err, user) => {
@@ -370,6 +224,7 @@ router.put('/:profile_name', (req, res) => {
     });
 });
 
+*/
 //DELETE
 router.delete('/:profile_name', (req, res) => {
     User.deleteUserByEmail(req.params.profile_name, (err, user) =>{
@@ -380,6 +235,33 @@ router.delete('/:profile_name', (req, res) => {
         }
         res.status(200).send(user);
     });s
+});
+
+router.get('/auth/check_credentials', (req, res) => {
+    request.post('http://localhost:3003/api/auth/check_credentials', {
+        'auth': {
+          'bearer': req.headers['authorization'].split(' ')[1]
+        }
+      },
+      (err, response, decodedAndVerifyToken) => {
+          if(err){
+              console.log('err:', err);
+          }
+        const data = JSON.parse(decodedAndVerifyToken);
+        if(response.statusCode === 403) {
+            return res.status(403).send(data.message);
+        }
+        const id = data.id;
+        console.log('id:', id);
+        User.findUserById(id, (err, user) => {
+            if (err) throw err;
+            if(!user) {
+                return res.status(404).send(notFoundMessage);
+            }
+            res.status(200).send(user);
+        });
+      });
+
 });
 
 module.exports = router;

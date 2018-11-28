@@ -1,23 +1,40 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
-
 const fs = require('fs');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 
 const publicKey = fs.readFileSync(path.join(__dirname, 'public.key'), 'utf8');
 
-console.log('publicKey initialized:', publicKey);
-
+//VARIABLES GLOBALES
 global.wat = null;
+global.title = "Flowersoft"
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  console.log('renderizando index');
-  console.log('wat:', global.wat);
-  console.log('wat type:', typeof global.wat);
-  res.render('index', { title: 'Flowersoft', t: global.wat});
+  console.log('INDEX');
+  console.log('global.wat:', global.wat);
+  if(global.wat !== null) {
+    const verifyJWT = jwt.verify(global.wat, publicKey);
+    const rol = verifyJWT.rol;
+    let redirect;
+    console.log('user rol:', rol);
+    if (rol === 'admin') {
+      redirect = '/admin/';
+    }
+    else if (rol === 'cliente') {
+      redirect = '/dashboard/';
+    }
+    else {
+      let error = {status: '500'};
+      return res.render('error', {message:'usuario invalido', error:error});
+    }
+    console.log('redirect:', redirect);
+    return res.redirect(redirect);
+  }
+  console.log('rendering the index');
+  res.render('index', {title: global.title});
 });
 
 router.get('/registro', function(req, res, next) {
@@ -36,9 +53,7 @@ router.post('/login', function(req, res, next) {
   form: {"email":email, "password":password, "audience":audience}},
   function(err, httpResponse, body) {
     console.log('en el callback');
-
-    if(err)
-    {
+    if(err){
       console.log('IN ERROR')
       console.log('in error:', err);
       return res.status(500).send(err);
@@ -48,28 +63,29 @@ router.post('/login', function(req, res, next) {
     console.log('unparsed body:', body);
     const token = body;
 
-    if(httpResponse.statusCode === 200){
-      decodedJWT = jwt.decode(token, {complete: true});
-      const verifyOptions = {
-       issuer: decodedJWT.payload.issuer,
-       subject: decodedJWT.payload.email,
-       audience: audience,
-       expiresIn: decodedJWT.payload.expiresIn,
-       algorithm: decodedJWT.header.alg
-      };
-      console.log('publicKey:', publicKey);
-      jwt.verify(token, publicKey, verifyOptions, (err, authData) => {
-        console.log('verifying token');
-        if(err) {
-          console.log('err:', err);
-          return res.render('error', {error});
-        }
-        else {
-          global.wat = token;
-          res.redirect('/');
-        }
-      });
+    if(httpResponse.statusCode !== 200){
+      return res.redirect('/');
     }
+    decodedJWT = jwt.decode(token, {complete: true});
+    const verifyOptions = {
+      issuer: decodedJWT.payload.issuer,
+      subject: decodedJWT.payload.email,
+      audience: audience,
+      expiresIn: decodedJWT.payload.expiresIn,
+      algorithm: decodedJWT.header.alg
+   }
+   console.log('verifying token');
+   jwt.verify(token, publicKey, verifyOptions, (err, userData) => {
+     if(err) {
+       console.log('err:', err);
+       return res.render('error', {error});
+      }
+      else {
+        global.wat = token;
+
+        res.redirect('/');
+      }
+    });
   });
 });
 

@@ -4,6 +4,7 @@ var request = require('request');
 
 
 router.get('/', function(req, res, next){
+	console.log('en admin get /');
 	request('http://localhost:8080/pedidos/', function(error, response, body) {
 		var pedidos = JSON.parse(body);
         res.render('admin/dash', {title: 'Lista de pedidos', pedidos: pedidos.data});
