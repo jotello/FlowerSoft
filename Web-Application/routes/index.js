@@ -23,7 +23,7 @@ router.get('/', function(req, res, next) {
       redirect = '/admin/';
     }
     else if (rol === 'cliente') {
-      redirect = '/dashboard/';
+      redirect = '/dashboard/pedidos';
     }
     else {
       let error = {status: '500'};
@@ -57,7 +57,6 @@ router.post('/login', function(req, res, next) {
       console.log('in error:', err);
       return res.status(500).send(err);
     }
-
     console.log('NOT IN ERROR');
     console.log('unparsed body:', body);
     const token = body;
@@ -82,7 +81,6 @@ router.post('/login', function(req, res, next) {
       else {
         global.wat = token;
         global.rol = userData.rol;
-
         res.redirect('/');
       }
     });

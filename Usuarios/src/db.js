@@ -102,6 +102,27 @@ module.exports.findAllUsers = function (callback) {
     User.findOne(query, callback);
  };
 
+ module.exports.updateUserById = function(id, changeQuery, callback) {
+    query = {_id: id};
+    
+    if(changeQuery.password) {
+        bcrypt.genSalt(10, (err, salt) => {
+            if(err) throw err;
+
+            bcrypt.hash(changeQuery.password, salt, (err, hash) => {
+                console.log('hash:', hash);
+                if (err) throw err;
+
+                changeQuery.password = hash;
+                User.updateOne(query, changeQuery, callback);
+            });
+        });
+    }
+    else {
+        User.updateOne(query, changeQuery, callback);
+    }
+ }
+
  module.exports.updateUserByProfileName = function (profile_name, changeQuery, emailChanged, callback) {
     query = {profile_name: profile_name};
 
@@ -151,6 +172,11 @@ module.exports.findAllUsers = function (callback) {
         User.updateOne(query, changeQuery, callback);
     }
 };
+
+module.exports.deleteUserById = function (id, callback) {
+    query = {_id: id};
+    User.findOneAndDelete(query, callback);
+ }
 
  module.exports.deleteUserByEmail = function (email, callback) {
     query = {email: email};
