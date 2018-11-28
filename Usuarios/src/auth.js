@@ -19,7 +19,6 @@ const _algorithm = "RS256";
 
 router.post('/sign', (req, res) => {
     console.log('payload:', req.body.payload);
-    console.log('REQ:', req);
     const options = JSON.parse(req.body.options);
     const payload = JSON.parse(req.body.payload);
     const signOptions = {
@@ -38,7 +37,10 @@ router.post('/check_credentials', (req, res) => {
     console.log('en check credentials');
     const ver_res = verifyTokenPresence(req, res);
     if(ver_res === null){
-        return res.status(403).send('no token');
+        return res.status(403).send({
+            message: 'no hay token',
+            data: false
+        });
     }
     const token = req.token.split(' ')[1];
     console.log('req.token:', req.token);
@@ -46,7 +48,10 @@ router.post('/check_credentials', (req, res) => {
     console.log('splitted token:', req.token.split('.'));
     const splittedToken = req.token.split('.');
     if(splittedToken.length !== 3) {
-        return res.status(403).send('invalid token');
+        return res.status(403).send({
+            message: 'token invalido',
+            data: false
+        });
     }
     console.log('a decodificar');
     decodedJWT = jwt.decode(req.token, {complete: true});
@@ -64,9 +69,13 @@ router.post('/check_credentials', (req, res) => {
     if(ver_token_res === false) {
         return res.status(403).send({
             message:'forbidden',
+            data: false
         });
     }
-    return res.status(200).send(ver_token_res);
+    return res.status(200).send({
+        message: 'OK',
+        data: ver_token_res
+    });
 });
 
 router.get('/key', (req, res)=> {

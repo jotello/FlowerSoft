@@ -10,6 +10,9 @@ var adminRouter = require('./routes/admin');
 
 var app = express();
 
+global.wat = null;
+
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -20,7 +23,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
+app.use('/', indexRouter.router);
 app.use('/dashboard', dashRouter);
 app.use('/admin', adminRouter);
 

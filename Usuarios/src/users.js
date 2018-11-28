@@ -243,25 +243,26 @@ router.get('/auth/check_credentials', (req, res) => {
           'bearer': req.headers['authorization'].split(' ')[1]
         }
       },
-      (err, response, decodedAndVerifyToken) => {
+      (err, response, verifyJWT) => {
           if(err){
               console.log('err:', err);
+              return res.status(500).send({
+                  message: 'error',
+                  data: false
+              })
           }
-        const data = JSON.parse(decodedAndVerifyToken);
-        if(response.statusCode === 403) {
-            return res.status(403).send(data.message);
-        }
-        const id = data.id;
-        console.log('id:', id);
-        User.findUserById(id, (err, user) => {
-            if (err) throw err;
-            if(!user) {
-                return res.status(404).send(notFoundMessage);
-            }
-            res.status(200).send(user);
-        });
-      });
-
+          const resp = JSON.parse(verifyJWT);
+          console.log('RESP COMPLETE:', resp);
+          //resp:
+          //    message
+          //    data
+          console.log('response status:', response.statusCode);
+          const status = (resp.data === false)? 403 : 200;
+          console.log('ternary status:', response.statusCode);          
+          return res.status(status).send({
+              resp
+            });
+    });
 });
 
 module.exports = router;

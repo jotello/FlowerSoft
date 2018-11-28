@@ -8,8 +8,7 @@ const jwt = require('jsonwebtoken');
 const publicKey = fs.readFileSync(path.join(__dirname, 'public.key'), 'utf8');
 
 //VARIABLES GLOBALES
-global.wat = null;
-global.title = "Flowersoft"
+global.title = "Flowersoft";
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -89,35 +88,11 @@ router.post('/login', function(req, res, next) {
   });
 });
 
-router.get('/profile', (req, res, next) => {
-  console.log('en profile');
-  if(global.wat === null)
-  {
+router.post('/registro', (req, res, next) => {
+
+  if(global.wat !== null) {
     return res.redirect('/');
   }
-  const bearerToken = global.wat;
-  console.log(req);
-  console.log('bearer token:', bearerToken);
-  request.get('http://localhost:8080/users/', {
-    'auth': {
-      'bearer': bearerToken
-    }
-  },
-  (err, response, body) => {
-    console.log('response:', response);
-    if (err)
-    {
-      console.log('err:', err);
-    }
-    console.log('body:', body);
-    const user = JSON.parse(body);
-    console.log('user:', user);
-    console.log('global.wat:', global.wat);
-    res.status(200).send(user);
-  });
-});
-
-router.post('/registro', (req, res, next) => {
 
   console.log('En registro');
   const names = req.body.names;
@@ -144,4 +119,4 @@ router.get('/logout', (req, res , next) => {
   res.render('logout');
 });
 
-module.exports = router;
+module.exports.router = router;
