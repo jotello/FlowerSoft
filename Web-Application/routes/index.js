@@ -81,6 +81,7 @@ router.post('/login', function(req, res, next) {
       }
       else {
         global.wat = token;
+        global.rol = userData.rol;
 
         res.redirect('/');
       }
@@ -116,6 +117,7 @@ router.post('/registro', (req, res, next) => {
 router.get('/logout', (req, res , next) => {
 
   global.wat = null;
+  global.rol = null;
   res.render('logout');
 });
 

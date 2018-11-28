@@ -11,6 +11,7 @@ var adminRouter = require('./routes/admin');
 var app = express();
 
 global.wat = null;
+global.rol = null;
 
 
 // view engine setup
