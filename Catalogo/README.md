@@ -14,9 +14,11 @@ Para iniciar el servicio:
 
 El servicio esta en localhost:3004
 
-La estructura de un pedido esta dada por:
+La estructura de un Producto esta dada por:
 -------------------------------------------
 * id
 * nombre
 * tipo
 * precio
+* descripcion
+* imagen
