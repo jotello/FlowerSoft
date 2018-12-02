@@ -7,6 +7,7 @@ var options = {
 
 var pgp = require('pg-promise')(options);
 var connectionString = 'postgres://jose@localhost:5432/pedidos';
+var password = '1234'
 var db = pgp({
     host: 'localhost',
     port: 5432,

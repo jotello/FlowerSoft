@@ -1,24 +1,39 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
-
 const fs = require('fs');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 
 const publicKey = fs.readFileSync(path.join(__dirname, 'public.key'), 'utf8');
 
-console.log('publicKey initialized:', publicKey);
-
-global.wat = null;
+//VARIABLES GLOBALES
+global.title = "Flowersoft";
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  console.log('renderizando index');
-  console.log('wat:', wat);
-  console.log('wat type:', typeof wat);
-  const token = global.wat;
-  res.render('index', { title: 'Flowersoft', t: global.wat});
+  console.log('INDEX');
+  console.log('global.wat:', global.wat);
+  if(global.wat !== null) {
+    const verifyJWT = jwt.verify(global.wat, publicKey);
+    const rol = verifyJWT.rol;
+    let redirect;
+    console.log('user rol:', rol);
+    if (rol === 'admin') {
+      redirect = '/admin/';
+    }
+    else if (rol === 'cliente') {
+      redirect = '/dashboard/pedidos';
+    }
+    else {
+      let error = {status: '500'};
+      return res.render('error', {message:'usuario invalido', error:error});
+    }
+    console.log('redirect:', redirect);
+    return res.redirect(redirect);
+  }
+  console.log('rendering the index');
+  res.render('index', {title: global.title});
 });
 
 router.get('/registro', function(req, res, next) {
@@ -37,69 +52,46 @@ router.post('/login', function(req, res, next) {
   form: {"email":email, "password":password, "audience":audience}},
   function(err, httpResponse, body) {
     console.log('en el callback');
-    if(err) throw err;
-
-    var results = JSON.parse(body);
-    console.log(results);
-    const token = results.token;
-    
-    console.log('req.body.email:', req.body.email);
-    console.log('token:', token);
-    
-    if(httpResponse.statusCode === 200){
-
-      decodedJWT = jwt.decode(token, {complete: true});
-
-      const verifyOptions = {
-       issuer: decodedJWT.payload.issuer,
-       subject: decodedJWT.payload.email,
-       audience: audience,
-       expiresIn: decodedJWT.payload.expiresIn,
-       algorithm: decodedJWT.header.alg
-      };
-      
-      console.log('publicKey:', publicKey);
-
-      jwt.verify(token, publicKey, verifyOptions, (err, authData) => {
-        console.log('verifying token');
-        if(err) {
-          console.log('err:', err);
-          return res.render('error', {error});
-        }
-        else {
-          global.wat = token;
-          res.redirect('/');
-        }
-      });
+    if(err){
+      console.log('IN ERROR')
+      console.log('in error:', err);
+      return res.status(500).send(err);
     }
-  });
-});
+    console.log('NOT IN ERROR');
+    console.log('unparsed body:', body);
+    const token = body;
 
-router.get('/profile', (req, res, next) => {
-  console.log('en profile');
-  const bearerToken = global.wat;
-  
-  console.log('bearer token:', bearerToken);
-  
-  request.get('http://localhost:8080/users/', {
-    'auth': {
-      'bearer': bearerToken
+    if(httpResponse.statusCode !== 200){
+      return res.redirect('/');
     }
-  },
-  (err, response, body) => {
-    console.log('response:', response);
-    if (err)
-    {
-      console.log('err:', err);
-    }
-    console.log('body:', body);
-
-    const user = body;
-    res.render('perfil', {user: body, token: global.wat});
+    decodedJWT = jwt.decode(token, {complete: true});
+    const verifyOptions = {
+      issuer: decodedJWT.payload.issuer,
+      subject: decodedJWT.payload.email,
+      audience: audience,
+      expiresIn: decodedJWT.payload.expiresIn,
+      algorithm: decodedJWT.header.alg
+   }
+   console.log('verifying token');
+   jwt.verify(token, publicKey, verifyOptions, (err, userData) => {
+     if(err) {
+       console.log('err:', err);
+       return res.render('error', {error});
+      }
+      else {
+        global.wat = token;
+        global.rol = userData.rol;
+        res.redirect('/');
+      }
+    });
   });
 });
 
 router.post('/registro', (req, res, next) => {
+
+  if(global.wat !== null) {
+    return res.redirect('/');
+  }
 
   console.log('En registro');
   const names = req.body.names;
@@ -123,7 +115,8 @@ router.post('/registro', (req, res, next) => {
 router.get('/logout', (req, res , next) => {
 
   global.wat = null;
+  global.rol = null;
   res.render('logout');
 });
 
-module.exports = router;
+module.exports.router = router;

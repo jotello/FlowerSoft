@@ -2,42 +2,208 @@ var express = require('express');
 var router = express.Router();
 var request = require('request');
 
+var jwt = require('jsonwebtoken');
+
+var check = require('./index');
+
 
 router.get('/', function(req, res, next){
+	console.log('en admin get /');
+	if(global.wat === null) {
+		return res.redirect('/');
+	}
+	if(global.rol === null) {
+		return res.redirect('/');
+	}
+	if(global.rol !== 'admin') { 
+		return res.redirect('/');
+	}
 	request('http://localhost:8080/pedidos/', function(error, response, body) {
 		var pedidos = JSON.parse(body);
-        res.render('admin/dash', {title: 'Lista de pedidos', pedidos: pedidos.data});
-    });
+		return res.render('admin/dash', {title: 'Lista de pedidos', pedidos: pedidos.data});
+	});
+	/*
+	const bearerToken = global.wat;
+	request.get('http://localhost:8080/users/auth/check_credentials', {
+		'auth': {
+		  'bearer': bearerToken
+		}
+	  },
+	  (err, response, body) => {
+		if (err){
+		  console.log('err:', err);
+		  error = {status: 500};
+		  return res.render('error', {message:'an error', error:error});
+		}
+		console.log('body:', body);
+		const verifyJWT = JSON.parse(body).resp;
+		console.log('verifyJWT:', verifyJWT);
+		console.log('global.wat:', global.wat);
+		if(verifyJWT.data === false) {
+			return res.redirect('/');
+		}
+		if(verifyJWT.data.rol !== 'admin') {
+			return res.redirect('/');
+		}
+		request('http://localhost:8080/pedidos/', function(error, response, body) {
+			var pedidos = JSON.parse(body);
+			return res.render('admin/dash', {title: 'Lista de pedidos', pedidos: pedidos.data});
+		});
+	  });
 	//res.render('inicio', {title: 'Inicio', pedidos: array.data});
+	*/
 });
 
 router.get('/admin', function(req, res, next){
-	res.redirect('/admin');
+	console.log('en admin get /');
+	if(global.wat === null) {
+		return res.redirect('/');
+	}
+	const bearerToken = global.wat;
+	request.get('http://localhost:8080/users/auth/check_credentials', {
+		'auth': {
+		  'bearer': bearerToken
+		}
+	  },
+	  (err, response, body) => {
+		if (err) {
+		  console.log('err:', err);
+		  error = {status: 500};
+		  return res.render('error', {message:'an error', error:error});
+		}
+		console.log('body:', body);
+		const verifyJWT = JSON.parse(body).resp;
+		console.log('verifyJWT:', verifyJWT);
+		console.log('global.wat:', global.wat);
+		if(verifyJWT.data === false) {
+			return res.redirect('/');
+		}
+		if(verifyJWT.data.rol !== 'admin') {
+			return res.redirect('/');
+		}
+		return res.redirect('/admin');
+	  });
 	//res.render('inicio', {title: 'Inicio', pedidos: array.data});
 });
 
 router.get('/productos', function(req, res, next) {
 	//Rosa debe poblar esta vista con los productos
-	request('http://localhost:8080/catalogo/', function(error, response, body) {
-		var catalogo = JSON.parse(body);
-        res.render('admin/productos', {title: 'Catalogo de Productos', catalogo: catalogo.data});
-        console.log(catalogo.data);
-    });
+
+	console.log('/admin/productos/');
+	if(global.wat === null) {
+		return res.redirect('/');
+	}
+	const bearerToken = global.wat;
+	request.get('http://localhost:8080/users/auth/check_credentials', {
+		'auth': {
+		  'bearer': bearerToken
+		}
+	  },
+	  (err, response, body) => {
+		if (err) {
+		  console.log('err:', err);
+		  error = {status: 500};
+		  return res.render('error', {message:'an error', error:error});
+		}
+		console.log('body:', body);
+		const verifyJWT = JSON.parse(body).resp;
+		console.log('verifyJWT:', verifyJWT);
+		console.log('global.wat:', global.wat);
+		if(verifyJWT.data === false) {
+			return res.redirect('/');
+		}
+		if(verifyJWT.data.rol !== 'admin') {
+			return res.redirect('/');
+		}
+		request('http://localhost:8080/catalogo/', function(error, response, body) {
+			var catalogo = JSON.parse(body);
+			res.render('admin/productos', {title: 'Catalogo de Productos', catalogo: catalogo.data});
+			console.log(catalogo.data);
+		});
+	  });
+
+
   //res.render('dashboard', { title: 'Dashboard' });
 });
 
 router.get('/crear/pedido', function(req, res, next){
-	request('http://localhost:8080/pedidos/usuarios', function(error, response, body) {
+	console.log('/crear/pedido');
+	if(global.wat === null) {
+		return res.redirect('/');
+	}
+	const bearerToken = global.wat;
+	request.get('http://localhost:8080/users/auth/check_credentials', {
+		'auth': {
+		  'bearer': bearerToken
+		}
+	  },
+	  (err, response, body) => {
+		if (err) {
+		  console.log('err:', err);
+		  error = {status: 500};
+		  return res.render('error', {message:'an error', error:error});
+		}
+		console.log('body:', body);
+		const verifyJWT = JSON.parse(body).resp;
+		console.log('verifyJWT:', verifyJWT);
+		console.log('global.wat:', global.wat);
+		if(verifyJWT.data === false) {
+			return res.redirect('/');
+		}
+		if(verifyJWT.data.rol !== 'admin') {
+			return res.redirect('/');
+		}
+		console.log('rendering admin/crear_pedido');
+		request('http://localhost:8080/pedidos/usuarios', function(error, response, body) {
 		var usuarios = JSON.parse(body);
         res.render('admin/crear_pedido', {title: 'Crear Pedido', usuarios: usuarios.data});
-    });
+    	});
+	  });
 });
 
 router.get('/crear/producto', function(req, res, next) {
-  res.render('admin/crear_producto', { title: 'Crear Producto' });
+	console.log('/crear/pedido');
+	if(global.wat === null) {
+		return res.redirect('/');
+	}
+	const bearerToken = global.wat;
+	request.get('http://localhost:8080/users/auth/check_credentials', {
+		'auth': {
+		  'bearer': bearerToken
+		}
+	  },
+	  (err, response, body) => {
+		if (err) {
+		  console.log('err:', err);
+		  error = {status: 500};
+		  return res.render('error', {message:'an error', error:error});
+		}
+		console.log('body:', body);
+		const verifyJWT = JSON.parse(body).resp;
+		console.log('verifyJWT:', verifyJWT);
+		if(verifyJWT.data === false) {
+			return res.redirect('/');
+		}
+		if(verifyJWT.data.rol !== 'admin') {
+			return res.redirect('/');
+		}
+		console.log('rendering admin/crear_producto');
+		return res.render('admin/crear_producto', { title: 'Crear Producto' });
+	  });
 });
 
 router.post('/crearProducto', function(req, res, next){
+	console.log('/crearProducto');
+	if(global.wat === null) {
+		return res.redirect('/');
+	}
+	if(global.rol === null) {
+		return res.redirect('/');
+	}
+	if(global.rol !== 'admin') { 
+		return res.redirect('/');
+	}
+	
 	var tipo = req.body.tipo;
 	var nombre = req.body.nombre;
 	var precio = req.body.precio;

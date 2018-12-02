@@ -19,11 +19,8 @@ const _algorithm = "RS256";
 
 router.post('/sign', (req, res) => {
     console.log('payload:', req.body.payload);
-    console.log('REQ:', req);
-
     const options = JSON.parse(req.body.options);
     const payload = JSON.parse(req.body.payload);
-
     const signOptions = {
         issuer: options.issuer,
         subject: options.subject,
@@ -36,12 +33,14 @@ router.post('/sign', (req, res) => {
     return res.status(200).send(token);
 });
 
-router.post('/check_credentials', (req, res) => { 
+router.post('/check_credentials', (req, res) => {
     console.log('en check credentials');
     const ver_res = verifyTokenPresence(req, res);
-
-    if(ver_res === null){ 
-        return res.status(403).send('no token');
+    if(ver_res === null){
+        return res.status(403).send({
+            message: 'no hay token',
+            data: false
+        });
     }
     const token = req.token.split(' ')[1];
     console.log('req.token:', req.token);
@@ -49,14 +48,14 @@ router.post('/check_credentials', (req, res) => {
     console.log('splitted token:', req.token.split('.'));
     const splittedToken = req.token.split('.');
     if(splittedToken.length !== 3) {
-        return res.status(403).send('invalid token');
+        return res.status(403).send({
+            message: 'token invalido',
+            data: false
+        });
     }
-
     console.log('a decodificar');
     decodedJWT = jwt.decode(req.token, {complete: true});
-
     console.log('decodificado:', decodedJWT);
-
     const verOptions = {
         issuer: decodedJWT.payload.iss,
         subject: decodedJWT.payload.sub,
@@ -64,18 +63,19 @@ router.post('/check_credentials', (req, res) => {
         expiresIn: decodedJWT.payload.exp,
         algorithm: decodedJWT.header.alg
     };
-
     console.log('verOptions:', verOptions);
-
     const ver_token_res = verifyToken(req.token, verOptions);
     console.log('ver_token_res:', ver_token_res);
-
     if(ver_token_res === false) {
         return res.status(403).send({
             message:'forbidden',
+            data: false
         });
     }
-    return res.status(200).send(ver_token_res);
+    return res.status(200).send({
+        message: 'OK',
+        data: ver_token_res
+    });
 });
 
 router.get('/key', (req, res)=> {
@@ -110,7 +110,6 @@ function verifyTokenPresence (req, res) {
 };
 
 function verifyToken(token, options){
-
     console.log('verifying token itself');
     try{
         return jwt.verify(token, publicKey, options);
@@ -118,7 +117,6 @@ function verifyToken(token, options){
         return false;
     }
 }
-
 function decode(token){
     return jwt.decode(token, {compete: true});
 }
