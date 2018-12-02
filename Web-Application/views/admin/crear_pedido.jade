@@ -50,16 +50,32 @@ include templates/default
                   a(href='#') Salir
         // /.navbar-collapse
         // /.container-fluid
+  
 
   center
     .container-fluid 
         .wrapper
           form.form-signin(action='/dashboard/crearPedido', method='POST')
             h2.form-signin-heading.text-center Creación de pedido
-            input.form-control(type='text', name='detalle', placeholder='Ingrese el detalle del pedido', required='', autofocus='')
-            input.form-control(type='text', name='fecha', placeholder='Ingrese la fecha de entrega', required='', autofocus='')
-            input.form-control(type='text', name='total', placeholder='Total a cobrar', required='', autofocus='')
-            input.form-control(type='text', name='id_cliente', placeholder='Ingrese el id del cliente', required='')
-            input.form-control(type='text', name='cliente', placeholder='Ingrese el nombre del cliente', required='')
+            .form-group
+              label(for='exampleFormControlInput1') Ingrese el detalle del pedido
+              input#exampleFormControlInput1.form-control(type='text', placeholder='Solo flores rojas')
+            .form-group
+              label(for='exampleFormControlInput1') Ingrese el total
+              input#exampleFormControlInput1.form-control(type='number', placeholder='0')
+            .form-group.input-append.date.form_datetime(data-date='2019-01-01T15:25:00Z')
+              label(for='exampleFormControlInput1') Ingrese la fecha de entrega
+               input.form_datetime(size='16', type='date', value='2012-06-15 14:45', readonly='')      
+            .form-group
+              label(for='exampleFormControlSelect1') Seleccione un Cliente
+              select#exampleFormControlSelect1.form-control
+                option(value='')
+                each item in usuarios
+                  option(value='#{item.id}') #{item.nombre} - #{item.rut}
+            
       
             button.btn.btn-lg.btn-block(type='submit') Enviar
+
+  
+
+  //Desplegar el catalogo para agregar productos al pedido

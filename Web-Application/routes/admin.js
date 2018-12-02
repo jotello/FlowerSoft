@@ -27,7 +27,10 @@ router.get('/productos', function(req, res, next) {
 });
 
 router.get('/crear/pedido', function(req, res, next){
-	res.render('admin/crear_pedido', {title: 'Crear Pedido'});
+	request('http://localhost:8080/pedidos/usuarios', function(error, response, body) {
+		var usuarios = JSON.parse(body);
+        res.render('admin/crear_pedido', {title: 'Crear Pedido', usuarios: usuarios.data});
+    });
 });
 
 router.get('/crear/producto', function(req, res, next) {

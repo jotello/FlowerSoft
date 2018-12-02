@@ -18,6 +18,7 @@ var db = pgp({
 // add query functions
 
 module.exports = {
+  getAllUsuarios: getAllUsuarios,
   getAllPedidos: getAllPedidos,
   getSinglePedido: getSinglePedido,
   createPedido: createPedido,
@@ -25,8 +26,23 @@ module.exports = {
   removePedido: removePedido
 };
 
+function getAllUsuarios(req, res, next){
+  db.any('select * from Usuario')
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: 'Retrieved ALL Usuarios'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
+
 function getAllPedidos(req, res, next) {
-  db.any('select * from pedido')
+  db.any('select * from Pedido')
     .then(function (data) {
       res.status(200)
         .json({
