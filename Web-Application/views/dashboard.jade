@@ -1,10 +1,44 @@
 include templates/default
 
   include templates/nav
+  
 
 
   .row
       each item in catalogo
+        script(type='text/javascript').
+            $(document).ready(function(){
+                var quantity = 1;
+                var precio = #{item.precio};
+                var plus = '.quantity-right-plus#{item.id}';
+                var minus = '.quantity-left-minus#{item.id}';
+                var quant = '#quantity#{item.id}';
+                var totalInput = '#total#{item.id}';
+                var total = '.total#{item.id}';
+                var btn = '.btn#{item.id}';
+
+                        $(plus).click(function(e){
+                            e.preventDefault();
+                            var quantity = parseInt($(quant).val());
+                            $(quant).val(quantity + 1);
+                            $(total).text("$" + (precio * (quantity + 1)));
+                            $(totalInput).val(precio*(quantity+1));
+                        });
+
+                        $(minus).click(function(e){
+                            e.preventDefault();
+                            var quantity = parseInt($(quant).val());
+                            if(quantity > 1){
+                                $(quant).val(quantity - 1);
+                                $(total).text("$" + (precio * (quantity - 1)));
+                                $(totalInput).val(precio*(quatity-1));
+                            }
+                        });
+                        
+
+              }) 
+
+        var.hidden id = '##{item.id}'
         .col-sm-6.col-md-4
           .thumbnail
             img(src='#{item.imagen}', alt='...').img-responsive
@@ -12,5 +46,83 @@ include templates/default
               h3 #{item.nombre}
               p.description #{item.descripcion}
               .clearfix
-                .price Precio: #{item.precio} $
-                a.btn.btn-success.pull-right(href='#', role='button') Agregar al carrito
+                .price Precio: $ #{item.precio}
+                a.btn.btn-success.pull-right(data-target='##{item.id}', href='#', role='button', type='button', data-toggle='modal') Agregar al carrito
+                div.modal.fade.product_view(id = '#{item.id}')
+                  .modal-dialog
+                    .modal-content
+                      .modal-header
+                        button.close(type='button', data-dismiss='modal') ×
+                        h3.modal-title #{item.nombre}
+                      .modal-body
+                        .card
+                          .row
+                            aside.col-sm-5.border-right
+                              article.gallery-wrap
+                                .img-big-wrap
+                                  div
+                                    a(href='#')
+                                      img(src='#{item.imagen}')
+                                // slider-product.//
+                                // gallery-wrap .end//
+                            aside.col-sm-7
+                              article.card-body.p-5
+                                p.price-detail-wrap
+                                  span.price.h3.text-warning
+                                    span.currency CLP $
+                                    span.num #{item.precio}
+                                  span /cada unidad
+                                // price-detail-wrap .//
+                                dl.item-property
+                                  dt Descripción
+                                  dd
+                                    p
+                                      | #{item.descripcion}
+                                .row
+                                  .col-lg-6
+                                    dl.param.param-feature
+                                      dt ID#
+                                      dd(name = 'idProducto') #{item.id}
+                                  .col-lg-6
+                                    dl.param.param-feature
+                                      dt Tipo
+                                      dd #{item.tipo} 
+                                hr
+                                .row
+                                 
+                                  .col-12.col-lg-6
+                                    form(action='/dashboard/carrito/agregar', method='POST')
+                                      .form-group
+                                        label Cantidad :
+                                        .input-group
+                                          span.input-group-btn
+                                            button.btn.btn-danger.btn-number(class = 'quantity-left-minus#{item.id}', type='button', data-type='minus', data-field='quant[2]')
+                                              span.glyphicon.glyphicon-minus
+                                          input.form-control.input-number(id = 'quantity#{item.id}', type='text', name='cantidad', value='0', min='1', max='100')
+                                          input.form-control(type='hidden' , value ='' , id = 'total#{item.id}', name='total')
+                                          input.form-control(type='hidden' , value ='#{item.id}', name= 'id_producto')
+                                          input.form-control(type='hidden' , value ='#{item.nombre}', name= 'nombre_producto')
+                                          //Cambiar este id_usuario en el futuro, ahora estará hardcodeado
+                                          input.form-control(type='hidden' , value = 4, name='id_usuario')
+                                          span.input-group-btn
+                                            button.btn.btn-success.btn-number(class = 'quantity-right-plus#{item.id}', type='button', data-type='plus', data-field='quant[2]')
+                                              span.glyphicon.glyphicon-plus
+                                      
+                                      button.btn.btn-lg.btn-success(type='submit', class= 'btn#{item.id}')
+                                        i.fas.fa-shopping-cart
+                                        |   Agregar al carrito
+                                      
+                                  
+                                  .col-12.col-lg-6
+                                    dl.param.param-feature
+                                      dt Total
+                                      h4(class = 'total#{item.id}', name='total')$  0
+                                    
+
+
+                              // card-body.//
+                              // col.//
+                              // row.//
+                              // card.//
+                              // container.//
+                                                 

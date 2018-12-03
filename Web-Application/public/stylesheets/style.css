@@ -3,9 +3,22 @@ body {
     background: #fdffb2 !important;
 }
 
+.product_view .modal-dialog {max-width: 800px; width: 100%;}
+.space-ten{padding: 10px 0;}
+.mb-3{display: inline;}
+.add_to_cart_block .price {
+    color: #c01508;
+    text-align: center;
+    font-weight: bold;
+    font-size: 200%;
+    margin-bottom: 0;
+}
+.card {
+  padding: 10px;
+}
 
 h4 {
-    font-size: 19px;
+    font-size: 59px;
     line-height: 1.375em;
     color: #fff;
     font-weight: 400;

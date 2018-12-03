@@ -1,0 +1,44 @@
+include templates/default
+
+  include templates/nav
+  
+  .container
+      .row
+        .col-md-12
+          h4 Productos reservados por [nombre_usuario]
+          .table-responsive
+            table#mytable.table.table-bordred.table-striped
+              thead
+                tr
+                  th ID
+                  th Producto
+                  th Cantidad
+                  th Total
+                  th Ver en detalle
+                  th Editar
+                  th Eliminar
+              tbody
+              each item in productos
+                tr
+                  td #{item.id_producto}
+                  td #{item.nombre_producto}
+                  td #{item.cantidad}
+                  td #{item.total}
+                  td 
+                    p(data-placement='top', data-toggle='tooltip', title='Edit')
+                      button.btn.btn-primary.btn-xs(data-title='Edit', data-toggle='modal', data-target='#edit')
+                        span.glyphicon.glyphicon-zoom-in
+                  td
+                    p(data-placement='top', data-toggle='tooltip', title='Edit')
+                      button.btn.btn-primary.btn-xs(data-title='Edit', data-toggle='modal', data-target='#edit')
+                        span.glyphicon.glyphicon-pencil
+                  td
+                    p(data-placement='top', data-toggle='tooltip', title='Delete')
+                      button.btn.btn-danger.btn-xs(data-title='Delete', data-toggle='modal', data-target='#delete')
+                        span.glyphicon.glyphicon-trash
+  .row
+    .col-md-12
+      h4.totalPedido #{total}
+      button.btn.btn-lg.btn-success(type='submit')
+        i.fas.fa-shopping-cart
+        |   Realizar Pedido 

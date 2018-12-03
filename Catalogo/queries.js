@@ -21,8 +21,15 @@ module.exports = {
   selectCatalogo: selectCatalogo,
   insertCatalogo: insertCatalogo,
   updateCatalogo: updateCatalogo,
-  deleteCatalogo: deleteCatalogo
+  deleteCatalogo: deleteCatalogo,
+  insertCarrito: insertCarrito,
+  deleteCarrito: deleteCarrito,
+  updateCarrito: updateCarrito,
+  vaciarCarrito: vaciarCarrito,
+  selectCarrito: selectCarrito
 };
+
+//Catalogo
 
 function catalogo(req, res, next) {
 var query = connection.query('SELECT * FROM catalogo', function(error, result){
@@ -97,4 +104,78 @@ var query = connection.query('SELECT * FROM catalogo WHERE id = ?', [parseInt(re
 );}
 
 
-//connection.end();
+//Usuario
+//Carrito
+
+function insertCarrito(req, res, next) {
+   //TODO: Checkear si el producto esta en el carrito, si es asi, añadir cantidad y total al registro
+   var query = connection.query('INSERT INTO Carrito(id_usuario, id_producto, nombre_producto, cantidad, total) VALUES(?, ?, ?, ?, ?)', 
+   [req.params.id, req.body.id_producto, req.body.nombre_producto, req.body.cantidad, req.body.total], 
+   function(error, result){
+   if(error){
+      throw error;
+   }else{
+      console.log(result);
+      res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
+   }
+ });
+}
+
+function updateCarrito(req, res, next) {
+var query = connection.query('UPDATE Carrito SET cantidad =? , total =? WHERE id_producto = ? AND id_usuario = ?', 
+   [req.body.cantidad, req.body.total, parseInt(req.body.id_producto), parseInt(req.params.id)], 
+   function(error, result){
+   if(error){
+      throw error;
+   }else{
+      console.log(result);
+      res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
+   }
+ }
+);
+console.log(tarea.update(req.body.nombre));
+}
+
+function deleteCarrito(req, res, next) {
+var query = connection.query('DELETE FROM Carrito WHERE id_producto = ? AND id_usuario= ? ',
+   [parseInt(req.params.id), parseInt(req.body.id_usuario)],
+ function(error, result){
+   if(error){
+      throw error;
+   }else{
+      console.log(result);
+      res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
+   }
+ }
+);
+console.log(tarea.delete(req.body.id));
+}
+
+function vaciarCarrito(req, res, next) {
+var query = connection.query('DELETE FROM Carrito WHERE id_usuario= ? ',[parseInt(req.body.id_usuario)],
+ function(error, result){
+   if(error){
+      throw error;
+   }else{
+      console.log(result);
+      res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
+   }
+ }
+);
+console.log(tarea.delete(req.body.id));
+}
+
+function selectCarrito(req, res, next) {
+var query = connection.query('SELECT * FROM Carrito WHERE id_usuario = ?', [parseInt(req.params.id)], 
+   function(error, result){
+      if(error){
+         throw error;
+      }else{
+         var resultado = result;
+         res.send(JSON.stringify({"status": 200, "data": resultado}));
+         
+      }
+   }
+);}
+
+
