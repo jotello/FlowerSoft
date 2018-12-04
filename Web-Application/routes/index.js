@@ -26,6 +26,7 @@ router.get('/', function(req, res, next) {
       redirect = '/dashboard/pedidos';
     }
     else {
+      console.log("error en login");
       let error = {status: '500'};
       return res.render('error', {message:'usuario invalido', error:error});
     }

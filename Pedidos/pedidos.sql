@@ -25,6 +25,7 @@ CREATE TABLE Usuario(
 	ID INT PRIMARY KEY,
 	rut VARCHAR,
 	nombre VARCHAR,
+  rol VARCHAR,
 	email VARCHAR,
 	password VARCHAR
 );
