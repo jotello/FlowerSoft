@@ -25,7 +25,6 @@ const UserSchema = new Schema({
     }
 
 });
-
 const UserJoiSchema = module.exports.joiSchema = {
     post: {
         rut: Joi.string().min(8).required(),
@@ -45,7 +44,6 @@ const UserJoiSchema = module.exports.joiSchema = {
         rol: Joi.string()
     }
 };
-
 const Counterschema = new Schema({
   _id: String,
   sequence_value: Number
@@ -56,7 +54,7 @@ const db_url_users = 'mongodb://localhost/users-service-db';
 let Conx;
 
 const User = module.exports.modelUser = mongoose.model('user', UserSchema);
-const Counter = module.exports.modelCounter = mongoose.model('counters', CounterSchema);
+const Counter = module.exports.modelCounter = mongoose.model('counters', Counterschema);
 
 module.exports.connectToUsersDatabase = function () {
     mongoose.connect(db_url_users, { useNewUrlParser: true })
