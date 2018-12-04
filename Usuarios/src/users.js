@@ -121,10 +121,23 @@ router.post('/', (req, res) => {
             }
             //Success
             console.log('user', user);
-
-            res.status(200).send(user);
+            //User already in user's database
+            //must be included now in Pedidos/Usuario
+            // ID
+            // Rut
+            // Nombre
+            // Email
+            // Password
+            request.post({url: 'http://localhost:3002/api/pedidos/usuarios',
+            form: {id: user_id, rut: user.rut, nombre: user.nombre, email: user.email, password: user.password}},
+              (err, response, body) => {
+                console.log("response status:", response.statusCode)
+                console.log("body:", body);
+              });
+              console.log('user allegedly succesfully created');
+              console.log('theUser:', user);
+              console.log('The user in pedidos/usuarios(allegedly):', user);
         });
-
     });
 });
 //GET
@@ -251,7 +264,7 @@ router.get('/auth/check_credentials', (req, res) => {
           //    data
           console.log('response status:', response.statusCode);
           const status = (resp.data === false)? 403 : 200;
-          console.log('ternary status:', response.statusCode);          
+          console.log('ternary status:', response.statusCode);
           return res.status(status).send({
               resp
             });

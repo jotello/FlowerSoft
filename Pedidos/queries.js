@@ -89,6 +89,22 @@ function createPedido(req, res, next) {
     });
 }
 
+function createUsuario(req, res, next) {
+  db.none('insert into usuario (ID, rut, nombre, email, password)' +
+        'values (${id}, ${rut} ${nombre}, ${email}, ${password})',
+      req.body)
+      .then(function() {
+        res.status(200)
+        .json({
+          status: 'success',
+          message: 'Inserted one usuario'
+        });
+      })
+      .catch(function (err){
+        return next(err);
+      });
+}
+
 function updatePedido(req, res, next) {
   db.none('update pedido set total=$1, detalle=$2, fecha_entrega=$3, nombre_cliente=$4 where id=$5',
     [req.body.total, req.body.detalle, req.body.fecha, req.body.cliente, parseInt(req.params.id)])
@@ -120,8 +136,3 @@ function removePedido(req, res, next) {
       return next(err);
     });
 }
-
-
-
-
-

@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const Joi =  require('joi');
 
 const UserSchema = new Schema({
+    _id: Number,
     profile_name: String,
     rut: String,
     names: String,
@@ -45,12 +46,17 @@ const UserJoiSchema = module.exports.joiSchema = {
     }
 };
 
+const Counterschema = new Schema({
+  _id: String,
+  sequence_value: Number
+});
+
 const db_url_users = 'mongodb://localhost/users-service-db';
 
 let Conx;
 
 const User = module.exports.modelUser = mongoose.model('user', UserSchema);
-const Session = module.exports.modelSession = mongoose.model('session', new Schema({_id: String, session: JSON, expires: Date}), 'sessions');
+const Counter = module.exports.modelCounter = mongoose.model('counters', CounterSchema);
 
 module.exports.connectToUsersDatabase = function () {
     mongoose.connect(db_url_users, { useNewUrlParser: true })
@@ -63,14 +69,23 @@ module.exports.connectToUsersDatabase = function () {
 
 module.exports.createUser = function (userData, callback) {
     let newUser = new User();
-
-    newUser.rut = userData.rut;
-    newUser.names = userData.names;
-    newUser.family_name = userData.family_name;
-    newUser.email = userData.email;
-    newUser.profile_name = this.makeProfileName(newUser.email);
-    newUser.rol = userData.rol;
-
+    let newuserId;
+    counterQuery = {_id: "userid"};
+    counters.findById(counterQuery, (err, counter) => {
+      if(err) {
+        console.log('error:', err);
+      }
+      console.log("counter.sequence_value:", counter.sequence_value);
+      newuserId = counter.sequence_value;
+    });
+    console.log("newUserId: ", newuserId);
+      newUser._id = newuserId;
+      newUser.rut = userData.rut;
+      newUser.names = userData.names;
+      newUser.family_name = userData.family_name;
+      newUser.email = userData.email;
+      newUser.profile_name = this.makeProfileName(newUser.email);
+      newUser.rol = userData.rol;
     bcrypt.genSalt(10, (err, salt) => {
         if(err) throw err;
 
@@ -104,7 +119,7 @@ module.exports.findAllUsers = function (callback) {
 
  module.exports.updateUserById = function(id, changeQuery, callback) {
     query = {_id: id};
-    
+
     if(changeQuery.password) {
         bcrypt.genSalt(10, (err, salt) => {
             if(err) throw err;
@@ -197,7 +212,7 @@ module.exports.deleteUserById = function (id, callback) {
      });
  };
 
- //LOGIN - SESSIONS 
+ //LOGIN - SESSIONS
 
  module.exports.findSessionById = function (session_id, callback) {
      Session.findById(session_id, callback);

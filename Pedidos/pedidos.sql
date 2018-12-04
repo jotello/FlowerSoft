@@ -8,21 +8,21 @@ CREATE TABLE Pedido (
   total INT,
   detalle VARCHAR,
   fecha_entrega VARCHAR,
-  ID_CLIENTE INT, 
+  ID_CLIENTE INT,
   nombre_cliente VARCHAR
 );
 
 CREATE TABLE Producto(
    ID SERIAL PRIMARY KEY,
-   nombre VARCHAR, 
-   tipo VARCHAR, 
-   imagen VARCHAR, 
-   precio INT, 
+   nombre VARCHAR,
+   tipo VARCHAR,
+   imagen VARCHAR,
+   precio INT,
    descripcion VARCHAR
 );
 
 CREATE TABLE Usuario(
-	ID SERIAL PRIMARY KEY,
+	ID INT PRIMARY KEY,
 	rut VARCHAR,
 	nombre VARCHAR,
 	email VARCHAR,
@@ -43,5 +43,3 @@ CREATE TABLE PedidoxProducto(
 
 INSERT INTO Usuario (rut, nombre, email, password)
   VALUES ('19241676-0', 'Beatriz Sanchez', 'bsanchez@gmail.com', 'holamundo123');
-
-
