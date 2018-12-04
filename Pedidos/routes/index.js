@@ -13,7 +13,7 @@ router.get('/api/pedidos', db.getAllPedidos);
 router.get('/api/pedidos/usuarios', db.getAllUsuarios);
 router.get('/api/pedidos/:id', db.getSinglePedido);
 router.post('/api/pedidos', db.createPedido);
-router.post('api/pedidos/usuarios', db.createUsuario);
+router.post('/api/pedidos/usuarios', db.createUsuario);
 router.put('/api/pedidos/:id', db.updatePedido);
 router.delete('/api/pedidos/:id', db.removePedido);
 

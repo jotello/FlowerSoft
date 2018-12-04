@@ -23,6 +23,7 @@ module.exports = {
   getAllPedidos: getAllPedidos,
   getSinglePedido: getSinglePedido,
   createPedido: createPedido,
+  createUsuario: createUsuario,
   updatePedido: updatePedido,
   removePedido: removePedido
 };
@@ -90,17 +91,21 @@ function createPedido(req, res, next) {
 }
 
 function createUsuario(req, res, next) {
-  db.none('insert into usuario (ID, rut, nombre, email, password)' +
-        'values (${id}, ${rut} ${nombre}, ${email}, ${password})',
+  console.log('creando pedidos/usuario');
+  console.log("req.body:", req.body);
+  db.none('INSERT INTO Usuario (ID, rut, nombre, email, password)' + 
+      'VALUES(${id}, ${rut}, ${nombre}, ${email}, ${password})',
       req.body)
-      .then(function() {
+      .then(function () {
         res.status(200)
         .json({
           status: 'success',
           message: 'Inserted one usuario'
         });
+        console.log('Aparentemente creado pedidos/usuario');
       })
-      .catch(function (err){
+      .catch(function (err) {
+        console.log("error:", err);
         return next(err);
       });
 }

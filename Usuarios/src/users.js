@@ -101,7 +101,7 @@ router.post('/', (req, res) => {
         return res.status(400).send({
             errors: error,
             message: badRequestMessage,
-            data: {}
+            data: false
         });
     }
     User.findUserByEmail(req.body.email, (err, user) => {
@@ -112,7 +112,7 @@ router.post('/', (req, res) => {
             console.log('user exist');
             return res.status(400).send({
                 message: emailExistMessage,
-                data: {}
+                data: false
             });
         }
         User.createUser(req.body, (err, user) => {
@@ -123,20 +123,35 @@ router.post('/', (req, res) => {
             console.log('user', user);
             //User already in user's database
             //must be included now in Pedidos/Usuario
-            // ID
-            // Rut
-            // Nombre
-            // Email
-            // Password
+            // -ID
+            // -rut
+            // -mombre
+            // -email
+            // -password
+            console.log('requesting pedidos/usuarios');
+            console.log('id', user._id);
+            console.log("rut:", user.rut);
+            console.log('nombre:', user.names);
+            console.log("email:", user.email);
+            console.log("email:", user.password);
             request.post({url: 'http://localhost:3002/api/pedidos/usuarios',
-            form: {id: user_id, rut: user.rut, nombre: user.nombre, email: user.email, password: user.password}},
+            form: {id: user._id, rut: user.rut, nombre: user.names, email: user.email, password: user.password}},
               (err, response, body) => {
+                  if(err) {
+                      console.log("error:", err);
+                  }
                 console.log("response status:", response.statusCode)
                 console.log("body:", body);
-              });
-              console.log('user allegedly succesfully created');
-              console.log('theUser:', user);
-              console.log('The user in pedidos/usuarios(allegedly):', user);
+
+                console.log('user allegedly succesfully created');
+                console.log('theUser:', user);
+                console.log('Message from pedidos/usuarios(allegedly):', body.message);
+  
+                return res.status(200).json({
+                      message: "success",
+                      data: user
+                });
+             });
         });
     });
 });

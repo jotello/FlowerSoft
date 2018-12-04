@@ -54,7 +54,7 @@ const db_url_users = 'mongodb://localhost/users-service-db';
 let Conx;
 
 const User = module.exports.modelUser = mongoose.model('user', UserSchema);
-const Counter = module.exports.modelCounter = mongoose.model('counters', Counterschema);
+const Counters = module.exports.modelCounter = mongoose.model('counters', Counterschema);
 
 module.exports.connectToUsersDatabase = function () {
     mongoose.connect(db_url_users, { useNewUrlParser: true })
@@ -66,33 +66,37 @@ module.exports.connectToUsersDatabase = function () {
 
 
 module.exports.createUser = function (userData, callback) {
+    console.log('createUser');
     let newUser = new User();
     let newuserId;
-    counterQuery = {_id: "userid"};
-    counters.findById(counterQuery, (err, counter) => {
+    cid = "userid";
+    counterUpdate = {$inc:{sequence_value:1}};
+    Counters.findByIdAndUpdate(cid, counterUpdate, {new:true}, (err, counter) => {
       if(err) {
         console.log('error:', err);
+        return null;
       }
       console.log("counter.sequence_value:", counter.sequence_value);
       newuserId = counter.sequence_value;
-    });
-    console.log("newUserId: ", newuserId);
-      newUser._id = newuserId;
-      newUser.rut = userData.rut;
-      newUser.names = userData.names;
-      newUser.family_name = userData.family_name;
-      newUser.email = userData.email;
-      newUser.profile_name = this.makeProfileName(newUser.email);
-      newUser.rol = userData.rol;
-    bcrypt.genSalt(10, (err, salt) => {
-        if(err) throw err;
 
-        bcrypt.hash(userData.password, salt, (err, hash) => {
-            console.log('hash:', hash);
-            if (err) throw err;
+        console.log("newUserId: ", newuserId);
+        newUser._id = newuserId;
+        newUser.rut = userData.rut;
+        newUser.names = userData.names;
+        newUser.family_name = userData.family_name;
+        newUser.email = userData.email;
+        newUser.profile_name = this.makeProfileName(newUser.email);
+        newUser.rol = userData.rol;
+        bcrypt.genSalt(10, (err, salt) => {
+            if(err) throw err;
 
-            newUser.password = hash;
-            newUser.save(callback);
+            bcrypt.hash(userData.password, salt, (err, hash) => {
+                console.log('hash:', hash);
+                if (err) throw err;
+
+                newUser.password = hash;
+                newUser.save(callback);
+            });
         });
     });
 };
