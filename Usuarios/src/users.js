@@ -133,11 +133,12 @@ router.post('/', (req, res) => {
             console.log('id', user._id);
             console.log("rut:", user.rut);
             console.log('nombre:', user.names);
+            console.log('apellido', user.family_name);
             console.log('rol:', user.rol);
             console.log("email:", user.email);
             console.log("password:", user.password);
             request.post({url: 'http://localhost:3002/api/pedidos/usuarios',
-            form: {id: user._id, rut: user.rut, nombre: user.names, rol: user.rol,
+            form: {id: user._id, rut: user.rut, nombre: user.names, apellido: user.family_name, rol: user.rol,
               email: user.email, password: user.password}},
               (err, response, body) => {
                   if(err) {

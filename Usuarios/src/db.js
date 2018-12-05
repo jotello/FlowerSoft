@@ -14,16 +14,7 @@ const UserSchema = new Schema({
     rol: {
       type: String,
       default: 'cliente'
-    },
-    creation_date: {
-        type: Date,
-        default: Date.now()
-    },
-    last_login: {
-        type: Date,
-        default: Date.now()
     }
-
 });
 const UserJoiSchema = module.exports.joiSchema = {
     post: {

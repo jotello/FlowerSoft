@@ -94,7 +94,7 @@ function createUsuario(req, res, next) {
   console.log('creando pedidos/usuario');
   console.log("req.body:", req.body);
   db.none('INSERT INTO Usuario (ID, rut, nombre, rol, email, password)' +
-      ' VALUES (${id}, ${rut}, ${nombre}, ${rol}, ${email}, ${password})',
+      ' VALUES (${id}, ${rut}, ${nombre}, ${apellido}, ${rol}, ${email}, ${password})',
       req.body)
       .then(function () {
         res.status(200)
