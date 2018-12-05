@@ -34,7 +34,7 @@ CREATE TABLE Usuario(
 CREATE TABLE PedidoxUsuario(
 	ID_PEDIDO INT REFERENCES Pedido(ID) ,
 	ID_USUARIO INT REFERENCES Usuario(ID),
-  fecha_pedido datetime default CURRENT_TIMESTAMP, 
+  fecha_pedido TIMESTAMP default CURRENT_TIMESTAMP, 
 	PRIMARY KEY (ID_PEDIDO, ID_USUARIO)
 );
 
