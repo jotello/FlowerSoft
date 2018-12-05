@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const publicKey = fs.readFileSync(path.join(__dirname, 'public.key'), 'utf8');
-const aux = require('../aux');
+const aux = require('../session_checker');
 
 //VARIABLES GLOBALES
 global.title = "Flowersoft";

@@ -6,7 +6,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var dashRouter = require('./routes/dashboard');
 var adminRouter = require('./routes/admin');
-const aux = require('./aux');
+const aux = require('./session_checker');
 
 var app = express();
 
