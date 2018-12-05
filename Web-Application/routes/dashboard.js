@@ -8,11 +8,12 @@ router.get('/', function(req, res, next) {
 	//Rosa debe poblar esta vista con los productos
 	request('http://localhost:8080/catalogo/', function(error, response, body) {
 		var catalogo = JSON.parse(body);
-		request('http://localhost:8080/catalogo/carrito/4', function(err, resp, bod){
+		request('http://localhost:8080/catalogo/carrito/3', function(err, resp, bod){
 			var productos = JSON.parse(bod).data;
 
 			if(productos.length > 0){
-				res.render('dashboard', {title: 'Inicio', catalogo: catalogo.data, contador: productos.length});	
+				var mensaje_ctr = '('+ productos.length +')';
+				res.render('dashboard', {title: 'Inicio', catalogo: catalogo.data, contador: mensaje_ctr});	
 			} else{
 				res.render('dashboard', {title: 'Inicio', catalogo: catalogo.data});
 			}			
@@ -24,8 +25,10 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/carrito', function(req,res, next){
-	request('http://localhost:8080/catalogo/carrito/4', function(err, resp, bod){
+	var id_usuario = req.user.id;
+	request('http://localhost:8080/catalogo/carrito/'+ id_usuario, function(err, resp, bod){
 			var productos = JSON.parse(bod).data;
+			console.log(productos);
 			if(productos.length > 0){
 				var total = 0;
 				for(i=0; i<= (productos.length - 1) ; i++){
@@ -40,7 +43,7 @@ router.get('/carrito', function(req,res, next){
 });
 
 router.post('/carrito/agregar', function(req, res, next){
-	var id_usuario = req.body.id_usuario;
+	var id_usuario = req.user.id;
 	var id_producto = req.body.id_producto;
 	var nombre_producto = req.body.nombre_producto;
 	var cantidad = req.body.cantidad;
@@ -67,7 +70,7 @@ router.get('/pedidos', function(req, res, next){
 });
 
 router.post('/pedido', function(req, res, next){
-	var id_usuario = req.body.id_usuario;
+	var id_usuario = req.user.id;
 	var fecha = req.body.fecha;
 	var detalle = req.body.detalle;
 	var total = req.body.total;

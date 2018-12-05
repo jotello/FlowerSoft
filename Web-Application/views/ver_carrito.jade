@@ -1,7 +1,29 @@
 include templates/default
 
   include templates/nav
-  
+
+  script(type='text/javascript').
+    $(document).ready(function(){
+        var total = #{total} ;
+        document.getElementById('confirmarBtn').addEventListener('click', function(){
+
+          var fecha = document.getElementById('fecha').value;
+          var detalle = document.getElementById('detalle').value;
+          const url = 'http://localhost:3005/dashboard/pedido';
+          const data = {
+            fecha: fecha,
+            detalle: detalle,
+            total: total
+          }
+          $.post(url, data, function(data, status){
+              alert('Hello');
+              console.log('${data} and status is ${status}')
+          });
+        });
+                
+
+      }) 
+
   .container
       .row
         .col-md-12
@@ -123,60 +145,59 @@ include templates/default
                                         dd
                                           p
                                             a.btn.btn-success.pull-right(data-target='##{item.id_producto}', href='#', role='button', type='button', data-toggle='modal') Confirmar
-                                      
-  .row
-    .col-md-12
-      h4.totalPedido #{total}
-      // Trigger the modal with a button
-      button.btn.btn-success.btn-lg(type='button', data-toggle='modal', data-target='#myModal')
-        i.fas.fa-shopping-cart
-        | Realizar Pedido
-      // Modal
-      #myModal.modal.fade(role='dialog')
-        .modal-dialog
-          // Modal content
-          .modal-content
-            .modal-header
-              button.close(type='button', data-dismiss='modal') ×
-              h4.modal-title Confirmar Pedido
-            .modal-body
-              h4 Productos en este pedido
-              .table-responsive
-                table#mytable.table.table-bordred.table-striped
-                  thead
-                    tr
-                      th ID
-                      th Producto
-                      th Cantidad
-                      th Total
-                  tbody
-                  each item in productos
-                    tr
-                      td #{item.id_producto}
-                      td #{item.nombre_producto}
-                      td #{item.cantidad}
-                      td #{item.total}
-              hr
-              .row                                 
-                .col-12.col-lg-6
-                  form(action='/dashboard/pedido', method='POST')
-                    .form-group
-                      label Ingrese la fecha de entrega:
-                      .input-group
-                        input(type='date', name = 'fecha')
-                      label Puede ingresar detalles en el pedido:
-                      .input-group
-                        input(type='text', name = 'detalle')
-                        //Aqui deberia ir el id del usuario, por mientras esta hardcodeado
-                        input.form-control(type='hidden' , value = 4  , name='id_usuario')
-                        input.form-control(type='hidden', value = #{total}, name ='total')
-                .col-12.col-lg-6
-                  label Total a cancelar:
-                  |  #{total}       
+      
+        .col-md-12
+          h4.totalPedido #{total}
+          // Trigger the modal with a button
+          button.btn.btn-success.btn-lg(type='button', data-toggle='modal', data-target='#myModal')
+            i.fas.fa-shopping-cart
+            | Realizar Pedido
+          // Modal
+          #myModal.modal.fade(role='dialog')
+            .modal-dialog
+              // Modal content
+              .modal-content
+                .modal-header
+                  button.close(type='button', data-dismiss='modal') ×
+                  h4.modal-title Confirmar Pedido
+                .modal-body
+                  h4 Productos en este pedido
+                  .table-responsive
+                    table#mytable.table.table-bordred.table-striped
+                      thead
+                        tr
+                          th ID
+                          th Producto
+                          th Cantidad
+                          th Total
+                      tbody
+                      each item in productos
+                        tr
+                          td #{item.id_producto}
+                          td #{item.nombre_producto}
+                          td #{item.cantidad}
+                          td #{item.total}
+                  hr
+                  .row                                 
+                    .col-12.col-lg-6
+                      form(action='/dashboard/pedido', method='POST')
+                        .form-group
+                          label Ingrese la fecha de entrega:
+                          .input-group
+                            input(id = 'fecha', type='date', name = 'fecha')
+                          label Puede ingresar detalles en el pedido:
+                          .input-group
+                            input(id = 'detalle', type='text', name = 'detalle')
+                            
+                          
+                    .col-12.col-lg-6
+                      label Total a cancelar:
+                      |  #{total}       
 
-            .modal-footer
-              button.btn.btn-danger(type='button', data-dismiss='modal') Cancelar
-              button.btn.btn-success(type='submit') Confirmar
+                .modal-footer
+                  button.btn.btn-danger(type='button', data-dismiss='modal') Cancelar
+                  button.btn.btn-success(id = 'confirmarBtn', type='button') Confirmar                                
+   
 
   
                                     

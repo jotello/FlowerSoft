@@ -13,9 +13,9 @@ nav.navbar.navbar-default
         #bs-example-navbar-collapse-1.collapse.navbar-collapse.container-fluid
           ul.nav.navbar-nav.navbar-right
             li
-              a(href='#')
+              a(href='/dashboard/carrito')
                 i.fas.fa-shopping-cart
-                |  Carrito (#{contador})
+                |  Carrito #{contador}
             li.dropdown
               a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
                 i.fas.fa-user
@@ -28,6 +28,6 @@ nav.navbar.navbar-default
                   a(href='#') Configuración
                 li.divider(role='separator')
                 li
-                  a(href='#') Salir
+                  a(href='/logout') Salir
         // /.navbar-collapse
         // /.container-fluid

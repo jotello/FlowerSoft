@@ -23,7 +23,7 @@ router.get('/', function(req, res, next) {
       redirect = '/admin/';
     }
     else if (rol === 'cliente') {
-      redirect = '/dashboard/pedidos';
+      redirect = '/dashboard/';
     }
     else {
       console.log("error en login");
