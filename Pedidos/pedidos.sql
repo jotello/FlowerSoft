@@ -8,23 +8,25 @@ CREATE TABLE Pedido (
   total INT,
   detalle VARCHAR,
   fecha_entrega VARCHAR,
-  ID_CLIENTE INT, 
+  ID_CLIENTE INT,
   nombre_cliente VARCHAR
 );
 
 CREATE TABLE Producto(
    ID SERIAL PRIMARY KEY,
-   nombre VARCHAR, 
-   tipo VARCHAR, 
-   imagen VARCHAR, 
-   precio INT, 
+   nombre VARCHAR,
+   tipo VARCHAR,
+   imagen VARCHAR,
+   precio INT,
    descripcion VARCHAR
 );
 
 CREATE TABLE Usuario(
-	ID SERIAL PRIMARY KEY,
+	ID INT PRIMARY KEY,
 	rut VARCHAR,
 	nombre VARCHAR,
+  apellido VARCHAR,
+  rol VARCHAR,
 	email VARCHAR,
 	password VARCHAR
 );
@@ -45,8 +47,9 @@ CREATE TABLE PedidoxProducto(
 	PRIMARY KEY(ID_PEDIDO, ID_PRODUCTO)
 );
 
-INSERT INTO Usuario (rut, nombre, email, password)
-  VALUES ('19241676-0', 'Beatriz Sanchez', 'bsanchez@gmail.com', 'holamundo123');
+INSERT INTO Usuario (ID, rut, nombre, apellido, rol, email, password)
+  VALUES ('1', '18.297.512-5', 'Max', 'Bombin', 'admin', 'max@gmail.com', '$2a$10$OXIxBEC8wfQ/dspUT3yDDOM.GDOBWK3j.2oX2L8xZQXY1ZyGMH9Ru');
 
-
+INSERT INTO Usuario (ID, rut, nombre, apellido, rol, email, password)
+  VALUES ('2', '6.411.539-1', 'Juan', 'Sanchez', 'cliente', 'juan@gmail.com', '$2a$10$OXIxBEC8wfQ/dspUT3yDDOM.GDOBWK3j.2oX2L8xZQXY1ZyGMH9Ru');
 

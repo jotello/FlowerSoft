@@ -3,16 +3,15 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
 var indexRouter = require('./routes/index');
 var dashRouter = require('./routes/dashboard');
 var adminRouter = require('./routes/admin');
+const seschk = require('./session_checker');
 
 var app = express();
 
 global.wat = null;
 global.rol = null;
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,6 +23,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/dashboard', seschk.checkLogged);
+app.use('/admin', seschk.checkAdmin);
 app.use('/', indexRouter.router);
 app.use('/dashboard', dashRouter);
 app.use('/admin', adminRouter);

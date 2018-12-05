@@ -3,16 +3,9 @@ const Joi = require('joi');
 const fs = require('fs');
 const express = require('express');
 const router = express.Router();
-
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-
-const User = require(path.join(__dirname, 'db'));
-
+const jwt = require('jsonwebtoken');
 const privateKey = fs.readFileSync(path.join(__dirname, 'private.key'), 'utf8');
 const publicKey = fs.readFileSync(path.join(__dirname, 'public.key'), 'utf8');
-
-const jwt = require('jsonwebtoken');
 
 const _expTime = "30m";
 const _algorithm = "RS256";
@@ -37,7 +30,7 @@ router.post('/check_credentials', (req, res) => {
     console.log('en check credentials');
     const ver_res = verifyTokenPresence(req, res);
     if(ver_res === null){
-        return res.status(403).send({
+        return res.status(401).send({
             message: 'no hay token',
             data: false
         });
@@ -48,7 +41,7 @@ router.post('/check_credentials', (req, res) => {
     console.log('splitted token:', req.token.split('.'));
     const splittedToken = req.token.split('.');
     if(splittedToken.length !== 3) {
-        return res.status(403).send({
+        return res.status(401).send({
             message: 'token invalido',
             data: false
         });
@@ -82,17 +75,6 @@ router.get('/key', (req, res)=> {
     return publicKey;
 });
 
-function sign(payload, options) {
-    const signOptions = {
-        issuer: options.issuer,
-        subject: options.subject,
-        audience: options.audience,
-        expiresIn: _expTime,
-        algorithm: _algorithm
-    };
-    return jwt.sign(payload, privateKey, signOptions);
-}
-
 function verifyTokenPresence (req, res) {
     console.log('En verify token presence');
     const bearerHeader = req.headers['authorization'];
@@ -114,6 +96,7 @@ function verifyToken(token, options){
     try{
         return jwt.verify(token, publicKey, options);
     } catch (err) {
+        console.log('ver err:', err);
         return false;
     }
 }

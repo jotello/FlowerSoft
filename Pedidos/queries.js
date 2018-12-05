@@ -23,6 +23,7 @@ module.exports = {
   getAllPedidos: getAllPedidos,
   getSinglePedido: getSinglePedido,
   createPedido: createPedido,
+  createUsuario: createUsuario,
   updatePedido: updatePedido,
   removePedido: removePedido
 };
@@ -89,6 +90,26 @@ function createPedido(req, res, next) {
     });
 }
 
+function createUsuario(req, res, next) {
+  console.log('creando pedidos/usuario');
+  console.log("req.body:", req.body);
+  db.none('INSERT INTO Usuario (ID, rut, nombre, rol, email, password)' +
+      ' VALUES (${id}, ${rut}, ${nombre}, ${apellido}, ${rol}, ${email}, ${password})',
+      req.body)
+      .then(function () {
+        res.status(200)
+        .json({
+          status: 'success',
+          message: 'Inserted one usuario'
+        });
+        console.log('Aparentemente creado pedidos/usuario');
+      })
+      .catch(function (err) {
+        console.log("error:", err);
+        return next(err);
+      });
+}
+
 function updatePedido(req, res, next) {
   db.none('update pedido set total=$1, detalle=$2, fecha_entrega=$3, nombre_cliente=$4 where id=$5',
     [req.body.total, req.body.detalle, req.body.fecha, req.body.cliente, parseInt(req.params.id)])
@@ -120,8 +141,3 @@ function removePedido(req, res, next) {
       return next(err);
     });
 }
-
-
-
-
-

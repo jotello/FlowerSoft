@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const Joi =  require('joi');
 
 const UserSchema = new Schema({
+    _id: Number,
     profile_name: String,
     rut: String,
     names: String,
@@ -13,18 +14,8 @@ const UserSchema = new Schema({
     rol: {
       type: String,
       default: 'cliente'
-    },
-    creation_date: {
-        type: Date,
-        default: Date.now()
-    },
-    last_login: {
-        type: Date,
-        default: Date.now()
     }
-
 });
-
 const UserJoiSchema = module.exports.joiSchema = {
     post: {
         rut: Joi.string().min(8).required(),
@@ -44,13 +35,17 @@ const UserJoiSchema = module.exports.joiSchema = {
         rol: Joi.string()
     }
 };
+const Counterschema = new Schema({
+  _id: String,
+  sequence_value: Number
+});
 
 const db_url_users = 'mongodb://localhost/users-service-db';
 
 let Conx;
 
 const User = module.exports.modelUser = mongoose.model('user', UserSchema);
-const Session = module.exports.modelSession = mongoose.model('session', new Schema({_id: String, session: JSON, expires: Date}), 'sessions');
+const Counters = module.exports.modelCounter = mongoose.model('counters', Counterschema);
 
 module.exports.connectToUsersDatabase = function () {
     mongoose.connect(db_url_users, { useNewUrlParser: true })
@@ -62,24 +57,37 @@ module.exports.connectToUsersDatabase = function () {
 
 
 module.exports.createUser = function (userData, callback) {
+    console.log('createUser');
     let newUser = new User();
+    let newuserId;
+    cid = "usersid";
+    counterUpdate = {$inc:{sequence_value:1}};
+    Counters.findByIdAndUpdate(cid, counterUpdate, {new:true}, (err, counter) => {
+      if(err) {
+        console.log('error:', err);
+        return null;
+      }
+      console.log("counter.sequence_value:", counter.sequence_value);
+      newuserId = counter.sequence_value;
 
-    newUser.rut = userData.rut;
-    newUser.names = userData.names;
-    newUser.family_name = userData.family_name;
-    newUser.email = userData.email;
-    newUser.profile_name = this.makeProfileName(newUser.email);
-    newUser.rol = userData.rol;
+        console.log("newUserId: ", newuserId);
+        newUser._id = newuserId;
+        newUser.rut = userData.rut;
+        newUser.names = userData.names;
+        newUser.family_name = userData.family_name;
+        newUser.email = userData.email;
+        newUser.profile_name = this.makeProfileName(newUser.email);
+        newUser.rol = userData.rol;
+        bcrypt.genSalt(10, (err, salt) => {
+            if(err) throw err;
 
-    bcrypt.genSalt(10, (err, salt) => {
-        if(err) throw err;
+            bcrypt.hash(userData.password, salt, (err, hash) => {
+                console.log('hash:', hash);
+                if (err) throw err;
 
-        bcrypt.hash(userData.password, salt, (err, hash) => {
-            console.log('hash:', hash);
-            if (err) throw err;
-
-            newUser.password = hash;
-            newUser.save(callback);
+                newUser.password = hash;
+                newUser.save(callback);
+            });
         });
     });
 };
@@ -104,7 +112,7 @@ module.exports.findAllUsers = function (callback) {
 
  module.exports.updateUserById = function(id, changeQuery, callback) {
     query = {_id: id};
-    
+
     if(changeQuery.password) {
         bcrypt.genSalt(10, (err, salt) => {
             if(err) throw err;
@@ -197,7 +205,7 @@ module.exports.deleteUserById = function (id, callback) {
      });
  };
 
- //LOGIN - SESSIONS 
+ //LOGIN - SESSIONS
 
  module.exports.findSessionById = function (session_id, callback) {
      Session.findById(session_id, callback);

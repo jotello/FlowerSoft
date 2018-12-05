@@ -58,7 +58,7 @@ passport.deserializeUser(function (id, done) {
 });
 //POST LOGIN
 router.post('/login', passport.authenticate('local'), (req, res, next) => {
-    console.log('login');
+    console.log('EN LOGIN DE USUARIO');
     const payload = {
         id: req.user._id,
         email: req.user.email,
@@ -96,12 +96,11 @@ router.post('/login', passport.authenticate('local'), (req, res, next) => {
 router.post('/', (req, res) => {
     console.log('En post de users');
     const { error }  = Joi.validate(req.body, User.joiSchema.post);
-
     if (error) {
         return res.status(400).send({
             errors: error,
             message: badRequestMessage,
-            data: {}
+            data: false
         });
     }
     User.findUserByEmail(req.body.email, (err, user) => {
@@ -112,7 +111,7 @@ router.post('/', (req, res) => {
             console.log('user exist');
             return res.status(400).send({
                 message: emailExistMessage,
-                data: {}
+                data: false
             });
         }
         User.createUser(req.body, (err, user) => {
@@ -121,48 +120,72 @@ router.post('/', (req, res) => {
             }
             //Success
             console.log('user', user);
+            //User already in user's database
+            //must be included now in Pedidos/Usuario
+            // -ID
+            // -rut
+            // -names
+            // - rol
+            // -email
+            // -password
+            console.log('requesting pedidos/usuarios');
+            console.log('id', user._id);
+            console.log("rut:", user.rut);
+            console.log('nombre:', user.names);
+            console.log('apellido', user.family_name);
+            console.log('rol:', user.rol);
+            console.log("email:", user.email);
+            console.log("password:", user.password);
+            request.post({url: 'http://localhost:3002/api/pedidos/usuarios',
+            form: {id: user._id, rut: user.rut, nombre: user.names, apellido: user.family_name, rol: user.rol,
+              email: user.email, password: user.password}},
+              (err, response, body) => {
+                  if(err) {
+                      console.log("error:", err);
+                  }
+                console.log("response status:", response.statusCode)
+                console.log("BODY:", body);
 
-            res.status(200).send(user);
+                console.log('user allegedly succesfully created');
+                console.log('theUser:', user);
+                return res.status(200).json({
+                      message: "success",
+                      data: user
+                });
+             });
         });
-
     });
 });
 //GET
-router.get('/', (req, res) => {
-    console.log('En get');
-    console.log('headers:', req.headers);
-    console.log('headers["authorization"]:', req.headers['authorization']);
-
-    request.post('http://localhost:3003/api/auth/check_credentials', {
-        'auth': {
-          'bearer': req.headers['authorization'].split(' ')[1]
+router.get('/', checkCredentials, (req, res) => {
+    console.log("EN GET DE USERS");
+    const data = JSON.parse(req.userData);
+    console.log("user data:", data);
+    if(response.statusCode === 403) {
+        return res.status(403).send(data.message);
+    }
+    const id = data.id;
+    console.log('id:', id);
+    User.findUserById(id, (err, user) => {
+        if (err) { 
+            console.log("err", err);
+            return res.status(500).send({
+                message: "error",
+                data: err
+            });
         }
-      },
-      (err, response, decodedAndVerifyToken) => {
-          if(err){
-              console.log('err:', err);
-          }
-        const data = JSON.parse(decodedAndVerifyToken);
-        if(response.statusCode === 403) {
-            return res.status(403).send(data.message);
+        if(!user) {
+            return res.status(404).send({
+                message: notFoundMessage,
+                data: false
+            });
         }
-        const id = data.id;
-        console.log('id:', id);
-        User.findUserById(id, (err, user) => {
-            if (err) throw err;
-            if(!user) {
-                return res.status(404).send(notFoundMessage);
-            }
-            res.status(200).send(user);
+        res.status(200).json({
+            message: success,
+            data: user
         });
-      });
+    });
 });
-
-//GET: LOGOUT
-
-router.get('/logout', (req, res) => {
-});
-
 //DELETE
 router.delete('/:id', (req, res) => {
     User.deleteUserById(req.params.id, (err, user) =>{
@@ -205,8 +228,9 @@ router.put('/:id', (req, res) => {
         let emailChanged = false;
         if(req.body.email && req.body.email != user.email)  {
             User.findUserByEmail(req.body.email, (err, user) => {
-                if (err) throw  err;
-
+                if (err) { 
+                    throw  err;
+                }
                 if (user) {
                     return res.status(400).send({
                         message: emailExistMessage,
@@ -216,7 +240,6 @@ router.put('/:id', (req, res) => {
             });
             emailChanged = true;
         }
-
         console.log('emailChanged', emailChanged);
         User.updateUserById(req.params.id, req.body, emailChanged, (err, raw) => {
             console.log('raw:', raw);
@@ -231,6 +254,7 @@ router.put('/:id', (req, res) => {
 });
 
 router.get('/auth/check_credentials', (req, res) => {
+    console.log("CHECKING CREDENTIALS");
     request.post('http://localhost:3003/api/auth/check_credentials', {
         'auth': {
           'bearer': req.headers['authorization'].split(' ')[1]
@@ -251,11 +275,45 @@ router.get('/auth/check_credentials', (req, res) => {
           //    data
           console.log('response status:', response.statusCode);
           const status = (resp.data === false)? 403 : 200;
-          console.log('ternary status:', response.statusCode);          
+          console.log('ternary status:', response.statusCode);
           return res.status(status).send({
               resp
             });
     });
 });
+
+function checkCredentials(req, res, next) {
+    console.log("CHECKING CREDENTIALS MIDDLEWARE");
+    request.post('http://localhost:3003/api/auth/check_credentials', {
+        'auth': {
+          'bearer': req.headers['authorization'].split(' ')[1]
+        }
+      },
+      (err, response, verifyJWT) => {
+          if(err){
+              console.log('err:', err);
+              return res.status(500).send({
+                  message: 'error',
+                  data: false
+              })
+          }
+          const resp = JSON.parse(verifyJWT);
+          console.log('RESP COMPLETE:', resp);
+          //resp:
+          //    message
+          //    data
+          console.log('response status:', response.statusCode);
+          const status = (resp.data === false)? 403 : 200;
+          console.log('ternary status:', response.statusCode);
+          if(status === 403) {
+              return res.status(403).send({
+                    message: 'Forbidden',
+                    data: false
+              });
+          }
+          req.userData = resp.data;
+          next();
+    });
+}
 
 module.exports = router;
