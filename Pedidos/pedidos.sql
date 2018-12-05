@@ -45,3 +45,6 @@ CREATE TABLE PedidoxProducto(
 
 INSERT INTO Usuario (ID, rut, nombre, apellido, rol, email, password)
   VALUES ('1', '18.297.512-5', 'Max', 'Bombin', 'admin', 'max@gmail.com', '$2a$10$OXIxBEC8wfQ/dspUT3yDDOM.GDOBWK3j.2oX2L8xZQXY1ZyGMH9Ru');
+
+INSERT INTO Usuario (ID, rut, nombre, apellido, rol, email, password)
+  VALUES ('2', '6.411.539-1', 'Juan', 'Sanchez', 'cliente', 'juan@gmail.com', '$2a$10$OXIxBEC8wfQ/dspUT3yDDOM.GDOBWK3j.2oX2L8xZQXY1ZyGMH9Ru');

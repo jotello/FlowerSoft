@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const publicKey = fs.readFileSync(path.join(__dirname, 'public.key'), 'utf8');
-const aux = require('../session_checker');
+const seschk = require('../session_checker');
 
 //VARIABLES GLOBALES
 global.title = "Flowersoft";
@@ -113,10 +113,11 @@ router.post('/registro', (req, res, next) => {
   res.redirect('/');
 });
 
-router.get('/logout', aux.checkLogged, (req, res , next) => {
-
+router.get('/logout', seschk.checkLogged, (req, res , next) => {
+  console.log('LOGGING OUT');
   global.wat = null;
   global.rol = null;
+  console.log('RENDERING LOGOUT');
   res.render('logout');
 });
 

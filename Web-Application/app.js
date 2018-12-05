@@ -6,7 +6,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var dashRouter = require('./routes/dashboard');
 var adminRouter = require('./routes/admin');
-const aux = require('./session_checker');
+const seschk = require('./session_checker');
 
 var app = express();
 
@@ -24,8 +24,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/dashboard', aux.checkLogged);
-app.use('/admin', aux.checkAdmin);
+app.use('/dashboard', seschk.checkLogged);
+app.use('/admin', seschk.checkAdmin);
 app.use('/', indexRouter.router);
 app.use('/dashboard', dashRouter);
 app.use('/admin', adminRouter);

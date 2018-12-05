@@ -1,20 +1,23 @@
 const request = require('request');
 
 
-module.exports.checkLogged = function() {
-    console.log('CHECK_LOGGED');
+module.exports.checkLogged = function(req, res, next) {
+		console.log('CHECK_LOGGED');
+		console.log('token:', global.wat);
+		console.log('rol:', global.rol);
 	if(global.wat === null || global.rol === null) {
-        console.log('NO SESSION NOR ADMIN');
+		console.log('NO SESSION');
 		return res.redirect('/');
-    }
+  }
 	const bearerToken = global.wat;
 	request.get('http://localhost:8080/users/auth/check_credentials', {
-		'auth': {
-		  'bearer': bearerToken
-		}
+			'auth': {
+				'bearer': bearerToken
+			}
 	  },
 	  (err, response, body) => {
 		if (err) {
+			console.log('ERROR IN CHECKLOGGED');
 		  console.log('err:', err);
 		  error = {status: 500};
 		  return res.render('error', {message:'an error', error:error});
@@ -31,7 +34,7 @@ module.exports.checkLogged = function() {
 	  });
 }
 
-module.exports.checkAdmin = function () {
+module.exports.checkAdmin = function (req, res, next) {
     console.log('CHECK_ADMIN');
 	if(global.wat === null || global.rol === null || global.rol !== "admin") {
         console.log('NO SESSION NOR ADMIN');
