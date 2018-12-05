@@ -125,6 +125,7 @@ router.post('/', (req, res) => {
             // -ID
             // -rut
             // -names
+            // -family_name
             // - rol
             // -email
             // -password
@@ -167,7 +168,7 @@ router.get('/', checkCredentials, (req, res) => {
     const id = data.id;
     console.log('id:', id);
     User.findUserById(id, (err, user) => {
-        if (err) { 
+        if (err) {
             console.log("err", err);
             return res.status(500).send({
                 message: "error",
@@ -228,7 +229,7 @@ router.put('/:id', (req, res) => {
         let emailChanged = false;
         if(req.body.email && req.body.email != user.email)  {
             User.findUserByEmail(req.body.email, (err, user) => {
-                if (err) { 
+                if (err) {
                     throw  err;
                 }
                 if (user) {

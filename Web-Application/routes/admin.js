@@ -8,6 +8,7 @@ var check = require('./index');
 
 
 router.get('/', function(req, res, next){
+	console.log("user id:", req.user.id);
 	request('http://localhost:8080/pedidos/', function(error, response, body) {
 		var pedidos = JSON.parse(body);
 		return res.render('admin/dash', {title: 'Lista de pedidos', pedidos: pedidos.data});
@@ -15,7 +16,6 @@ router.get('/', function(req, res, next){
 });
 
 router.get('/admin', function(req, res, next){
-		console.log("user:", req.user);
 		return res.redirect('/admin');
 	//res.render('inicio', {title: 'Inicio', pedidos: array.data});
 });
@@ -77,7 +77,7 @@ router.post('/crearProducto', function(req, res, next){
 	var descrip = req.body.descrip;
 	var imagen = req.body.imagen;
 
-	request.post('http://localhost:8080/catalogo/').form({"tipo":tipo, "nombre":nombre, "descripcion": descrip, "imagen": imagen, "precio" :precio}), 
+	request.post('http://localhost:8080/catalogo/').form({"tipo":tipo, "nombre":nombre, "descripcion": descrip, "imagen": imagen, "precio" :precio}),
 	function optionalCallback(err, httpResponse, body) {
   		if (err) {
     		return console.error('upload failed:', err);
@@ -113,7 +113,7 @@ router.post('/crear/pedido', function(req, res, next){
 	var cliente = req.body.cliente;
 	var detalle = req.body.detalle;
 	var fecha = req.body.fecha;
-	request.post('http://localhost:8080/pedidos/').form({"total":total, "detalle":detalle, "fecha" :fecha, "ID_CLIENTE" : id_cliente, "nombre_cliente" : cliente}), 
+	request.post('http://localhost:8080/pedidos/').form({"total":total, "detalle":detalle, "fecha" :fecha, "ID_CLIENTE" : id_cliente, "nombre_cliente" : cliente}),
 	function optionalCallback(err, httpResponse, body) {
   		if (err) {
     		return console.error('upload failed:', err);

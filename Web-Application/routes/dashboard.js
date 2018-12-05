@@ -12,13 +12,13 @@ router.get('/', function(req, res, next) {
 			var productos = JSON.parse(bod).data;
 
 			if(productos.length > 0){
-				res.render('dashboard', {title: 'Inicio', catalogo: catalogo.data, contador: productos.length});	
+				res.render('dashboard', {title: 'Inicio', catalogo: catalogo.data, contador: productos.length});
 			} else{
 				res.render('dashboard', {title: 'Inicio', catalogo: catalogo.data});
-			}			
+			}
             console.log(catalogo.data);
 		});
-        
+
     });
   //res.render('dashboard', { title: 'Dashboard' });
 });
@@ -31,10 +31,10 @@ router.get('/carrito', function(req,res, next){
 				for(i=0; i<= (productos.length - 1) ; i++){
 					total = total + productos[i].total;
 				}
-				res.render('ver_carrito', {title: 'Carrito de reserva', productos: productos, contador: productos.length, total: total});	
+				res.render('ver_carrito', {title: 'Carrito de reserva', productos: productos, contador: productos.length, total: total});
 			} else{
 				res.render('ver_carrito', {title: 'Carrito de reserva', mensaje: 'Sin productos en el carrito'});
-			}			
+			}
 		});
 
 });
@@ -46,7 +46,7 @@ router.post('/carrito/agregar', function(req, res, next){
 	var cantidad = req.body.cantidad;
 	var total = req.body.total;
 
-	request.post('http://localhost:8080/catalogo/carrito/'+parseInt(id_usuario)).form({"id_producto" : parseInt(id_producto), 
+	request.post('http://localhost:8080/catalogo/carrito/'+parseInt(id_usuario)).form({"id_producto" : parseInt(id_producto),
 		"nombre_producto": nombre_producto, "cantidad" :parseInt(cantidad), "total" : parseInt(total)}),
 	function optionalCallback(err, httpResponse, body) {
   		if (err) {
@@ -59,6 +59,7 @@ router.post('/carrito/agregar', function(req, res, next){
 
 
 router.get('/pedidos', function(req, res, next){
+	console.log("user id:", req.user.id);
 	request('http://localhost:8080/pedidos/', function(error, response, body) {
 		var pedidos = JSON.parse(body);
         res.render('dashboard', {title: 'Lista de pedidos', pedidos: pedidos.data});
@@ -75,7 +76,7 @@ router.post('/pedido', function(req, res, next){
 	function optionalCallback(err, httpResponse, body){
 		if(err) {
 			return console.error('Upload de pedido fallo: ', err);
-		} 
+		}
 	};
 	res.redirect('/dashboard');
 });
@@ -129,7 +130,7 @@ router.post('/crearPedido', function(req, res, next){
 	var cliente = req.body.cliente;
 	var detalle = req.body.detalle;
 	var fecha = req.body.fecha;
-	request.post('http://localhost:8080/pedidos/').form({"total":total, "detalle":detalle, "fecha" :fecha, "ID_CLIENTE" : id_cliente, "nombre_cliente" : cliente}), 
+	request.post('http://localhost:8080/pedidos/').form({"total":total, "detalle":detalle, "fecha" :fecha, "ID_CLIENTE" : id_cliente, "nombre_cliente" : cliente}),
 	function optionalCallback(err, httpResponse, body) {
   		if (err) {
     		return console.error('upload failed:', err);

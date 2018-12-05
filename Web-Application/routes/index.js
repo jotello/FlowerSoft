@@ -125,7 +125,6 @@ router.post('/registro', (req, res, next) => {
 });
 
 //GET PROFILE
-
 router.get('/profile', seschk.checkLogged, (req, res, next) => {
   res.status(200).json({
     message: 'Ok',
