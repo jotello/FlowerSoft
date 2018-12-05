@@ -159,8 +159,8 @@ router.post('/', (req, res) => {
 //GET
 router.get('/', checkCredentials, (req, res) => {
     console.log("EN GET DE USERS");
-    const data = JSON.parse(req.verifyJWT);
-    console.log("data:", data);
+    const data = JSON.parse(req.userData);
+    console.log("user data:", data);
     if(response.statusCode === 403) {
         return res.status(403).send(data.message);
     }
@@ -180,7 +180,7 @@ router.get('/', checkCredentials, (req, res) => {
                 data: false
             });
         }
-        res.status(200).send({
+        res.status(200).json({
             message: success,
             data: user
         });
@@ -311,7 +311,7 @@ function checkCredentials(req, res, next) {
                     data: false
               });
           }
-          req.verifyJWT = resp.data;
+          req.userData = resp.data;
           next();
     });
 }

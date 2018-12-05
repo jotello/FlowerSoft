@@ -139,5 +139,4 @@ router.post('/update/pedido', function(req, res, next){
 	res.redirect('/admin/pedidos');
 });
 
-
 module.exports = router;

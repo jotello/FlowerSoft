@@ -126,12 +126,10 @@ router.post('/registro', (req, res, next) => {
 
 //GET PROFILE
 
-router.get('/profile', (req, res, next) => {
-  console.log('PROFILE');
-  request.get('https://localhost:8080/users/', null, 
-  function(err, httpResponse, body) {
-    console.log("body:", body);
-      res.send(body);
+router.get('/profile', seschk.checkLogged, (req, res, next) => {
+  res.status(200).json({
+    message: 'Ok',
+    data: req.user
   });
 })
 
