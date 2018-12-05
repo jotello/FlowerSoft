@@ -12,6 +12,7 @@ var app = express();
 
 global.wat = null;
 global.rol = null;
+global.id = null;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
