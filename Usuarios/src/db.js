@@ -55,7 +55,6 @@ module.exports.connectToUsersDatabase = function () {
     .catch(err => console.log(err));
 };
 
-
 module.exports.createUser = function (userData, callback) {
     console.log('createUser');
     let newUser = new User();
@@ -63,6 +62,7 @@ module.exports.createUser = function (userData, callback) {
     cid = "usersid";
     counterUpdate = {$inc:{sequence_value:1}};
     Counters.findByIdAndUpdate(cid, counterUpdate, {new:true}, (err, counter) => {
+      console.log("counter:", counter);
       if(err) {
         console.log('error:', err);
         return null;
@@ -77,7 +77,9 @@ module.exports.createUser = function (userData, callback) {
         newUser.family_name = userData.family_name;
         newUser.email = userData.email;
         newUser.profile_name = this.makeProfileName(newUser.email);
-        newUser.rol = userData.rol;
+        if(userData.rol) {
+          newUser.rol = userData.rol;
+        }
         bcrypt.genSalt(10, (err, salt) => {
             if(err) throw err;
 
