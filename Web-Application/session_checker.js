@@ -30,6 +30,7 @@ module.exports.checkLogged = function(req, res, next) {
             console.log('NO SESSION');
 			return res.redirect('/');
 		}
+		req.user = verifyJWT.data;
 		return next();
 	  });
 }
@@ -42,9 +43,9 @@ module.exports.checkAdmin = function (req, res, next) {
     }
 	const bearerToken = global.wat;
 	request.get('http://localhost:8080/users/auth/check_credentials', {
-		'auth': {
-		  'bearer': bearerToken
-		}
+			'auth': {
+				'bearer': bearerToken
+			}
 	  },
 	  (err, response, body) => {
 		if (err) {
@@ -63,6 +64,7 @@ module.exports.checkAdmin = function (req, res, next) {
 		if(verifyJWT.data.rol !== 'admin') {
 			return res.redirect('/');
 		}
+		req.user = verifyJWT.data;
 		return next();
 	  });
 }

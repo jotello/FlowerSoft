@@ -10,7 +10,7 @@ const seschk = require('../session_checker');
 //VARIABLES GLOBALES
 global.title = "Flowersoft";
 
-/* GET home page. */
+//GET INDEX
 router.get('/', function(req, res, next) {
   console.log('INDEX');
   console.log('global.wat:', global.wat);
@@ -37,18 +37,31 @@ router.get('/', function(req, res, next) {
   res.render('index', {title: global.title});
 });
 
+//GET REGISTRO
 router.get('/registro', function(req, res, next) {
   res.render('registro', { title: 'FlowerSoft' });
 });
 
+//GET LOGOUT
+router.get('/logout', seschk.checkLogged, (req, res , next) => {
+  console.log('LOGGING OUT');
+  global.wat = null;
+  global.rol = null;
+  console.log('RENDERING LOGOUT');
+  res.render('logout');
+});
+
+//POST LOGIN
 router.post('/login', function(req, res, next) {
+  if(global.wat !== null) {
+    res.redirect('/');
+  }
   console.log('en web app login');
   const email = req.body.email;
   const password = req.body.password;
   const audience = "http://localhost:3005/";
   console.log(req.body.email);
   console.log(req.body.password);
-
   request.post({url: 'http://localhost:8080/users/login',
   form: {"email":email, "password":password, "audience":audience}},
   function(err, httpResponse, body) {
@@ -88,12 +101,11 @@ router.post('/login', function(req, res, next) {
   });
 });
 
+//POST REGISTRO
 router.post('/registro', (req, res, next) => {
-
   if(global.wat !== null) {
     return res.redirect('/');
   }
-
   console.log('En registro');
   const names = req.body.names;
   const family_name = req.body.family_name;
@@ -101,7 +113,6 @@ router.post('/registro', (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   const confirmPassword = req.body.confirmPassword;
-
   request.post('http://localhost:8080/users/').form({
     "names": names,
     "family_name": family_name,
@@ -113,12 +124,15 @@ router.post('/registro', (req, res, next) => {
   res.redirect('/');
 });
 
-router.get('/logout', seschk.checkLogged, (req, res , next) => {
-  console.log('LOGGING OUT');
-  global.wat = null;
-  global.rol = null;
-  console.log('RENDERING LOGOUT');
-  res.render('logout');
-});
+//GET PROFILE
+
+router.get('/profile', (req, res, next) => {
+  console.log('PROFILE');
+  request.get('https://localhost:8080/users/', null, 
+  function(err, httpResponse, body) {
+    console.log("body:", body);
+      res.send(body);
+  });
+})
 
 module.exports.router = router;
