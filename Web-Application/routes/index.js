@@ -4,8 +4,8 @@ var request = require('request');
 const fs = require('fs');
 const path = require('path');
 const jwt = require('jsonwebtoken');
-
 const publicKey = fs.readFileSync(path.join(__dirname, 'public.key'), 'utf8');
+const aux = require('../aux');
 
 //VARIABLES GLOBALES
 global.title = "Flowersoft";
@@ -113,7 +113,7 @@ router.post('/registro', (req, res, next) => {
   res.redirect('/');
 });
 
-router.get('/logout', (req, res , next) => {
+router.get('/logout', aux.checkLogged, (req, res , next) => {
 
   global.wat = null;
   global.rol = null;
