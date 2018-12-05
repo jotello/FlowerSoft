@@ -32,16 +32,21 @@ CREATE TABLE Usuario(
 CREATE TABLE PedidoxUsuario(
 	ID_PEDIDO INT REFERENCES Pedido(ID) ,
 	ID_USUARIO INT REFERENCES Usuario(ID),
+  fecha_pedido datetime default CURRENT_TIMESTAMP, 
 	PRIMARY KEY (ID_PEDIDO, ID_USUARIO)
 );
 
 CREATE TABLE PedidoxProducto(
 	ID_PEDIDO INT REFERENCES Pedido(ID),
 	ID_PRODUCTO INT REFERENCES Producto(ID),
+  total int,
+  cantidad int, 
+  nombre_producto VARCHAR, 
 	PRIMARY KEY(ID_PEDIDO, ID_PRODUCTO)
 );
 
 INSERT INTO Usuario (rut, nombre, email, password)
   VALUES ('19241676-0', 'Beatriz Sanchez', 'bsanchez@gmail.com', 'holamundo123');
+
 
 

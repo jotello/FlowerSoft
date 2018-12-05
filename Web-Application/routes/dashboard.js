@@ -66,6 +66,20 @@ router.get('/pedidos', function(req, res, next){
 	//res.render('inicio', {title: 'Inicio', pedidos: array.data});
 });
 
+router.post('/pedido', function(req, res, next){
+	var id_usuario = req.body.id_usuario;
+	var fecha = req.body.fecha;
+	var detalle = req.body.detalle;
+	var total = req.body.total;
+	request.post('http://localhost:8080/pedidos/').form({"id_usuario": id_usuario, "fecha": fecha, "detalle": detalle, "total": total}),
+	function optionalCallback(err, httpResponse, body){
+		if(err) {
+			return console.error('Upload de pedido fallo: ', err);
+		} 
+	};
+	res.redirect('/dashboard');
+});
+
 router.get('/pedido/delete/:id', function(req, res, next){
 	var id = req.params.id;
 	request.delete('http://localhost:8080/pedidos/'+id,
