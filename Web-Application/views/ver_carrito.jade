@@ -16,7 +16,7 @@ include templates/default
             total: total
           }
           $.post(url, data, function(data, status){
-              alert('Hello');
+              window.location.href = 'http://localhost:3005/dashboard';
               console.log('${data} and status is ${status}')
           });
         });

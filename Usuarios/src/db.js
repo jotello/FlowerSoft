@@ -77,7 +77,9 @@ module.exports.createUser = function (userData, callback) {
         newUser.family_name = userData.family_name;
         newUser.email = userData.email;
         newUser.profile_name = this.makeProfileName(newUser.email);
-        newUser.rol = userData.rol;
+        if(userData.rol){
+            newUser.rol = userData.rol;
+        }
         bcrypt.genSalt(10, (err, salt) => {
             if(err) throw err;
 

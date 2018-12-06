@@ -152,17 +152,16 @@ console.log(tarea.delete(req.body.id));
 }
 
 function vaciarCarrito(req, res, next) {
-var query = connection.query('DELETE FROM Carrito WHERE id_usuario= ? ',[parseInt(req.body.id_usuario)],
- function(error, result){
-   if(error){
-      throw error;
-   }else{
-      console.log(result);
-      res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
-   }
- }
-);
-console.log(tarea.delete(req.body.id));
+  console.log(req.body.id_usuario);
+  var query = connection.query('DELETE FROM Carrito WHERE id_usuario= ? ',[parseInt(req.body.id_usuario)],
+   function(error, result){
+     if(error){
+        throw error;
+     }else{
+        console.log(result);
+        res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
+     }
+   });
 }
 
 function selectCarrito(req, res, next) {
@@ -175,7 +174,7 @@ var query = connection.query('SELECT * FROM Carrito WHERE id_usuario = ?', [pars
          res.send(JSON.stringify({"status": 200, "data": resultado}));
          
       }
-   }
-);}
+   });
+}
 
 

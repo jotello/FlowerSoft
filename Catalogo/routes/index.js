@@ -21,6 +21,6 @@ router.get('/api/catalogo/carrito/:id', db.selectCarrito);
 router.post('/api/catalogo/carrito/:id', db.insertCarrito);
 router.put('/api/catalogo/carrito/:id', db.updateCarrito);
 router.delete('/api/catalogo/carrito/:id', db.deleteCarrito);
-router.delete('/api/catalogo/carrito', db.vaciarCarrito);
+router.get('/api/catalogo/vaciar/carrito', db.vaciarCarrito);
 
 module.exports = router;
