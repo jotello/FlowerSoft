@@ -1,15 +1,18 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
+var productos_global = ''; 
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+	var id_usuario = req.user.id;
 	console.log('en get the dashboard');
 	//Rosa debe poblar esta vista con los productos
 	request('http://localhost:8080/catalogo/', function(error, response, body) {
 		var catalogo = JSON.parse(body);
-		request('http://localhost:8080/catalogo/carrito/3', function(err, resp, bod){
+		request('http://localhost:8080/catalogo/carrito/'+id_usuario, function(err, resp, bod){
 			var productos = JSON.parse(bod).data;
+			var productos_global = productos;
 
 			if(productos.length > 0){
 				var mensaje_ctr = '('+ productos.length +')';
@@ -26,16 +29,16 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/carrito', function(req,res, next){
-	var id_usuario = req.user.id;
+	var id_usuario = req.user.id;	
 	request('http://localhost:8080/catalogo/carrito/'+ id_usuario, function(err, resp, bod){
 			var productos = JSON.parse(bod).data;
-			console.log(productos);
+			var ctd = '('+productos.length+')';
 			if(productos.length > 0){
 				var total = 0;
 				for(i=0; i<= (productos.length - 1) ; i++){
 					total = total + productos[i].total;
 				}
-				res.render('ver_carrito', {title: 'Carrito de reserva', productos: productos, contador: productos.length, total: total});
+				res.render('ver_carrito', {title: 'Carrito de reserva', productos: productos, contador: ctd, total: total});
 			} else{
 				res.render('ver_carrito', {title: 'Carrito de reserva', mensaje: 'Sin productos en el carrito'});
 			}
@@ -81,25 +84,17 @@ router.post('/pedido', function(req, res, next){
 	function optionalCallback(err, httpResponse, body){
 		if(err) {
 			return console.error('Upload de pedido fallo: ', err);
-		}
-		var id_pedido = body.data.id;
-		request('http://localhost:8080/catalogo/carrito/'+id_usuario, function(error, resp, bod){
-	        var productos = JSON.parse(bod).data;
-	        if(productos.length > 0){
-	        for(i = 0; i < (productos.length - 1); i++){
-		        var id_producto = parseInt(productos[i].id_producto);
-		        var nombre_producto = productos[i].nombre_producto;
-		        var cantidad = parseInt(productos[i].cantidad);
-		        var total = parseInt(productos[i].total);
-		        request.post('http://localhost:8080/pedidos/producto').form({"id_producto": id_producto, 
-		        	"id_pedido":id_pedido,"total":total, "cantidad": cantidad,
-		        	"nombre_producto":nombre_producto}), function optionalCallback(err, httpResponse, boddd){
-					console.log('Producto añadido')
-		        }; 
-		    }
-	    }
-		});
-	};
+		}	
+		
+    };
+
+    request.post('http://localhost:8080/pedidos/carrito/'+id_usuario).form(productos_global),
+    function optionalCallback(err, httpResponse, body){
+    	if(err){
+    		return console.error('Fallo envio de carrito: ', err);
+    	}
+    };
+	 
 	
 	request('http://localhost:8080/catalogo/vaciar/carrito').form({"id_usuario": id_usuario}),
       function optionalCallback(err, httpResponse, body) {
@@ -107,11 +102,23 @@ router.post('/pedido', function(req, res, next){
           return console.error('No se pudo vaciar el carrito:', err);
         }
         console.log('Se pudo vaciar el carrio! Server respondio :', body);
-        res.status(200);
     };
-   
-	res.redirect('/dashboard');
+    
+    res.redirect('/dashboard');
+	
 });
+
+function postProductIntoPedido(id, producto){
+	var id_producto = producto.id_producto;
+	var total = producto.total;
+	var cantidad = producto.cantidad;
+	var nombre_producto = producto.nombre_producto;
+	request.post('http://localhost:8080/pedidos/producto')
+	.form({"id_producto": id_producto, "id_pedido":id,"total":total, "cantidad": cantidad,"nombre_producto":nombre_producto}),
+	function(err, httpResponse, body){
+		return httpResponse;
+	};
+}
 
 router.get('/pedido/delete/:id', function(req, res, next){
 	var id = req.params.id;

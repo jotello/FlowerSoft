@@ -27,7 +27,8 @@ module.exports = {
   createUsuario: createUsuario,
   updatePedido: updatePedido,
   removePedido: removePedido,
-  insertProductoEnPedido: insertProductoEnPedido
+  insertProductoEnPedido: insertProductoEnPedido,
+  insertCarritoenPedido: insertCarritoenPedido
 };
 
 function getAllUsuarios(req, res, next){
@@ -103,6 +104,7 @@ function createPedido(req, res, next) {
   var total = parseInt(req.body.total);
   var detalle = String(req.body.detalle);
   var fecha = String(req.body.fecha);
+  var id_pedido = 0;
   //Consulta para obtener el nombre del cliente
   console.log('Buscando nombre...');
   db.one('select nombre from usuario where id = $1 ', ID_CLIENTE)
@@ -117,19 +119,14 @@ function createPedido(req, res, next) {
             //Obteniendo el id del pedido recien creado
             db.one('SELECT id FROM  pedido ORDER BY id DESC LIMIT 1')
               .then(function(data) {
-                var id_pedido = parseInt(data.id);
+                id_pedido = parseInt(data.id);
                 console.log('Id del ultimo pedido: '+id_pedido);
                 //Relacionando el pedido con el cliente
                 db.none('insert into pedidoxusuario(id_pedido, id_usuario)' + 'values($1, $2)', [id_pedido, ID_CLIENTE])
                   .then(function() {
                     console.log('Relacion entre usuario y pedido lista.')
                     //Finalmente relacionamos los productos al pedido y vaciamos el carrito del usuario
-                    res.status(200)
-                    .json({
-                      status: 'success',
-                      data: data,
-                      message: 'Listo'
-                    });               
+                                   
                   })
                   .catch(function(err) {
                     return next(err);
@@ -146,6 +143,13 @@ function createPedido(req, res, next) {
     })
     .catch(function(err) {
       return next(err);
+  });
+
+  res.status(200)
+  .json({
+    status: 'success',
+    data: data,
+    message: 'Listo'
   });
   
 

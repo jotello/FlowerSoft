@@ -6,19 +6,20 @@ include templates/default
     $(document).ready(function(){
         var total = #{total} ;
         document.getElementById('confirmarBtn').addEventListener('click', function(){
+            var fecha = document.getElementById('fecha').value;
+            var detalle = document.getElementById('detalle').value;
+            const url = 'http://localhost:3005/dashboard/pedido';
+            const data = {
+              fecha: fecha,
+              detalle: detalle,
+              total: total
+            }
+            $.post(url, data, function(data, status){
+                window.location.href = 'http://localhost:3005/dashboard';
+                console.log('${data} and status is ${status}')
+            });   
 
-          var fecha = document.getElementById('fecha').value;
-          var detalle = document.getElementById('detalle').value;
-          const url = 'http://localhost:3005/dashboard/pedido';
-          const data = {
-            fecha: fecha,
-            detalle: detalle,
-            total: total
-          }
-          $.post(url, data, function(data, status){
-              window.location.href = 'http://localhost:3005/dashboard';
-              console.log('${data} and status is ${status}')
-          });
+          
         });
                 
 
@@ -27,7 +28,7 @@ include templates/default
   .container
       .row
         .col-md-12
-          h4 Productos reservados por [nombre_usuario]
+          h4 Productos reservados:
           .table-responsive
             table#mytable.table.table-bordred.table-striped
               thead
@@ -147,11 +148,11 @@ include templates/default
                                             a.btn.btn-success.pull-right(data-target='##{item.id_producto}', href='#', role='button', type='button', data-toggle='modal') Confirmar
       
         .col-md-12
-          h4.totalPedido #{total}
+          
           // Trigger the modal with a button
           button.btn.btn-success.btn-lg(type='button', data-toggle='modal', data-target='#myModal')
             i.fas.fa-shopping-cart
-            | Realizar Pedido
+            |   Realizar Pedido
           // Modal
           #myModal.modal.fade(role='dialog')
             .modal-dialog
