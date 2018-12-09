@@ -1,6 +1,6 @@
 var mysql = require('mysql');
-var amqp = require('amqplib/callback_api');
-var tarea = require('./new_task');
+//var amqp = require('amqplib/callback_api');
+//var tarea = require('./new_task');
 
 var connection = mysql.createConnection({
    host: '127.0.0.1',
@@ -55,7 +55,7 @@ var query = connection.query('INSERT INTO catalogo(nombre, tipo, descripcion, im
    }
  }
 );
-console.log(tarea.insert(req.body.nombre));
+//console.log(tarea.insert(req.body.nombre));
 }
 
 function updateCatalogo(req, res, next) {
@@ -69,7 +69,7 @@ var query = connection.query('UPDATE catalogo SET precio =? , nombre =? WHERE id
    }
  }
 );
-console.log(tarea.update(req.body.nombre));
+//console.log(tarea.update(req.body.nombre));
 }
 
 function deleteCatalogo(req, res, next) {
@@ -83,7 +83,7 @@ var query = connection.query('DELETE FROM catalogo WHERE id = ? ',[req.body.id],
    }
  }
 );
-console.log(tarea.delete(req.body.id));
+//console.log(tarea.delete(req.body.id));
 }
 
 function selectCatalogo(req, res, next) {
@@ -133,7 +133,7 @@ var query = connection.query('UPDATE Carrito SET cantidad =? , total =? WHERE id
    }
  }
 );
-console.log(tarea.update(req.body.nombre));
+//console.log(tarea.update(req.body.nombre));
 }
 
 function deleteCarrito(req, res, next) {
@@ -148,7 +148,7 @@ var query = connection.query('DELETE FROM Carrito WHERE id_producto = ? AND id_u
    }
  }
 );
-console.log(tarea.delete(req.body.id));
+//console.log(tarea.delete(req.body.id));
 }
 
 function vaciarCarrito(req, res, next) {
