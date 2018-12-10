@@ -10,15 +10,15 @@ router.get('/', function(req, res) {
 var tarea = require('../new_task');
 
 //catalogo
-router.get('/api/insert_product', console.log(tarea.insert(req.body.nombre)));
-router.get('/api/update_product', console.log(tarea.update(req.body.nombre)));
-router.get('/api/delete_product', console.log(tarea.delete(req.body.id)));
+router.get('/api/insert_product', tarea.insert);
+router.get('/api/update_product', tarea.update);
+router.get('/api/delete_product', tarea.delete);
 
 //carrito
-router.get('/api/insert_carro',console.log(tarea.insert_carro(req.body.id_producto, req.body.nombre_producto)));
-router.get('/api/update_carro',console.log(tarea.update_carro(req.body.nombre, req.body.id_producto)));
-router.get('/api/delete_carro',console.log(tarea.delete_carro(req.body.id_producto, req.body.id_usuario)));
-router.get('/api/vaciar_carro',console.log(tarea.vaciar_carro(req.body.id_usuario)));
+router.get('/api/insert_carro',tarea.insert_carro);
+router.get('/api/update_carro',tarea.update_carro);
+router.get('/api/delete_carro',tarea.delete_carro);
+router.get('/api/vaciar_carro',tarea.vaciar_carro);
 
 //usuario
 
