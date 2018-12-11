@@ -97,6 +97,7 @@ router.post('/', (req, res) => {
     console.log('En post de users');
     const { error }  = Joi.validate(req.body, User.joiSchema.post);
     if (error) {
+      console.log("error en request");
         return res.status(400).send({
             errors: error,
             message: badRequestMessage,

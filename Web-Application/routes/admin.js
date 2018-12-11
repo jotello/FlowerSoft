@@ -20,6 +20,8 @@ router.get('/admin', function(req, res, next){
 	//res.render('inicio', {title: 'Inicio', pedidos: array.data});
 });
 
+
+//TO DO
 router.get('/productos', function(req, res, next) {
 	//Rosa debe poblar esta vista con los productos
 	request('http://localhost:8080/catalogo/', function(error, response, body) {
@@ -31,33 +33,6 @@ router.get('/productos', function(req, res, next) {
 });
 
 router.get('/crear/pedido', function(req, res, next){
-	console.log('/crear/pedido');
-	if(global.wat === null) {
-		return res.redirect('/');
-	}
-	const bearerToken = global.wat;
-	request.get('http://localhost:8080/users/auth/check_credentials', {
-		'auth': {
-		  'bearer': bearerToken
-		}
-	  },
-	  (err, response, body) => {
-		if (err) {
-		  console.log('err:', err);
-		  error = {status: 500};
-		  return res.render('error', {message:'an error', error:error});
-		}
-		console.log('body:', body);
-		const verifyJWT = JSON.parse(body).resp;
-		console.log('verifyJWT:', verifyJWT);
-		console.log('global.wat:', global.wat);
-		if(verifyJWT.data === false) {
-			return res.redirect('/');
-		}
-		if(verifyJWT.data.rol !== 'admin') {
-			return res.redirect('/');
-		}
-		console.log('rendering admin/crear_pedido');
 		request('http://localhost:8080/pedidos/usuarios', function(error, response, body) {
 		var usuarios = JSON.parse(body);
         res.render('admin/crear_pedido', {title: 'Crear Pedido', usuarios: usuarios.data});
@@ -107,6 +82,7 @@ router.get('/producto/edit/:id', function(req, res, next){
     });
 });
 
+//TO DO - RESULTADO - VISTAS
 router.post('/crear/pedido', function(req, res, next){
 	var total = req.body.total;
 	var id_cliente = req.body.id_cliente;
@@ -123,6 +99,8 @@ router.post('/crear/pedido', function(req, res, next){
 	res.redirect('/admin');
 });
 
+
+//TO DO - RESULTADO - VISTAS
 router.post('/update/pedido', function(req, res, next){
 	var id = req.body.id;
 	var tipo = req.body.tipo;
