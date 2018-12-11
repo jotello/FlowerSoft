@@ -2,6 +2,7 @@ var mysql = require('mysql');
 //var amqp = require('amqplib/callback_api');
 //var tarea = require('./new_task');
 
+
 var connection = mysql.createConnection({
    host: '127.0.0.1',
    user: 'root',

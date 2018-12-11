@@ -27,8 +27,7 @@ module.exports = {
   createUsuario: createUsuario,
   updatePedido: updatePedido,
   removePedido: removePedido,
-  insertProductoEnPedido: insertProductoEnPedido,
-  insertCarritoenPedido: insertCarritoenPedido
+  insertProductoEnPedido: insertProductoEnPedido
 };
 
 function getAllUsuarios(req, res, next){
