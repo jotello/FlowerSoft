@@ -1,50 +1,41 @@
 var express = require('express');
 var router = express.Router();
 var request = require('request');
-
 var jwt = require('jsonwebtoken');
-
 var check = require('./index');
 
-
-router.get('/', function(req, res, next){
+router.get('/', function(req, res, next) {
 	console.log("user id:", req.user.id);
 	request('http://localhost:8080/pedidos/', function(error, response, body) {
 		var pedidos = JSON.parse(body);
 		return res.render('admin/dash', {title: 'Lista de pedidos', pedidos: pedidos.data});
 	});
 });
-
-router.get('/admin', function(req, res, next){
+/// Admin
+router.get('/admin', function(req, res, next) {
 		return res.redirect('/admin');
-	//res.render('inicio', {title: 'Inicio', pedidos: array.data});
 });
-
-
 //TO DO
 router.get('/productos', function(req, res, next) {
-	//Rosa debe poblar esta vista con los productos
 	request('http://localhost:8080/catalogo/', function(error, response, body) {
 		var catalogo = JSON.parse(body);
 		res.render('admin/productos', {title: 'Catalogo de Productos', catalogo: catalogo.data});
 		console.log(catalogo.data);
 	});
-  //res.render('dashboard', { title: 'Dashboard' });
 });
-
-router.get('/crear/pedido', function(req, res, next){
-		request('http://localhost:8080/pedidos/usuarios', function(error, response, body) {
+// CREAR/PEDIDO
+router.get('/crear/pedido', function(req, res, next) {
+	request('http://localhost:8080/pedidos/usuarios', function(error, response, body) {
 		var usuarios = JSON.parse(body);
-        res.render('admin/crear_pedido', {title: 'Crear Pedido', usuarios: usuarios.data});
-    	});
-	  });
+	  res.render('admin/crear_pedido', {title: 'Crear Pedido', usuarios: usuarios.data});
+	});
 });
-
+// CREAR/PRODUCTO
 router.get('/crear/producto', function(req, res, next) {
 		console.log('rendering admin/crear_producto');
 		return res.render('admin/crear_producto', { title: 'Crear Producto' });
 });
-
+// CREAR PRODUCTO
 router.post('/crearProducto', function(req, res, next){
 	var tipo = req.body.tipo;
 	var nombre = req.body.nombre;
@@ -62,7 +53,7 @@ router.post('/crearProducto', function(req, res, next){
 	res.redirect('/admin/productos');
 });
 
-router.get('/producto/delete/:id', function(req, res, next){
+router.get('/producto/delete/:id', function(req, res, next) {
 	var id = req.params.id;
 	request.delete('http://localhost:8080/catalogo/'+id).form({"id" : id}),
 		function optionalCallback(err, httpResponse, body){
@@ -72,18 +63,17 @@ router.get('/producto/delete/:id', function(req, res, next){
   			console.log('Delete successful!  Server responded with:', body);
 	};
 	res.redirect('/admin/productos');
-}); //Funcionando
-
-router.get('/producto/edit/:id', function(req, res, next){
+});
+// PRODUCTO/EDIT/:ID
+router.get('/producto/edit/:id', function(req, res, next) {
 	var id = req.params.id;
 	request('http://localhost:8080/catalogo/'+id, function(error, response, body) {
 		var producto = JSON.parse(body);
         res.render('edit_producto', {producto: producto.data});
     });
 });
-
 //TO DO - RESULTADO - VISTAS
-router.post('/crear/pedido', function(req, res, next){
+router.post('/crear/pedido', function(req, res, next) {
 	var total = req.body.total;
 	var id_cliente = req.body.id_cliente;
 	var cliente = req.body.cliente;
@@ -98,10 +88,8 @@ router.post('/crear/pedido', function(req, res, next){
 	};
 	res.redirect('/admin');
 });
-
-
 //TO DO - RESULTADO - VISTAS
-router.post('/update/pedido', function(req, res, next){
+router.post('/update/pedido', function(req, res, next) {
 	var id = req.body.id;
 	var tipo = req.body.tipo;
 	var nombre = req.body.nombre;
@@ -116,5 +104,4 @@ router.post('/update/pedido', function(req, res, next){
 	};
 	res.redirect('/admin/pedidos');
 });
-
 module.exports = router;

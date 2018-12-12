@@ -95,9 +95,11 @@ router.post('/login', passport.authenticate('local'), (req, res, next) => {
 //POST
 router.post('/', (req, res) => {
     console.log('En post de users');
+    console.log('req.body:',req.body);
     const { error }  = Joi.validate(req.body, User.joiSchema.post);
     if (error) {
       console.log("error en request");
+      console.log('error:', error);
         return res.status(400).send({
             errors: error,
             message: badRequestMessage,
