@@ -13,7 +13,7 @@ html
     link(href='//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css', rel='stylesheet')
     link(rel='stylesheet', href='/stylesheets/style.css')
     link(rel='stylesheet', href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css")
-    script(src="https://code.jquery.com/jquery-2.2.3.min.js")  
+    script(src="https://code.jquery.com/jquery-2.2.3.min.js")
     script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js")
   body
 
@@ -29,7 +29,7 @@ html
           #myNavbar.collapse.navbar-collapse
 
   .nav-side-menu
-      
+
       i.fa.fa-bars.fa-2x.toggle-btn(data-toggle='collapse', data-target='#menu-content')
       .menu-list
         ul#menu-content.menu-content.collapse.out
@@ -40,7 +40,7 @@ html
           li.collapsed(data-toggle='collapse', data-target='#products')
             a(href='#')
               i.fa.fa-lg
-              |  Pedidos 
+              |  Pedidos
               span.arrow
           ul#products.sub-menu.collapse
             li.active
@@ -50,16 +50,16 @@ html
           li.collapsed(data-toggle='collapse', data-target='#service')
             a(href='/dashboard/editUsuario')
               i.fa.fa-lg
-              |  Configuración 
+              |  Configuración
           li.collapsed(data-toggle='collapse', data-target='#new')
-            a(href='/dashboard/logout')
+            a(href='/logout')
               i.fa.fa-lg
               |  Logout
 
     center
-      .container-fluid 
+      .container-fluid
           .wrapper
-            form.form-signin(action='/dashboard/producto/update', method='POST')
+            form.form-signin(action='/admin/producto/#{producto.id}', method='POST')
               h2.form-signin-heading.text-center Editar pedido
               input.form-control(id='id', name='id', type='hidden', value='#{producto.id}')
               input.form-control(type='text', name='nombre', placeholder='#{producto.nombre}')

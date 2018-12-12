@@ -34,7 +34,7 @@ include templates/default
                 span.caret
               ul.dropdown-menu
                 li
-                  a(href='#') Ver productos
+                  a(href='/admin/productos') Ver productos
                 li.divider(role='separator')
                 li
                   a(href='#') Crear Producto
@@ -63,6 +63,6 @@ include templates/default
               p.description #{item.descripcion}
               .clearfix
                 .price Precio: #{item.precio} $
-                a.btn.btn-default.pull-left(href='#', role='button') Editar
-                a.btn.btn-danger.pull-center(href='#', role='button') Eliminar
+                a.btn.btn-default.pull-left(href='/admin/producto/edit/#{item.id}', role='button') Editar
+                a.btn.btn-danger.pull-center(href='/admin/producto/delete/#{item.id}', role='button') Eliminar
                 a.btn.btn-info.pull-right(href='#', role='button') Ver en detalle

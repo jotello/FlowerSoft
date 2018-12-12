@@ -24,14 +24,15 @@ router.get('/crear/pedido', function(req, res, next) {
 	});
 });
 // POST - CREAR/PEDIDO
-router.post('/crear/pedido', function(req, res, next) {
-	console.log('En POST /admin/crearProducto');
-	console.log('req.body:', body);
+router.post('/crearPedido', function(req, res, next) {
+	console.log('En POST /admin/crearPedido');
+	console.log('req.body:', req.body);
 	var total = req.body.total;
 	var id_cliente = req.body.id_cliente;
 	var cliente = req.body.cliente;
 	var detalle = req.body.detalle;
 	var fecha = req.body.fecha;
+	console.log('a solicitar POST localhost:8080/pedidos/');
 	request.post('http://localhost:8080/pedidos/').form({"total":total, "detalle":detalle, "fecha" :fecha, "ID_CLIENTE" : id_cliente, "nombre_cliente" : cliente}),
 	function optionalCallback(err, httpResponse, body) {
   		if (err) {
@@ -69,6 +70,12 @@ router.get('/crear/producto', function(req, res, next) {
 		console.log('rendering admin/crear_producto');
 		return res.render('admin/crear_producto', { title: 'Crear Producto' });
 });
+//GET - PRODUCTO/ID
+router.get('/producto/:id', (req, res) => {
+	console.log('EN GET PRODUCTO/ID');
+	console.log("id:", req.params.id);
+	var id = req.params.id;
+});
 // POST - CREAR PRODUCTO
 router.post('/crearProducto', function(req, res, next){
 	console.log('En POST /admin/crearProducto');
@@ -90,7 +97,9 @@ router.post('/crearProducto', function(req, res, next){
 });
 // DELETE PRODUCTO
 router.get('/producto/delete/:id', function(req, res, next) {
+	console.log('EN GET producto/delete/:id')
 	var id = req.params.id;
+	console.log('id', id);
 	request.delete('http://localhost:8080/catalogo/'+id).form({"id" : id}),
 		function optionalCallback(err, httpResponse, body){
 			if (err) {
@@ -102,10 +111,13 @@ router.get('/producto/delete/:id', function(req, res, next) {
 });
 // PRODUCTO/EDIT/:ID
 router.get('/producto/edit/:id', function(req, res, next) {
-	var id = req.params.id;
+	console.log('en Producto edit');
+	const id = req.params.id;
+	console.log('id:', id);
 	request('http://localhost:8080/catalogo/'+id, function(error, response, body) {
 		var producto = JSON.parse(body);
-        res.render('edit_producto', {producto: producto.data});
+		console.log('producto:', producto);
+    return res.render('/admin/edit_producto', {producto: producto.data});
     });
 });
 module.exports = router;

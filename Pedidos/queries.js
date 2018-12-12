@@ -101,17 +101,17 @@ function insertProductoEnPedido(req, res , next){
   var cantidad = req.body.cantidad;
   var nombre_producto = req.body.nombre_producto;
 
-  db.none('insert into pedidoxproducto(id_pedido, id_producto, total, cantidad, nombre_producto)' + 
+  db.none('insert into pedidoxproducto(id_pedido, id_producto, total, cantidad, nombre_producto)' +
     'values($1, $2, $3, $4, $5)', [id_pedido, id_producto, total, cantidad, nombre_producto])
-    .then(function(){ 
+    .then(function(){
       console.log('Ingresado un producto');
       res.status(200)
       .json({
         status: 'success'
       });
-    }) 
-    .catch(function(err) { 
-    return next(err); 
+    })
+    .catch(function(err) {
+    return next(err);
     });
 }
 
@@ -120,7 +120,12 @@ function insertCarritoenPedido(req, res, next){
 }
 
 function createPedido(req, res, next) {
-  var ID_CLIENTE = parseInt(req.body.id_usuario);
+  console.log('EN CREATE PEDIDO');
+  console.log('req.body:', req.body);
+  console.log('id_usuario?:', req.body.id_usuario);
+  console.log('id_cliente?:', req.body.id_cliente);
+  var ID_CLIENTE = parseInt(((id_usuario)? req.body.id_usuario : req.body.id_cliente));
+  console.log('ID_CLIENTE:', ID_CLIENTE);
   console.log(ID_CLIENTE);
   var total = parseInt(req.body.total);
   var detalle = String(req.body.detalle);
@@ -132,7 +137,7 @@ function createPedido(req, res, next) {
     .then(function (data) {
       var nombre_cliente = data.nombre;
       console.log('Encontre el nombre: ', nombre_cliente);
-      console.log('Creando pedido...'); 
+      console.log('Creando pedido...');
       db.none('INSERT INTO pedido (total, detalle, fecha_entrega, id_cliente, nombre_cliente)' +
           ' VALUES ($1, $2, $3, $4, $5)', [total, detalle, fecha, ID_CLIENTE, nombre_cliente])
           .then(function () {
@@ -147,7 +152,7 @@ function createPedido(req, res, next) {
                   .then(function() {
                     console.log('Relacion entre usuario y pedido lista.')
                     //Finalmente relacionamos los productos al pedido y vaciamos el carrito del usuario
-                                   
+
                   })
                   .catch(function(err) {
                     return next(err);
@@ -172,7 +177,7 @@ function createPedido(req, res, next) {
     data: data,
     message: 'Listo'
   });
-  
+
 
 
 }
@@ -230,7 +235,7 @@ function removePedido(req, res, next) {
                 .json({
                   status: 'success',
                   message: `Removed ${resul.rowCount} pedido`
-                }); 
+                });
               }
               else {
                 res.status(200)
@@ -239,7 +244,7 @@ function removePedido(req, res, next) {
                   message: 'No existe el registro'
                 });
               }
-              
+
               /* jshint ignore:end */
             })
             .catch(function (err) {
@@ -253,12 +258,12 @@ function removePedido(req, res, next) {
               message: 'No existe el registro'
             });
           }
-          
+
           /* jshint ignore:end */
         })
         .catch(function (err) {
           return next(err);
-        }); 
+        });
       } else {
         res.status(200)
             .json({
@@ -272,9 +277,8 @@ function removePedido(req, res, next) {
       return next(err);
     });
 
- 
 
-  
+
+
 
 }
-                 
