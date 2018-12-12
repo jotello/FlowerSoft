@@ -1,0 +1,126 @@
+include templates/default
+
+  include templates/nav
+
+  
+
+  .container
+      .row
+        .col-md-12
+          h4 Pedidos actuales:
+          .table-responsive
+            table#mytable.table.table-bordred.table-striped
+              thead
+                tr
+                  th ID
+                  th Total
+                  th Detalle
+                  th Fecha de Entrega
+                  th Ver productos
+                  th Editar
+                  th Eliminar
+              tbody
+              each item in pedidos
+                script(type='text/javascript').
+                    $(document).ready(function(){
+                        var idDelete ='confirmarBtnDelete'+#{item.id};
+                        var idFecha = 'fecha'+#{item.id} ;
+                        var idDetalle = 'detalle'+#{item.id} ;
+                        var idEdit ='confirmarBtnEdit'+#{item.id};
+                        
+                        document.getElementById(idDelete).addEventListener('click', function(){
+                            var url = 'http://localhost:3005/dashboard/pedido/delete/'+#{item.id};
+                            window.location.href = url;                          
+                        });
+                        
+                        document.getElementById(idEdit).addEventListener('click', function(){
+                            var fecha = document.getElementById(idFecha).value;
+                            console.log(fecha.length);
+                            var detalle = document.getElementById(idDetalle).value;
+                            console.log(detalle.length);
+                            const url = 'http://localhost:3005/dashboard/pedido/update';
+                            const data = {
+                              fecha: fecha,
+                              detalle: detalle,
+                              id: #{item.id}
+                            }
+                            $.post(url, data, function(data, status){
+                                window.location.href = 'http://localhost:3005/dashboard/pedidos';
+                                console.log('${data} and status is ${status}')
+                            }); 
+                                                  
+                        });
+                                
+
+                      }) 
+                tr
+                  td #{item.id}
+                  td #{item.total}
+                  td #{item.detalle}
+                  td #{item.fecha_entrega}
+                  td 
+                    p(data-placement='top', data-toggle='tooltip', title='Productos')
+                      button.btn.btn-primary.btn-xs(data-target='#products##{item.id}', href='#', role='button', type='button', data-toggle='modal')
+                        span.glyphicon.glyphicon-zoom-in
+                      div.modal.fade.product_view(id = 'products#{item.id}')
+                        .modal-dialog
+                          .modal-content
+                            .modal-header
+                              button.close(type='button', data-dismiss='modal') ×
+                              h3.modal-title Productos en el pedido #{item.id}
+                            .modal-body
+                              .card
+                                .row
+                                  h3 En construcción
+                                       
+                                
+                        
+
+                  td
+                    p(data-placement='top', data-toggle='tooltip', title='Edit')
+                      button.btn.btn-primary.btn-xs(data-target='#edit#{item.id}', role='button', type='button', data-toggle='modal')
+                        span.glyphicon.glyphicon-pencil
+                      div.modal.fade.product_view(id = 'edit#{item.id}')
+                        .modal-dialog
+                          .modal-content
+                            .modal-header
+                              button.close(type='button', data-dismiss='modal') ×
+                              h3.modal-title Editar Pedido
+                            .modal-body
+                              .card
+                                .row
+                                  .col-12.col-lg-6
+                                    form(action='', method='POST')
+                                      .form-group
+                                        label Ingrese la nueva fecha de entrega:
+                                        .input-group
+                                          input#date.textbox-n(placeholder='#{item.fecha_entrega}', type='text', onfocus="(this.type='date')")
+                                        label Puede editar los detalles en el pedido:
+                                        .input-group
+                                          input(id = 'detalle', type='text', name = 'detalle', placeholder= '#{item.detalle}')
+                                         p
+                                          a.btn.btn-success.pull-right(id = 'confirmarBtnEdit#{item.id}', role='button', type='button') Confirmar
+                                         
+                                    
+                  td
+                    p(data-placement='top', data-toggle='tooltip', title='Delete')
+                      button.btn.btn-danger.btn-xs(data-target='#delete#{item.id}', role='button', type='button', data-toggle='modal')
+                        span.glyphicon.glyphicon-trash
+                      div.modal.fade.product_view(id = 'delete#{item.id}')
+                        .modal-dialog
+                          .modal-content
+                            .modal-header
+                              button.close(type='button', data-dismiss='modal') ×
+                              h3.modal-title Detalle
+                            .modal-body
+                              .card
+                                .row
+                                  aside.col-sm-7
+                                    article.card-body.p-5
+                                      dl.item-property
+                                        h3 ¿Estas seguro que quieres eliminar el pedido #{item.id}?
+                                        dd
+                                          p
+                                            a.btn.btn-success.pull-right(id = 'confirmarBtnDelete#{item.id}', role='button', type='button') Confirmar
+      
+             

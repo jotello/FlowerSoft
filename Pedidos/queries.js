@@ -28,7 +28,8 @@ module.exports = {
   updatePedido: updatePedido,
   removePedido: removePedido,
   insertProductoEnPedido: insertProductoEnPedido,
-  insertCarritoenPedido: insertCarritoenPedido
+  insertCarritoenPedido: insertCarritoenPedido,
+  getPedidosByUsuario : getPedidosByUsuario
 };
 
 function getAllUsuarios(req, res, next){
@@ -77,6 +78,22 @@ function getSinglePedido(req, res, next) {
     });
 }
 
+function getPedidosByUsuario(req, res, next) {
+  var userID = parseInt(req.params.id);
+  db.any('select * from pedido where id_cliente = $1', userID)
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: 'Retrieved pedidos'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
+
 function insertProductoEnPedido(req, res , next){
   var id_pedido = req.body.id_pedido;
   var id_producto = req.body.id_producto;
@@ -96,6 +113,10 @@ function insertProductoEnPedido(req, res , next){
     .catch(function(err) { 
     return next(err); 
     });
+}
+
+function insertCarritoenPedido(req, res, next){
+
 }
 
 function createPedido(req, res, next) {
@@ -177,8 +198,8 @@ function createUsuario(req, res, next) {
 }
 
 function updatePedido(req, res, next) {
-  db.none('update pedido set total=$1, detalle=$2, fecha_entrega=$3, nombre_cliente=$4 where id=$5',
-    [req.body.total, req.body.detalle, req.body.fecha, req.body.cliente, parseInt(req.params.id)])
+  db.none('update pedido set detalle=$1, fecha_entrega=$2 where id=$3',
+    [req.body.detalle, req.body.fecha, parseInt(req.params.id)])
     .then(function () {
       res.status(200)
         .json({
@@ -193,18 +214,67 @@ function updatePedido(req, res, next) {
 
 function removePedido(req, res, next) {
   var pupID = parseInt(req.params.id);
-  db.result('delete from pedido where id = $1', pupID)
+  db.result('DELETE FROM pedidoxusuario WHERE id_pedido = $1', pupID)
     .then(function (result) {
       /* jshint ignore:start */
-      res.status(200)
-        .json({
-          status: 'success',
-          message: `Removed ${result.rowCount} pedido`
-        });
+      if(result.rowCount > 0){
+        db.result('DELETE FROM pedidoxproducto WHERE id_pedido = $1', pupID)
+        .then(function (r) {
+          /* jshint ignore:start */
+          if(r.rowCount > 0){
+            db.result('DELETE from pedido WHERE id= $1', pupID)
+            .then(function (resul) {
+              /* jshint ignore:start */
+              if(resul.rowCount > 0){
+               res.status(200)
+                .json({
+                  status: 'success',
+                  message: `Removed ${resul.rowCount} pedido`
+                }); 
+              }
+              else {
+                res.status(200)
+                .json({
+                  status: 'Error',
+                  message: 'No existe el registro'
+                });
+              }
+              
+              /* jshint ignore:end */
+            })
+            .catch(function (err) {
+              return next(err);
+            });
+          }
+          else{
+            res.status(200)
+            .json({
+              status: 'Error',
+              message: 'No existe el registro'
+            });
+          }
+          
+          /* jshint ignore:end */
+        })
+        .catch(function (err) {
+          return next(err);
+        }); 
+      } else {
+        res.status(200)
+            .json({
+              status: 'Error',
+              message: 'No existe el registro'
+            });
+      }
       /* jshint ignore:end */
     })
     .catch(function (err) {
       return next(err);
     });
+
+ 
+
+  
+
 }
                  
