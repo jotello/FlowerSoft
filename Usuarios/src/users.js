@@ -155,6 +155,23 @@ router.post('/', (req, res) => {
                       data: user
                 });
              });
+            request.post({url: 'http://localhost:3006/api/data_user',
+            form: {id: user._id, rut: user.rut, nombre: user.names, apellido: user.family_name, rol: user.rol,
+              email: user.email, password: user.password}},
+              (err, response, body) => {
+                  if(err) {
+                      console.log("error:", err);
+                  }
+                console.log("response status:", response.statusCode)
+                console.log("BODY:", body);
+
+                console.log('user allegedly succesfully created');
+                console.log('theUser:', user);
+                return res.status(200).json({
+                      message: "success",
+                      data: user
+                });
+             });
         });
     });
 });
