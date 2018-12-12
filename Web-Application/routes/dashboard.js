@@ -69,17 +69,19 @@ router.get('/pedidos', function(req, res, next){
 	var id = req.user.id;
 	request('http://localhost:8080/pedidos/usuario/'+id, function(error, response, body) {
 		var pedidos = JSON.parse(body);
+		console.log('Cantidad de pedidos: '+pedidos.data.length);
         res.render('ver_pedidos', {title: 'Lista de pedidos', pedidos: pedidos.data});
     });
 	//res.render('inicio', {title: 'Inicio', pedidos: array.data});
 });
 
+//Crear Pedido
 router.post('/pedido', function(req, res, next){
 	var id_usuario = req.user.id;
 	var fecha = req.body.fecha;
 	var detalle = req.body.detalle;
 	var total = req.body.total;
-
+	//Creamos el pedido en el servicio Pedidos
 	request.post('http://localhost:8080/pedidos/').form({"id_usuario": id_usuario, "fecha": fecha, "detalle": detalle, "total": total}),
 	function optionalCallback(err, httpResponse, body){
 		if(err) {
@@ -88,37 +90,10 @@ router.post('/pedido', function(req, res, next){
 		
     };
 
-    request.post('http://localhost:8080/pedidos/carrito/'+id_usuario).form(productos_global),
-    function optionalCallback(err, httpResponse, body){
-    	if(err){
-    		return console.error('Fallo envio de carrito: ', err);
-    	}
-    };
-	 
-	
-	request('http://localhost:8080/catalogo/vaciar/carrito').form({"id_usuario": id_usuario}),
-      function optionalCallback(err, httpResponse, body) {
-        if (err) {
-          return console.error('No se pudo vaciar el carrito:', err);
-        }
-        console.log('Se pudo vaciar el carrio! Server respondio :', body);
-    };
-    
     res.redirect('/dashboard');
 	
 });
 
-function postProductIntoPedido(id, producto){
-	var id_producto = producto.id_producto;
-	var total = producto.total;
-	var cantidad = producto.cantidad;
-	var nombre_producto = producto.nombre_producto;
-	request.post('http://localhost:8080/pedidos/producto')
-	.form({"id_producto": id_producto, "id_pedido":id,"total":total, "cantidad": cantidad,"nombre_producto":nombre_producto}),
-	function(err, httpResponse, body){
-		return httpResponse;
-	};
-}
 
 
 router.get('/pedido/delete/:id', function(req, res, next){
@@ -133,15 +108,7 @@ router.get('/pedido/delete/:id', function(req, res, next){
 		}
 	);
 	
-}); //Funcionando
-
-router.get('/pedido/edit/:id', function(req, res, next){
-	var id = req.params.id;
-	request('http://localhost:8080/pedidos/'+id, function(error, response, body) {
-		var pedido = JSON.parse(body);
-        res.render('edit_pedido', {pedido: pedido.data});
-    });
-});
+}); 
 
 router.post('/pedido/update', function(req, res, next){
 	var id = req.body.id;
@@ -154,13 +121,9 @@ router.post('/pedido/update', function(req, res, next){
     		return console.error('upload failed:', err);
   		}
   		console.log('Upload successful!  Server responded with:', body);
-  		res.redirect('/dashboard/pedidos');
+  		
 	};
-	
-});
-
-router.get('/crearPedido', function(req, res, next) {
-  res.render('crear_pedido', { title: 'Crear Pedido' });
+	res.redirect('/dashboard/pedidos');
 });
 
 router.post('/crearPedido', function(req, res, next){

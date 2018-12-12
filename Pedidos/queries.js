@@ -27,10 +27,27 @@ module.exports = {
   createUsuario: createUsuario,
   updatePedido: updatePedido,
   removePedido: removePedido,
-  insertProductoEnPedido: insertProductoEnPedido,
-  insertCarritoenPedido: insertCarritoenPedido,
-  getPedidosByUsuario : getPedidosByUsuario
+  getPedidosByUsuario : getPedidosByUsuario,
+  getProductosByPedido: getProductosByPedido
 };
+
+var pedidos = []; //Variable global para guardar los pedidos
+
+function getProductosByPedido(req, res, next) {
+  var pedidoID = parseInt(req.params.id);
+  db.any('SELECT * FROM pedidoxproducto WHERE id_pedido = $1', pedidoID)
+    .then(function (data) {
+      res.status(200)
+        .json({
+          status: 'success',
+          data: data,
+          message: 'Retrieved pedidos'
+        });
+    })
+    .catch(function (err) {
+      return next(err);
+    });
+}
 
 function getAllUsuarios(req, res, next){
   db.any('select * from Usuario')
@@ -47,15 +64,50 @@ function getAllUsuarios(req, res, next){
     });
 }
 
+function getProductosByPedidoNative(id_pedido, pedido){
+  console.log('Obteniendo productos del pedido'+ id_pedido);
+  db.any('SELECT * FROM pedidoxproducto WHERE id_pedido = $1', id_pedido)
+    .then(function (data) {
+      console.log('Tiene estos productos: '+ data.length);
+      const p = {
+        'pedido': pedido,
+        'productos': data 
+      }
+      pedidos.push(p);
+      return true;
+    })
+    .catch(function (err) {
+      return err;
+    }); 
+}
+
+
+
 function getAllPedidos(req, res, next) {
+  
   db.any('select * from Pedido')
     .then(function (data) {
-      res.status(200)
-        .json({
-          status: 'success',
-          data: data,
-          message: 'Retrieved ALL pedidos'
-        });
+      function processQ() {
+        // ... this will be called on each .push
+        if(pedidos.length == data.length){
+              res.status(200)
+                .json({
+                  status: 'success',
+                  data: pedidos,
+                  message: 'Retrieved ALL pedidos'
+                });
+              pedidos = [];
+            }
+      }
+
+      pedidos.push = function() { Array.prototype.push.apply(this, arguments);  processQ();};
+      for(var i =0; i < data.length; i++){
+        var id_pedido = data[i].id;
+        console.log('Trabajando con el pedido '+id_pedido); 
+        getProductosByPedidoNative(id_pedido, data[i]);
+      }
+
+      
     })
     .catch(function (err) {
       return next(err);
@@ -115,17 +167,57 @@ function insertProductoEnPedido(req, res , next){
     });
 }
 
-function insertCarritoenPedido(req, res, next){
+async function insertProduct(producto, id_pedido){
+  var id_producto = parseInt(producto.id_producto);
+  console.log('ID PRODUCTO: '+ id_producto);
+  var nombre_producto = producto.nombre_producto;
+  var cantidad = parseInt(producto.cantidad);
+  var total = parseInt(producto.total);
+  console.log('insertando producto en pedido....');
+  db.none('INSERT INTO pedidoxproducto(id_pedido, id_producto, nombre_producto, total, cantidad)' +
+    'VALUES ( $1, $2, $3, $4, $5)', [id_pedido, id_producto, nombre_producto, total, cantidad])
+    .then(function(){
+      //Nada
+      console.log('ProductoxPedido creado')
+      return true;
+    })
+    .catch(function(err){
+      console.log('Error: '+err);
+      return err;
+    });
 
+}
+
+function insertCarrito(id_pedido, id_usuario){
+  var productos; 
+  request('http://localhost:8080/catalogo/carrito/'+ id_usuario, function(err, resp, bod){
+      
+      productos = JSON.parse(bod).data;
+      console.log('Productos encontrados');
+      console.log(productos);
+      var i;
+      for (i = 0; i < productos.length; i++) {
+        console.log('Producto: '+productos[i].nombre_producto);
+        insertProduct(productos[i], id_pedido);
+        console.log('Producto '+i+' insertado.');
+        continue;
+      } 
+      
+      request('http://localhost:8080/catalogo/vaciar/carrito').form({"id_usuario": id_usuario}),
+      function optionalCallback(err, httpResponse, body) {
+        if (err) {
+          return console.error('No se pudo vaciar el carrito:', err);
+        }
+        console.log('Se pudo vaciar el carrio! Server respondio :', body);
+      };
+    });
 }
 
 function createPedido(req, res, next) {
   var ID_CLIENTE = parseInt(req.body.id_usuario);
-  console.log(ID_CLIENTE);
   var total = parseInt(req.body.total);
   var detalle = String(req.body.detalle);
   var fecha = String(req.body.fecha);
-  var id_pedido = 0;
   //Consulta para obtener el nombre del cliente
   console.log('Buscando nombre...');
   db.one('select nombre from usuario where id = $1 ', ID_CLIENTE)
@@ -140,14 +232,20 @@ function createPedido(req, res, next) {
             //Obteniendo el id del pedido recien creado
             db.one('SELECT id FROM  pedido ORDER BY id DESC LIMIT 1')
               .then(function(data) {
-                id_pedido = parseInt(data.id);
+                var id_pedido = parseInt(data.id);
                 console.log('Id del ultimo pedido: '+id_pedido);
                 //Relacionando el pedido con el cliente
                 db.none('insert into pedidoxusuario(id_pedido, id_usuario)' + 'values($1, $2)', [id_pedido, ID_CLIENTE])
                   .then(function() {
                     console.log('Relacion entre usuario y pedido lista.')
                     //Finalmente relacionamos los productos al pedido y vaciamos el carrito del usuario
-                                   
+                    console.log('Ahora relacionaremos el carrito con el pedido...')
+                    insertCarrito(id_pedido, ID_CLIENTE);   
+                    res.status(200)
+                    .json({
+                      status: 'success',
+                      message: 'Listo'
+                    });            
                   })
                   .catch(function(err) {
                     return next(err);
@@ -165,13 +263,6 @@ function createPedido(req, res, next) {
     .catch(function(err) {
       return next(err);
   });
-
-  res.status(200)
-  .json({
-    status: 'success',
-    data: data,
-    message: 'Listo'
-  });
   
 
 
@@ -181,8 +272,7 @@ function createUsuario(req, res, next) {
   console.log('creando pedidos/usuario');
   console.log("req.body:", req.body);
   db.none('INSERT INTO Usuario (ID, rut, nombre, apellido, rol, email, password)' +
-      ' VALUES (${id}, ${rut}, ${nombre}, ${apellido}, ${rol}, ${email}, ${password})',
-      req.body)
+      ' VALUES (${id}, ${rut}, ${nombre}, ${apellido}, ${rol}, ${email}, ${password})',req.body)
       .then(function () {
         res.status(200)
         .json({
