@@ -95,8 +95,11 @@ router.post('/login', passport.authenticate('local'), (req, res, next) => {
 //POST
 router.post('/', (req, res) => {
     console.log('En post de users');
+    console.log('req.body:',req.body);
     const { error }  = Joi.validate(req.body, User.joiSchema.post);
     if (error) {
+      console.log("error en request");
+      console.log('error:', error);
         return res.status(400).send({
             errors: error,
             message: badRequestMessage,
@@ -138,6 +141,23 @@ router.post('/', (req, res) => {
             console.log("email:", user.email);
             console.log("password:", user.password);
             request.post({url: 'http://localhost:3002/api/pedidos/usuarios',
+            form: {id: user._id, rut: user.rut, nombre: user.names, apellido: user.family_name, rol: user.rol,
+              email: user.email, password: user.password}},
+              (err, response, body) => {
+                  if(err) {
+                      console.log("error:", err);
+                  }
+                console.log("response status:", response.statusCode)
+                console.log("BODY:", body);
+
+                console.log('user allegedly succesfully created');
+                console.log('theUser:', user);
+                return res.status(200).json({
+                      message: "success",
+                      data: user
+                });
+             });
+            request.post({url: 'http://localhost:3006/api/data_user',
             form: {id: user._id, rut: user.rut, nombre: user.names, apellido: user.family_name, rol: user.rol,
               email: user.email, password: user.password}},
               (err, response, body) => {
