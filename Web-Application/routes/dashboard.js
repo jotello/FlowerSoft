@@ -67,14 +67,14 @@ router.post('/carrito/agregar', function(req, res, next){
   		}
   		console.log('Upload successful!  Server responded with:', body);
 	};
-	res.redirect('/dashboard/');
+	res.redirect('/dashboard');
 });
 //GET - PEDIDOS
 router.get('/pedidos', function(req, res, next){
-	console.log("user id:", req.user.id);
-	request('http://localhost:8080/pedidos/', function(error, response, body) {
+	var id = req.user.id;
+	request('http://localhost:8080/pedidos/usuario/'+id, function(error, response, body) {
 		var pedidos = JSON.parse(body);
-        res.render('dashboard', {title: 'Lista de pedidos', pedidos: pedidos.data});
+        res.render('ver_pedidos', {title: 'Lista de pedidos', pedidos: pedidos.data});
     });
 	//res.render('inicio', {title: 'Inicio', pedidos: array.data});
 });
@@ -119,7 +119,12 @@ function postProductIntoPedido(id, producto){
 		return httpResponse;
 	};
 }
+<<<<<<< HEAD
 // GET - /PEDIDO/DELETE/:id
+=======
+
+
+>>>>>>> 68af9fb2d6bec655bc9277b4b5a2be32a553b088
 router.get('/pedido/delete/:id', function(req, res, next){
 	var id = req.params.id;
 	request.delete('http://localhost:8080/pedidos/'+id,
@@ -128,11 +133,18 @@ router.get('/pedido/delete/:id', function(req, res, next){
     		return console.error('Delete failed:', err);
   			}
   			console.log('Delete successful!  Server responded with:', body);
+  			res.redirect('/dashboard/pedidos');
 		}
 	);
+<<<<<<< HEAD
 	res.redirect('/dashboard/pedidos');
 });
 //GET - /PEDIDO/EDIT/:id
+=======
+	
+}); //Funcionando
+
+>>>>>>> 68af9fb2d6bec655bc9277b4b5a2be32a553b088
 router.get('/pedido/edit/:id', function(req, res, next){
 	var id = req.params.id;
 	request('http://localhost:8080/pedidos/'+id, function(error, response, body) {
@@ -145,18 +157,16 @@ router.post('/pedido/update', function(req, res, next){
 	var id = req.body.id;
 	var detalle = req.body.detalle;
 	var fecha = req.body.fecha;
-	var total = req.body.total;
-	var id_cliente = req.body.id_cliente;
-	var cliente = req.body.cliente;
 
-	request.put('http://localhost:8080/pedidos/'+id).form({"total" : total, "detalle":detalle, "fecha" :fecha, "cliente" : cliente}),
+	request.put('http://localhost:8080/pedidos/'+id).form({"detalle":detalle, "fecha" :fecha}),
 	function optionalCallback(err, httpResponse, body) {
   		if (err) {
     		return console.error('upload failed:', err);
   		}
   		console.log('Upload successful!  Server responded with:', body);
+  		res.redirect('/dashboard/pedidos');
 	};
-	res.redirect('/dashboard/pedidos');
+	
 });
 // GET - CREAR PEDIDO
 router.get('/crearPedido', function(req, res, next) {
