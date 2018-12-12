@@ -50,12 +50,12 @@ include templates/default
                   a(href='#') Salir
         // /.navbar-collapse
         // /.container-fluid
-  
+
 
   center
-    .container-fluid 
+    .container-fluid
         .wrapper
-          form.form-signin(action='/dashboard/crearPedido', method='POST')
+          form.form-signin(action='/admin/crearPedido', method='POST')
             h2.form-signin-heading.text-center Creación de pedido
             .form-group
               label(for='exampleFormControlInput1') Ingrese el detalle del pedido
@@ -63,19 +63,19 @@ include templates/default
             .form-group
               label(for='exampleFormControlInput1') Ingrese el total
               input#exampleFormControlInput1.form-control(type='number', placeholder='0')
-            .form-group.input-append.date.form_datetime(data-date='2019-01-01T15:25:00Z')
+            .form-group.input-append.date.form_datetime(id="crearPedidoFormDatetime")
               label(for='exampleFormControlInput1') Ingrese la fecha de entrega
-               input.form_datetime(size='16', type='date', value='2012-06-15 14:45', readonly='')      
+               input.form_datetime( id="crearPedidoDate", size='16', type='date', value='2012-06-15')
+               span.add-on
+                  i.icon-th
             .form-group
               label(for='exampleFormControlSelect1') Seleccione un Cliente
               select#exampleFormControlSelect1.form-control
                 option(value='')
                 each item in usuarios
                   option(value='#{item.id}') #{item.nombre} - #{item.rut}
-            
-      
-            button.btn.btn-lg.btn-block(type='submit') Enviar
 
-  
+
+            button.btn.btn-lg.btn-block(type='submit') Enviar
 
   //Desplegar el catalogo para agregar productos al pedido
