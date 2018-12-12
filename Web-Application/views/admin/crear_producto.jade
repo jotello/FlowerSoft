@@ -54,9 +54,9 @@ include templates/default
 
 
     center
-      .container-fluid 
+      .container-fluid
           .wrapper
-            form.form-signin(action='/dashboard/crearProducto', method='POST')
+            form.form-signin(action='/admin/crearProducto', method='POST')
               h2.form-signin-heading.text-center Creación de producto
               //Cambiar el tipo por un dropdown con "Flores, Arreglo y Otro"
               input.form-control(type='text', name='tipo', placeholder='Ingrese el tipo (flores, arreglo, etc.)', required='', autofocus='')
@@ -64,5 +64,5 @@ include templates/default
               input.form-control(type='text', name='descrip', placeholder='Ingrese la descripción', required='', autofocus='')
               input.form-control(type='text', name='imagen', placeholder='Ingrese la imagen', required='', autofocus='')
               input.form-control(type='text', name='precio', placeholder='Ingrese el precio del producto unitario', required='', autofocus='')
-        
+
               button.btn.btn-lg.btn-block(type='submit') Enviar

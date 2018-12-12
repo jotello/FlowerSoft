@@ -45,6 +45,8 @@ var query = connection.query('SELECT * FROM catalogo', function(error, result){
 }
 
 function insertCatalogo(req, res, next) {
+  console.log('INSERTANDO CATALOGO');
+  console.log('req.body:', req.body);
 var query = connection.query('INSERT INTO catalogo(nombre, tipo, descripcion, imagen, precio) VALUES(?, ?, ?, ?, ?)',
    [req.body.nombre, req.body.tipo, req.body.descripcion, req.body.imagen, req.body.precio],
    function(error, result){
