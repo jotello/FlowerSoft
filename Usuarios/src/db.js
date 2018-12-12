@@ -54,7 +54,7 @@ module.exports.connectToUsersDatabase = function () {
     })
     .catch(err => console.log(err));
 };
-
+//CREATE USER
 module.exports.createUser = function (userData, callback) {
     console.log('createUser');
     let newUser = new User();
@@ -77,12 +77,11 @@ module.exports.createUser = function (userData, callback) {
         newUser.family_name = userData.family_name;
         newUser.email = userData.email;
         newUser.profile_name = this.makeProfileName(newUser.email);
-        if(userData.rol){
+        if(userData.rol) {
             newUser.rol = userData.rol;
         }
         bcrypt.genSalt(10, (err, salt) => {
             if(err) throw err;
-
             bcrypt.hash(userData.password, salt, (err, hash) => {
                 console.log('hash:', hash);
                 if (err) throw err;
@@ -93,22 +92,22 @@ module.exports.createUser = function (userData, callback) {
         });
     });
 };
-
+//FIND ALL USERS
 module.exports.findAllUsers = function (callback) {
     User.find(callback);
  };
-
+//FIND USER BY ID
  module.exports.findUserById = function (id, callback) {
     User.findById(id, callback);
+ };
+//FIND USER BY EMAIL
+ module.exports.findUserByEmail = function (email, callback) {
+    query = {email: email};
+    User.findOne(query, callback);
  };
 
  module.exports.findUserByProfileName = function (profile_name, callback) {
     query = {profile_name: profile_name};
-    User.findOne(query, callback);
- };
-
- module.exports.findUserByEmail = function (email, callback) {
-    query = {email: email};
     User.findOne(query, callback);
  };
 
@@ -206,13 +205,3 @@ module.exports.deleteUserById = function (id, callback) {
          callback(null, isMatch);
      });
  };
-
- //LOGIN - SESSIONS
-
- module.exports.findSessionById = function (session_id, callback) {
-     Session.findById(session_id, callback);
- }
-
- module.exports.findAllSessions = function (callback) {
-    Session.find(callback);
-}

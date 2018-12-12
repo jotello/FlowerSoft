@@ -34,7 +34,7 @@ CREATE TABLE Usuario(
 CREATE TABLE PedidoxUsuario(
 	ID_PEDIDO INT REFERENCES Pedido(ID) ,
 	ID_USUARIO INT REFERENCES Usuario(ID),
-  fecha_pedido TIMESTAMP default CURRENT_TIMESTAMP, 
+  fecha_pedido TIMESTAMP default CURRENT_TIMESTAMP,
 	PRIMARY KEY (ID_PEDIDO, ID_USUARIO)
 );
 
@@ -42,8 +42,8 @@ CREATE TABLE PedidoxProducto(
 	ID_PEDIDO INT REFERENCES Pedido(ID),
 	ID_PRODUCTO INT REFERENCES Producto(ID),
   total int,
-  cantidad int, 
-  nombre_producto VARCHAR, 
+  cantidad int,
+  nombre_producto VARCHAR,
 	PRIMARY KEY(ID_PEDIDO, ID_PRODUCTO)
 );
 
@@ -52,4 +52,3 @@ INSERT INTO Usuario (ID, rut, nombre, apellido, rol, email, password)
 
 INSERT INTO Usuario (ID, rut, nombre, apellido, rol, email, password)
   VALUES ('2', '6.411.539-1', 'Juan', 'Sanchez', 'cliente', 'juan@gmail.com', '$2a$10$OXIxBEC8wfQ/dspUT3yDDOM.GDOBWK3j.2oX2L8xZQXY1ZyGMH9Ru');
-

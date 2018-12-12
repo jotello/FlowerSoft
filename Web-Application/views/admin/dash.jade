@@ -1,6 +1,5 @@
 include templates/default
-
-
+  include templates/nav
 
   .container-fluid
       h4.center Lista de Pedidos
@@ -27,8 +26,5 @@ include templates/default
                 a.btn.btn-primary-btn-xs(href='/dashboard/pedido/edit/#{item.id}', type='button', onclick='window.location.reload()')
                   span.glyphicon.glyphicon-pencil
               td
-                a.btn.btn-primary-btn-xs(href='/dashboard/pedido/delete/#{item.id}', type='button', onclick='window.location.reload()') 
+                a.btn.btn-primary-btn-xs(href='/dashboard/pedido/delete/#{item.id}', type='button', onclick='window.location.reload()')
                   span.glyphicon.glyphicon-trash
-
-
-  

@@ -2,18 +2,14 @@ const path = require('path');
 const Joi = require('joi');
 const express = require('express');
 const router = express.Router();
-
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const User = require(path.join(__dirname, 'db'));
-
 const notFoundMessage = 'User not found';
 const badRequestMessage = 'invalid parameters';
 const emailExistMessage = 'Email in use';
-
 const myauth = require(path.join(__dirname, 'auth'));
 const jwt = require('jsonwebtoken');
-
 const request = require('request');
 //PASSPORT
 passport.use(new LocalStrategy({
@@ -44,12 +40,10 @@ passport.use(new LocalStrategy({
             });
         });
     }));
-
 passport.serializeUser(function (user, done) {
     console.log('serialiazing');
     done(null, user.id);
 });
-
 passport.deserializeUser(function (id, done) {
     console.log('deserialiazing');
     User.findUserById(id, function (err, user) {
@@ -147,33 +141,50 @@ router.post('/', (req, res) => {
                   if(err) {
                       console.log("error:", err);
                   }
-                console.log("response status:", response.statusCode)
+                  console.log('PEDIDOS');
                 console.log("BODY:", body);
 
                 console.log('user allegedly succesfully created');
                 console.log('theUser:', user);
+                request.post({url: 'http://localhost:3006/api/data_user',
+                form: {id: user._id, rut: user.rut, nombre: user.names, apellido: user.family_name, rol: user.rol,
+                  email: user.email, password: user.password}},
+                  (err, response, body) => {
+                    console.log('EN SAGA');
+                      if(err) {
+                        console.log("error:", err);
+                        return res.status(500).json({
+                          message: 'error al conectar con 3006/api/dada_user\nrevisar bases de datos',
+                          data: null
+                        });
+                }});
                 return res.status(200).json({
                       message: "success",
                       data: user
                 });
              });
-            request.post({url: 'http://localhost:3006/api/data_user',
+
+            /*request.post({url: 'http://localhost:3006/api/data_user',
             form: {id: user._id, rut: user.rut, nombre: user.names, apellido: user.family_name, rol: user.rol,
               email: user.email, password: user.password}},
               (err, response, body) => {
+                console.log('EN SAGA');
                   if(err) {
-                      console.log("error:", err);
-                  }
-                console.log("response status:", response.statusCode)
+                    console.log("error:", err);
+                    return res.status(500).json({
+                      message: 'error al conectar con 3006/api/dada_user\nrevisar bases de datos',
+                      data: null
+                    });
+                }
+                console.log(((response)? 'statusCode: ' + response.statusCode : 'response: undefined'));
                 console.log("BODY:", body);
-
                 console.log('user allegedly succesfully created');
                 console.log('theUser:', user);
                 return res.status(200).json({
                       message: "success",
                       data: user
                 });
-             });
+             });*/
         });
     });
 });
@@ -273,7 +284,7 @@ router.put('/:id', (req, res) => {
         });
     });
 });
-
+//GET -AUTH/CHECK_CREDENTIALS
 router.get('/auth/check_credentials', (req, res) => {
     console.log("CHECKING CREDENTIALS");
     request.post('http://localhost:3003/api/auth/check_credentials', {
@@ -302,7 +313,7 @@ router.get('/auth/check_credentials', (req, res) => {
             });
     });
 });
-
+// FUNCTION - checkCredentials
 function checkCredentials(req, res, next) {
     console.log("CHECKING CREDENTIALS MIDDLEWARE");
     request.post('http://localhost:3003/api/auth/check_credentials', {
@@ -336,5 +347,4 @@ function checkCredentials(req, res, next) {
           next();
     });
 }
-
 module.exports = router;
