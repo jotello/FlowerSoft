@@ -74,11 +74,14 @@ router.get('/pedidos', function(req, res, next){
 	var id = req.user.id;
 	request('http://localhost:8080/pedidos/usuario/'+id, function(error, response, body) {
 		var pedidos = JSON.parse(body);
+		console.log('Cantidad de pedidos: '+pedidos.data.length);
         res.render('ver_pedidos', {title: 'Lista de pedidos', pedidos: pedidos.data});
     });
 	//res.render('inicio', {title: 'Inicio', pedidos: array.data});
 });
-//POST PEDIDO
+
+//Crear Pedido
+
 router.post('/pedido', function(req, res, next){
 	console.log('en POST dashboard/pedido');
 	console.log('req.body:', req.body);
@@ -86,11 +89,16 @@ router.post('/pedido', function(req, res, next){
 	var fecha = req.body.fecha;
 	var detalle = req.body.detalle;
 	var total = req.body.total;
+<<<<<<< HEAD
+=======
+	//Creamos el pedido en el servicio Pedidos
+>>>>>>> 3752f941032da1fdf14a53c5d97ddc6691bb4437
 	request.post('http://localhost:8080/pedidos/').form({"id_usuario": id_usuario, "fecha": fecha, "detalle": detalle, "total": total}),
 	function optionalCallback(err, httpResponse, body){
 		if(err) {
 			return console.error('Upload de pedido fallo: ', err);
 		}
+<<<<<<< HEAD
   };
     request.post('http://localhost:8080/pedidos/carrito/'+id_usuario).form(productos_global),
     function optionalCallback(err, httpResponse, body){
@@ -120,6 +128,15 @@ function postProductIntoPedido(id, producto){
 	};
 }
 // GET - /PEDIDO/DELETE/:id
+=======
+    };	
+
+    res.redirect('/dashboard');
+});
+
+
+
+>>>>>>> 3752f941032da1fdf14a53c5d97ddc6691bb4437
 router.get('/pedido/delete/:id', function(req, res, next){
 	var id = req.params.id;
 	request.delete('http://localhost:8080/pedidos/'+id,
@@ -131,6 +148,7 @@ router.get('/pedido/delete/:id', function(req, res, next){
   			res.redirect('/dashboard/pedidos');
 		}
 	);
+<<<<<<< HEAD
 	res.redirect('/dashboard/pedidos');
 });
 //GET - /PEDIDO/EDIT/:id
@@ -141,7 +159,15 @@ router.get('/pedido/edit/:id', function(req, res, next){
         res.render('edit_pedido', {pedido: pedido.data});
     });
 });
+=======
+
+	
+}); 
+
+
+>>>>>>> 3752f941032da1fdf14a53c5d97ddc6691bb4437
 // POST - /PEDIDO/UPDATE
+
 router.post('/pedido/update', function(req, res, next){
 	var id = req.body.id;
 	var detalle = req.body.detalle;
@@ -153,14 +179,16 @@ router.post('/pedido/update', function(req, res, next){
     		return console.error('upload failed:', err);
   		}
   		console.log('Upload successful!  Server responded with:', body);
-  		res.redirect('/dashboard/pedidos');
+  		
 	};
 
+<<<<<<< HEAD
+=======
+	res.redirect('/dashboard/pedidos');
+	
+>>>>>>> 3752f941032da1fdf14a53c5d97ddc6691bb4437
 });
-// GET - CREAR PEDIDO
-router.get('/crearPedido', function(req, res, next) {
-  res.render('crear_pedido', { title: 'Crear Pedido' });
-});
+
 //POST - CREAR PEDIDO
 router.post('/crearPedido', function(req, res, next){
 	var total = req.body.total;

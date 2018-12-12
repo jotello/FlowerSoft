@@ -1,4 +1,5 @@
 var amqp = require('amqplib/callback_api');
+var request = require('request');
 
 exports.insert= function (producto){
 	amqp.connect('amqp://localhost', function(err, conn) {
@@ -111,7 +112,7 @@ exports.new_user= function (req, res, next){
 	amqp.connect('amqp://localhost', function(err, conn) {
 	  conn.createChannel(function(err, ch) {
 	    var q = 'usuarios';
-	    var msg = process.argv.slice(2).join(' ') || "Se ha agregado un nuevo usuario con "+ id + rut+ nombre+ apellido+ rol+ password;
+	    var msg = process.argv.slice(2).join(' ') || "Se ha agregado un nuevo usuario con id: "+ id +", rut: " +rut+", nombre: " +nombre+ ", apellido: "+apellido+ ", rol: "+rol+ ", contrasena: "+password;
 
 	    ch.assertQueue(q, {durable: true});
 	    ch.sendToQueue(q, new Buffer(msg), {persistent: true});
@@ -119,4 +120,12 @@ exports.new_user= function (req, res, next){
 	  });
 	  setTimeout(function() { conn.close(); process.exit(0) }, 500);
 	});
+
+	request.post('http://localhost:3002/api/pedidos/usuarios'),form({"id": id, "rut": rut, "nombre": nombre, "apellido": apellido, "rol":rol, "password": password}),
+	function optionalCallback(err, httpResponse, body){
+		if(err) {
+			return console.error('Upload de pedido fallo: ', err);
+		}	
+		
+    };
 }

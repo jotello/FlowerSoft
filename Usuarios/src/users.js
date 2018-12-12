@@ -141,20 +141,34 @@ router.post('/', (req, res) => {
                   if(err) {
                       console.log("error:", err);
                   }
-                console.log("response status:", response.statusCode)
+                  console.log('PEDIDOS');
                 console.log("BODY:", body);
 
                 console.log('user allegedly succesfully created');
                 console.log('theUser:', user);
+                request.post({url: 'http://localhost:3006/api/data_user',
+                form: {id: user._id, rut: user.rut, nombre: user.names, apellido: user.family_name, rol: user.rol,
+                  email: user.email, password: user.password}},
+                  (err, response, body) => {
+                    console.log('EN SAGA');
+                      if(err) {
+                        console.log("error:", err);
+                        return res.status(500).json({
+                          message: 'error al conectar con 3006/api/dada_user\nrevisar bases de datos',
+                          data: null
+                        });
+                }});
                 return res.status(200).json({
                       message: "success",
                       data: user
                 });
              });
-            request.post({url: 'http://localhost:3006/api/data_user',
+
+            /*request.post({url: 'http://localhost:3006/api/data_user',
             form: {id: user._id, rut: user.rut, nombre: user.names, apellido: user.family_name, rol: user.rol,
               email: user.email, password: user.password}},
               (err, response, body) => {
+                console.log('EN SAGA');
                   if(err) {
                     console.log("error:", err);
                     return res.status(500).json({
@@ -170,7 +184,7 @@ router.post('/', (req, res) => {
                       message: "success",
                       data: user
                 });
-             });
+             });*/
         });
     });
 });
