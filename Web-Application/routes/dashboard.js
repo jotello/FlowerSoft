@@ -119,12 +119,7 @@ function postProductIntoPedido(id, producto){
 		return httpResponse;
 	};
 }
-<<<<<<< HEAD
-// GET - /PEDIDO/DELETE/:id
-=======
 
-
->>>>>>> 68af9fb2d6bec655bc9277b4b5a2be32a553b088
 router.get('/pedido/delete/:id', function(req, res, next){
 	var id = req.params.id;
 	request.delete('http://localhost:8080/pedidos/'+id,
@@ -136,15 +131,10 @@ router.get('/pedido/delete/:id', function(req, res, next){
   			res.redirect('/dashboard/pedidos');
 		}
 	);
-<<<<<<< HEAD
 	res.redirect('/dashboard/pedidos');
 });
 //GET - /PEDIDO/EDIT/:id
-=======
-	
-}); //Funcionando
 
->>>>>>> 68af9fb2d6bec655bc9277b4b5a2be32a553b088
 router.get('/pedido/edit/:id', function(req, res, next){
 	var id = req.params.id;
 	request('http://localhost:8080/pedidos/'+id, function(error, response, body) {
