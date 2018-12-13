@@ -1,8 +1,6 @@
-var express = require('express');
-var router = express.Router();
-var request = require('request');
-var jwt = require('jsonwebtoken');
-var check = require('./index');
+const express = require('express');
+const router = express.Router();
+const request = require('request');
 
 router.get('/', function(req, res, next) {
 	console.log("user id:", req.user.id);

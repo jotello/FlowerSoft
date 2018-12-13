@@ -8,8 +8,6 @@ const User = require(path.join(__dirname, 'db'));
 const notFoundMessage = 'User not found';
 const badRequestMessage = 'invalid parameters';
 const emailExistMessage = 'Email in use';
-const myauth = require(path.join(__dirname, 'auth'));
-const jwt = require('jsonwebtoken');
 const request = require('request');
 //PASSPORT
 passport.use(new LocalStrategy({
@@ -158,6 +156,7 @@ router.post('/', (req, res) => {
                     });
                   }
                   //Éxito en todas las operaciones
+                  console.log("\tagregado");
                   return res.status(200).json({
                       message: "OK",
                       data: user

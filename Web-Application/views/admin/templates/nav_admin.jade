@@ -16,8 +16,17 @@ nav.navbar.navbar-default
               a(href='#')
                 i.fas.fa-truck
                 |  Pedidos
+                span.caret
+              ul.dropdown-menu
+                li
+                  a(href="/admin") Ver Pedidos
+                li.divider(role='separator')
+                li 
+                  a(href='/admin/crear/pedido')
+                    i.fas.fa-plus.circle
+                    |  Crear Pedido
             li.active
-              a(href='#')
+              a(href='/admin/productos/')
                 i.fas.fa-clipboard-list
                 |  Productos
             li.dropdown
@@ -27,13 +36,13 @@ nav.navbar.navbar-default
                 span.caret
               ul.dropdown-menu
                 li
-                  a(href='#') Action
+                  a(href='/admin/crear/producto') Crear Producto
                 li
-                  a(href='#') Another action
+                  a(href='/admin/crear/pedido') Crear Pedido
                 li
-                  a(href='#') Something else here
+                  a(href='/admin/productos/') Ver Productos
                 li.divider(role='separator')
                 li
-                  a(href='#') Separated link
+                  a(href='/logout') Salir
         // /.navbar-collapse
         // /.container-fluid
