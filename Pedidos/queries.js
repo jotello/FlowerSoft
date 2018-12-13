@@ -71,20 +71,20 @@ function getProductosByPedidoNative(id_pedido, pedido){
       console.log('Tiene estos productos: '+ data.length);
       const p = {
         'pedido': pedido,
-        'productos': data 
+        'productos': data
       }
       pedidos.push(p);
       return true;
     })
     .catch(function (err) {
       return err;
-    }); 
+    });
 }
 
 
 
 function getAllPedidos(req, res, next) {
-  
+
   db.any('select * from Pedido')
     .then(function (data) {
       function processQ() {
@@ -103,11 +103,11 @@ function getAllPedidos(req, res, next) {
       pedidos.push = function() { Array.prototype.push.apply(this, arguments);  processQ();};
       for(var i =0; i < data.length; i++){
         var id_pedido = data[i].id;
-        console.log('Trabajando con el pedido '+id_pedido); 
+        console.log('Trabajando con el pedido '+id_pedido);
         getProductosByPedidoNative(id_pedido, data[i]);
       }
 
-      
+
     })
     .catch(function (err) {
       return next(err);
@@ -189,9 +189,9 @@ async function insertProduct(producto, id_pedido){
 }
 
 function insertCarrito(id_pedido, id_usuario){
-  var productos; 
+  var productos;
   request('http://localhost:8080/catalogo/carrito/'+ id_usuario, function(err, resp, bod){
-      
+
       productos = JSON.parse(bod).data;
       console.log('Productos encontrados');
       console.log(productos);
@@ -201,8 +201,8 @@ function insertCarrito(id_pedido, id_usuario){
         insertProduct(productos[i], id_pedido);
         console.log('Producto '+i+' insertado.');
         continue;
-      } 
-      
+      }
+
       request('http://localhost:8080/catalogo/vaciar/carrito').form({"id_usuario": id_usuario}),
       function optionalCallback(err, httpResponse, body) {
         if (err) {
@@ -214,7 +214,6 @@ function insertCarrito(id_pedido, id_usuario){
 }
 
 function createPedido(req, res, next) {
-<<<<<<< HEAD
   console.log('EN CREATE PEDIDO');
   console.log('req.body:', req.body);
   console.log('id_usuario?:', req.body.id_usuario);
@@ -222,9 +221,6 @@ function createPedido(req, res, next) {
   var ID_CLIENTE = parseInt(((id_usuario)? req.body.id_usuario : req.body.id_cliente));
   console.log('ID_CLIENTE:', ID_CLIENTE);
   console.log(ID_CLIENTE);
-=======
-  var ID_CLIENTE = parseInt(req.body.id_usuario);
->>>>>>> 3752f941032da1fdf14a53c5d97ddc6691bb4437
   var total = parseInt(req.body.total);
   var detalle = String(req.body.detalle);
   var fecha = String(req.body.fecha);
@@ -249,17 +245,7 @@ function createPedido(req, res, next) {
                   .then(function() {
                     console.log('Relacion entre usuario y pedido lista.')
                     //Finalmente relacionamos los productos al pedido y vaciamos el carrito del usuario
-<<<<<<< HEAD
 
-=======
-                    console.log('Ahora relacionaremos el carrito con el pedido...')
-                    insertCarrito(id_pedido, ID_CLIENTE);   
-                    res.status(200)
-                    .json({
-                      status: 'success',
-                      message: 'Listo'
-                    });            
->>>>>>> 3752f941032da1fdf14a53c5d97ddc6691bb4437
                   })
                   .catch(function(err) {
                     return next(err);
@@ -277,7 +263,6 @@ function createPedido(req, res, next) {
     .catch(function(err) {
       return next(err);
   });
-<<<<<<< HEAD
 
   res.status(200)
   .json({
@@ -286,9 +271,6 @@ function createPedido(req, res, next) {
     message: 'Listo'
   });
 
-=======
-  
->>>>>>> 3752f941032da1fdf14a53c5d97ddc6691bb4437
 
 
 }

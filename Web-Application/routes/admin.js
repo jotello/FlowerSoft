@@ -33,7 +33,8 @@ router.post('/crearPedido', function(req, res, next) {
 	var detalle = req.body.detalle;
 	var fecha = req.body.fecha;
 	console.log('a solicitar POST localhost:8080/pedidos/');
-	request.post('http://localhost:8080/pedidos/').form({"total":total, "detalle":detalle, "fecha" :fecha, "ID_CLIENTE" : id_cliente, "nombre_cliente" : cliente}),
+	request.post('http://localhost:8080/pedidos/').form({"total":total, "detalle":detalle,
+	"fecha" :fecha, "ID_CLIENTE" : id_cliente, "nombre_cliente" : cliente}),
 	function optionalCallback(err, httpResponse, body) {
   		if (err) {
     		return console.error('upload failed:', err);
@@ -69,12 +70,6 @@ router.get('/productos', function(req, res, next) {
 router.get('/crear/producto', function(req, res, next) {
 		console.log('rendering admin/crear_producto');
 		return res.render('admin/crear_producto', { title: 'Crear Producto' });
-});
-//GET - PRODUCTO/ID
-router.get('/producto/:id', (req, res) => {
-	console.log('EN GET PRODUCTO/ID');
-	console.log("id:", req.params.id);
-	var id = req.params.id;
 });
 // POST - CREAR PRODUCTO
 router.post('/crearProducto', function(req, res, next){

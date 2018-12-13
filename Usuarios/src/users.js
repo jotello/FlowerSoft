@@ -90,19 +90,25 @@ router.post('/login', passport.authenticate('local'), (req, res, next) => {
 router.post('/', (req, res) => {
     console.log('En post de users');
     console.log('req.body:',req.body);
+    //Verificamos que la request no tenga errores
     const { error }  = Joi.validate(req.body, User.joiSchema.post);
     if (error) {
       console.log("error en request");
       console.log('error:', error);
-        return res.status(400).send({
-            errors: error,
-            message: badRequestMessage,
-            data: false
-        });
+      return res.status(400).send({
+        errors: error,
+        message: badRequestMessage,
+        data: false
+      });
     }
+    //Verificamos que el email no exista previamente en la BD
     User.findUserByEmail(req.body.email, (err, user) => {
-        if (err) throw err;
-
+        if (err) {
+          return res.stauts(500).json({
+            message: 'error al buscar usuario',
+            data: null
+          });
+        }
         console.log('user:', user);
         if(user) {
             console.log('user exist');
@@ -111,80 +117,53 @@ router.post('/', (req, res) => {
                 data: false
             });
         }
+        console.log('Usuarios');
+        //Creamos el Usuario en la BD users-service-db
         User.createUser(req.body, (err, user) => {
-            if (err) {
-                throw err;
-            }
-            //Success
-            console.log('user', user);
-            //User already in user's database
-            //must be included now in Pedidos/Usuario
-            // -ID
-            // -rut
-            // -names
-            // -family_name
-            // - rol
-            // -email
-            // -password
-            console.log('requesting pedidos/usuarios');
-            console.log('id', user._id);
-            console.log("rut:", user.rut);
-            console.log('nombre:', user.names);
-            console.log('apellido', user.family_name);
-            console.log('rol:', user.rol);
-            console.log("email:", user.email);
-            console.log("password:", user.password);
-            request.post({url: 'http://localhost:3002/api/pedidos/usuarios',
-            form: {id: user._id, rut: user.rut, nombre: user.names, apellido: user.family_name, rol: user.rol,
-              email: user.email, password: user.password}},
-              (err, response, body) => {
-                  if(err) {
-                      console.log("error:", err);
-                  }
-                  console.log('PEDIDOS');
-                console.log("BODY:", body);
-
-                console.log('user allegedly succesfully created');
-                console.log('theUser:', user);
-                request.post({url: 'http://localhost:3006/api/data_user',
-                form: {id: user._id, rut: user.rut, nombre: user.names, apellido: user.family_name, rol: user.rol,
-                  email: user.email, password: user.password}},
-                  (err, response, body) => {
-                    console.log('EN SAGA');
-                      if(err) {
-                        console.log("error:", err);
-                        return res.status(500).json({
-                          message: 'error al conectar con 3006/api/dada_user\nrevisar bases de datos',
-                          data: null
-                        });
-                }});
-                return res.status(200).json({
-                      message: "success",
-                      data: user
+          if (err) {
+            console.log('error:', err);
+            return res.status(500).json({
+              message: 'error al crear usuario en Usuario',
+              data: null
+            });
+          }
+          console.log('\tAgregado');
+          console.log("A PEDIDOS");
+          //Solicitamos crear el usuario en la BD Pedidos/Usuario
+          request.post({url: 'http://localhost:3002/api/pedidos/usuarios',
+          form: {id: user._id, rut: user.rut, nombre: user.names, apellido: user.family_name, rol: user.rol,
+            email: user.email, password: user.password}},
+            (err, response, body) => {
+              console.log('\tAgregado');
+              if(err) {
+                console.log("error:", err);
+                return res.status(500).json({
+                  message: 'error en pedidos/usuarios',
+                  data: null
                 });
-             });
-
-            /*request.post({url: 'http://localhost:3006/api/data_user',
-            form: {id: user._id, rut: user.rut, nombre: user.names, apellido: user.family_name, rol: user.rol,
-              email: user.email, password: user.password}},
-              (err, response, body) => {
-                console.log('EN SAGA');
+              }
+              console.log('\tAgregado');
+              console.log("a SAGA");
+              //Solicitamos a la SAGA la creacion de un usuario
+              request.post({url: 'http://localhost:3006/api/data_user',
+              form: {id: user._id, rut: user.rut, nombre: user.names, apellido: user.family_name,
+                rol: user.rol, email: user.email, password: user.password}},
+                (err, response, body) => {
+                  console.log('EN SAGA');
                   if(err) {
                     console.log("error:", err);
                     return res.status(500).json({
                       message: 'error al conectar con 3006/api/dada_user\nrevisar bases de datos',
                       data: null
                     });
-                }
-                console.log(((response)? 'statusCode: ' + response.statusCode : 'response: undefined'));
-                console.log("BODY:", body);
-                console.log('user allegedly succesfully created');
-                console.log('theUser:', user);
-                return res.status(200).json({
-                      message: "success",
+                  }
+                  //Éxito en todas las operaciones
+                  return res.status(200).json({
+                      message: "OK",
                       data: user
+                    });
                 });
-             });*/
+            });
         });
     });
 });

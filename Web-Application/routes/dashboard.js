@@ -70,7 +70,7 @@ router.post('/carrito/agregar', function(req, res, next){
 	res.redirect('/dashboard');
 });
 //GET - PEDIDOS
-router.get('/pedidos', function(req, res, next){
+router.get('/pedidos', function(req, res, next) {
 	var id = req.user.id;
 	request('http://localhost:8080/pedidos/usuario/'+id, function(error, response, body) {
 		var pedidos = JSON.parse(body);
@@ -79,9 +79,7 @@ router.get('/pedidos', function(req, res, next){
     });
 	//res.render('inicio', {title: 'Inicio', pedidos: array.data});
 });
-
 //Crear Pedido
-
 router.post('/pedido', function(req, res, next){
 	console.log('en POST dashboard/pedido');
 	console.log('req.body:', req.body);
@@ -89,16 +87,12 @@ router.post('/pedido', function(req, res, next){
 	var fecha = req.body.fecha;
 	var detalle = req.body.detalle;
 	var total = req.body.total;
-<<<<<<< HEAD
-=======
 	//Creamos el pedido en el servicio Pedidos
->>>>>>> 3752f941032da1fdf14a53c5d97ddc6691bb4437
 	request.post('http://localhost:8080/pedidos/').form({"id_usuario": id_usuario, "fecha": fecha, "detalle": detalle, "total": total}),
 	function optionalCallback(err, httpResponse, body){
 		if(err) {
 			return console.error('Upload de pedido fallo: ', err);
 		}
-<<<<<<< HEAD
   };
     request.post('http://localhost:8080/pedidos/carrito/'+id_usuario).form(productos_global),
     function optionalCallback(err, httpResponse, body){
@@ -116,87 +110,61 @@ router.post('/pedido', function(req, res, next){
     res.redirect('/dashboard');
 });
 // FUNCTION postProductIntoPedido
-function postProductIntoPedido(id, producto){
+function postProductIntoPedido(id, producto) {
 	var id_producto = producto.id_producto;
 	var total = producto.total;
 	var cantidad = producto.cantidad;
 	var nombre_producto = producto.nombre_producto;
 	request.post('http://localhost:8080/pedidos/producto')
-	.form({"id_producto": id_producto, "id_pedido":id,"total":total, "cantidad": cantidad,"nombre_producto":nombre_producto}),
+	.form({"id_producto": id_producto, "id_pedido":id,"total":total,
+	"cantidad": cantidad,"nombre_producto":nombre_producto}),
 	function(err, httpResponse, body){
 		return httpResponse;
 	};
-}
+};
 // GET - /PEDIDO/DELETE/:id
-=======
-    };	
-
-    res.redirect('/dashboard');
-});
-
-
-
->>>>>>> 3752f941032da1fdf14a53c5d97ddc6691bb4437
 router.get('/pedido/delete/:id', function(req, res, next){
 	var id = req.params.id;
 	request.delete('http://localhost:8080/pedidos/'+id,
 		function optionalCallback(err, httpResponse, body){
 			if (err) {
-    		return console.error('Delete failed:', err);
-  			}
-  			console.log('Delete successful!  Server responded with:', body);
-  			res.redirect('/dashboard/pedidos');
-		}
-	);
-<<<<<<< HEAD
-	res.redirect('/dashboard/pedidos');
+				return console.error('Delete failed:', err);
+  		}
+			console.log('Delete successful!  Server responded with:', body);
+			res.redirect('/dashboard/pedidos');
+		});
 });
 //GET - /PEDIDO/EDIT/:id
-router.get('/pedido/edit/:id', function(req, res, next){
+router.get('/pedido/edit/:id', function(req, res, next) {
 	var id = req.params.id;
 	request('http://localhost:8080/pedidos/'+id, function(error, response, body) {
 		var pedido = JSON.parse(body);
-        res.render('edit_pedido', {pedido: pedido.data});
-    });
+		res.render('edit_pedido', {pedido: pedido.data});
+  });
 });
-=======
-
-	
-}); 
-
-
->>>>>>> 3752f941032da1fdf14a53c5d97ddc6691bb4437
 // POST - /PEDIDO/UPDATE
-
-router.post('/pedido/update', function(req, res, next){
+router.post('/pedido/update', function(req, res, next) {
 	var id = req.body.id;
 	var detalle = req.body.detalle;
 	var fecha = req.body.fecha;
-
 	request.put('http://localhost:8080/pedidos/'+id).form({"detalle":detalle, "fecha" :fecha}),
 	function optionalCallback(err, httpResponse, body) {
   		if (err) {
     		return console.error('upload failed:', err);
   		}
   		console.log('Upload successful!  Server responded with:', body);
-  		
 	};
-
-<<<<<<< HEAD
-=======
 	res.redirect('/dashboard/pedidos');
-	
->>>>>>> 3752f941032da1fdf14a53c5d97ddc6691bb4437
 });
-
 //POST - CREAR PEDIDO
-router.post('/crearPedido', function(req, res, next){
+router.post('/crearPedido', function(req, res, next) {
 	var total = req.body.total;
 	var id_cliente = req.body.id_cliente;
 	var cliente = req.body.cliente;
 	var detalle = req.body.detalle;
 	var fecha = req.body.fecha;
-	request.post('http://localhost:8080/pedidos/').form({"total":total, "detalle":detalle, "fecha" :fecha, "ID_CLIENTE" : id_cliente, "nombre_cliente" : cliente}),
+	request.post('http://localhost:8080/pedidos/').form({"total":total, "detalle":detalle,
+	"fecha" :fecha, "ID_CLIENTE" : id_cliente, "nombre_cliente" : cliente}),
 	function optionalCallback(err, httpResponse, body) {
   		if (err) {
     		return console.error('upload failed:', err);
