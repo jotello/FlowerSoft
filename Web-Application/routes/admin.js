@@ -5,8 +5,12 @@ const request = require('request');
 router.get('/', function(req, res, next) {
 	console.log("user id:", req.user.id);
 	request('http://localhost:8080/pedidos/', function(error, response, body) {
-		var pedidos = JSON.parse(body);
-		console.log('PEDIDOS:', body);
+		console.log('pedidos body:', body);
+		var pedidos = {data:{}};
+		if(!body){
+			pedidos = JSON.parse(body);
+		}
+		console.log('pedidos:', pedidos);
 		return res.render('admin/dash', {title: 'Lista de pedidos', pedidos: pedidos.data});
 	});
 });
