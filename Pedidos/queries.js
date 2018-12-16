@@ -84,7 +84,7 @@ function getProductosByPedidoNative(id_pedido, pedido){
 
 
 function getAllPedidos(req, res, next) {
-
+  console.log('en GET ALL PEDIDOS');
   db.any('select * from Pedido')
     .then(function (data) {
       function processQ() {

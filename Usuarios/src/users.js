@@ -118,49 +118,32 @@ router.post('/', (req, res) => {
         console.log('Usuarios');
         //Creamos el Usuario en la BD users-service-db
         User.createUser(req.body, (err, user) => {
-          if (err) {
-            console.log('error:', err);
-            return res.status(500).json({
-              message: 'error al crear usuario en Usuario',
-              data: null
-            });
-          }
-          console.log('\tAgregado');
-          console.log("A PEDIDOS");
-          //Solicitamos crear el usuario en la BD Pedidos/Usuario
-          request.post({url: 'http://localhost:3002/api/pedidos/usuarios',
-          form: {id: user._id, rut: user.rut, nombre: user.names, apellido: user.family_name, rol: user.rol,
-            email: user.email, password: user.password}},
-            (err, response, body) => {
-              console.log('\tAgregado');
-              if(err) {
-                console.log("error:", err);
+            if (err) {
+                console.log('error:', err);
                 return res.status(500).json({
-                  message: 'error en pedidos/usuarios',
-                  data: null
+                message: 'error al crear usuario en Usuario',
+                data: null
                 });
-              }
-              console.log('\tAgregado');
-              console.log("a SAGA");
-              //Solicitamos a la SAGA la creacion de un usuario
-              request.post({url: 'http://localhost:3006/api/data_user',
-              form: {id: user._id, rut: user.rut, nombre: user.names, apellido: user.family_name,
+            }
+            //Le pedimos a la saga que nos agregue un usuario a pedidos-usuarios
+            console.log('A pedir a la SAGA');
+            request.post({url: 'http://localhost:3006/api/data_user',
+                form: {id: user._id, rut: user.rut, nombre: user.names, apellido: user.family_name,
                 rol: user.rol, email: user.email, password: user.password}},
                 (err, response, body) => {
-                  console.log('EN SAGA');
-                  if(err) {
-                    console.log("error:", err);
-                    return res.status(500).json({
-                      message: 'error al conectar con 3006/api/dada_user\nrevisar bases de datos',
-                      data: null
-                    });
-                  }
-                  //Éxito en todas las operaciones
-                  console.log("\tagregado");
-                  return res.status(200).json({
-                      message: "OK",
-                      data: user
-                    });
+                console.log('EN SAGA');
+                if(err) {
+                console.log("error:", err);
+                return res.status(500).json({
+                    message: 'error al conectar con 3006/api/dada_user\nrevisar bases de datos',
+                    data: null
+                });
+                }
+                //Éxito en todas las operaciones
+                console.log("\tagregado");
+                return res.status(200).json({
+                    message: "OK",
+                    data: user
                 });
             });
         });

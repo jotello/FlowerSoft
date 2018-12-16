@@ -34,9 +34,9 @@ html
       .menu-list
         ul#menu-content.menu-content.collapse.out
           li.active
-            a(href='/dashboard')
+            a(href='/admin')
               i.fa.fa-lg
-              |  Dashboard
+              |  Admin
           li.collapsed(data-toggle='collapse', data-target='#products')
             a(href='#')
               i.fa.fa-lg
@@ -44,22 +44,22 @@ html
               span.arrow
           ul#products.sub-menu.collapse
             li.active
-              a(href='/dashboard/pedidos') Ver Pedidos
+              a(href='/admin/pedidos') Ver Pedidos
             li
-              a(href='/dashboard/crearPedido') Crear Pedido
+              a(href='/admin/crearPedido') Crear Pedido
           li.collapsed(data-toggle='collapse', data-target='#service')
-            a(href='/dashboard/editUsuario')
+            a(href='/admin/editUsuario')
               i.fa.fa-lg
-              |  Configuración 
+              |  editar pedido
           li.collapsed(data-toggle='collapse', data-target='#new')
-            a(href='/dashboard/logout')
+            a(href='/admin/logout')
               i.fa.fa-lg
               |  Logout
 
     center
       .container-fluid 
           .wrapper
-            form.form-signin(action='/dashboard/producto/update', method='POST')
+            form.form-signin(action='/admin/producto/update', method='POST')
               h2.form-signin-heading.text-center Editar pedido
               input.form-control(id='id', name='id', type='hidden', value='#{producto.id}')
               input.form-control(type='text', name='nombre', placeholder='#{producto.nombre}')
