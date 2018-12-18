@@ -2,10 +2,9 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const bcrypt = require('bcryptjs');
 const Joi =  require('joi');
-
+//SCHEMAS
 const UserSchema = new Schema({
     _id: Number,
-    profile_name: String,
     rut: String,
     names: String,
     family_name: String,
@@ -16,7 +15,7 @@ const UserSchema = new Schema({
       default: 'cliente'
     }
 });
-const UserJoiSchema = module.exports.joiSchema = {
+module.exports.joiSchema = {
     post: {
         rut: Joi.string().min(8).required(),
         names: Joi.string().min(2).required(),
@@ -39,11 +38,9 @@ const Counterschema = new Schema({
   _id: String,
   sequence_value: Number
 });
-
+//CADENA DE CONEXIÓN
 const db_url_users = 'mongodb://localhost/users-service-db';
-
-let Conx;
-
+//
 const User = module.exports.modelUser = mongoose.model('user', UserSchema);
 const Counters = module.exports.modelCounter = mongoose.model('counters', Counterschema);
 
@@ -76,7 +73,6 @@ module.exports.createUser = function (userData, callback) {
         newUser.names = userData.names;
         newUser.family_name = userData.family_name;
         newUser.email = userData.email;
-        newUser.profile_name = this.makeProfileName(newUser.email);
         if(userData.rol) {
             newUser.rol = userData.rol;
         }
@@ -190,12 +186,6 @@ module.exports.deleteUserById = function (id, callback) {
  module.exports.deleteUserByEmail = function (email, callback) {
     query = {email: email};
     User.findOneAndDelete(query, callback);
- };
-
- module.exports.makeProfileName = function(email) {
-    const splittedEmail = email.split('@');
-    const splittedDomain = splittedEmail[1].split('.');
-    return splittedEmail[0] + '.' + splittedEmail[1][0] + '.'  + splittedDomain[1][splittedDomain[1].length - 1];
  };
 
  module.exports.comparePassword = function (candidatePassword, hash, callback) {

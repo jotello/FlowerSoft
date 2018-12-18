@@ -62,15 +62,18 @@ var query = connection.query('INSERT INTO catalogo(nombre, tipo, descripcion, im
 }
 
 function updateCatalogo(req, res, next) {
-var query = connection.query('UPDATE catalogo SET precio =? , nombre =? WHERE id = ?', [req.body.precio, req.body.nombre, parseInt(req.params.id)],
-   function(error, result){
-   if(error){
-      throw error;
-   }else{
-      console.log(result);
-      res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
+   console.log('en UPDATE Catalogo');
+   console.log('param id:', req.params.id);
+   console.log('body', req.body);
+   var query = connection.query('UPDATE catalogo SET precio =? , nombre =? WHERE id = ?', [req.body.precio, req.body.nombre, parseInt(req.params.id)],
+      function(error, result){
+      if(error){
+         throw error;
+      }else{
+         console.log(result);
+         res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
+      }
    }
- }
 );
 //console.log(tarea.update(req.body.nombre));
 }

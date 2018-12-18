@@ -1,14 +1,15 @@
-var express = require('express');
-var router = express.Router();
-var request = require('request');
-var jwt = require('jsonwebtoken');
-var check = require('./index');
+const express = require('express');
+const router = express.Router();
+const request = require('request');
 
 router.get('/', function(req, res, next) {
+	console.log('EN ADMIN /');
 	console.log("user id:", req.user.id);
 	request('http://localhost:8080/pedidos/', function(error, response, body) {
-		var pedidos = JSON.parse(body);
-		console.log('PEDIDOS:', body);
+		console.log('pedidos body:', body);
+
+		var pedidos = (body)? JSON.parse(body) : {data:{}};
+		console.log('pedidos:', pedidos);
 		return res.render('admin/dash', {title: 'Lista de pedidos', pedidos: pedidos.data});
 	});
 });
@@ -16,6 +17,7 @@ router.get('/', function(req, res, next) {
 router.get('/admin', function(req, res, next) {
 		return res.redirect('/admin');
 });
+//PEDIDOS
 // GET - CREAR/PEDIDO
 router.get('/crear/pedido', function(req, res, next) {
 	request('http://localhost:8080/pedidos/usuarios', function(error, response, body) {
@@ -24,15 +26,17 @@ router.get('/crear/pedido', function(req, res, next) {
 	});
 });
 // POST - CREAR/PEDIDO
-router.post('/crear/pedido', function(req, res, next) {
-	console.log('En POST /admin/crearProducto');
-	console.log('req.body:', body);
+router.post('/crearPedido', function(req, res, next) {
+	console.log('En POST /admin/crearPedido');
+	console.log('req.body:', req.body);
 	var total = req.body.total;
 	var id_cliente = req.body.id_cliente;
 	var cliente = req.body.cliente;
 	var detalle = req.body.detalle;
 	var fecha = req.body.fecha;
-	request.post('http://localhost:8080/pedidos/').form({"total":total, "detalle":detalle, "fecha" :fecha, "ID_CLIENTE" : id_cliente, "nombre_cliente" : cliente}),
+	console.log('a solicitar POST localhost:8080/pedidos/');
+	request.post('http://localhost:8080/pedidos/').form({"total":total, "detalle":detalle,
+	"fecha" :fecha, "ID_CLIENTE" : id_cliente, "nombre_cliente" : cliente}),
 	function optionalCallback(err, httpResponse, body) {
   		if (err) {
     		return console.error('upload failed:', err);
@@ -56,10 +60,11 @@ router.post('/update/pedido', function(req, res, next) {
 	};
 	res.redirect('/admin/pedidos');
 });
+//PRODUCTOS
 // GET - PRODUCTOS
 router.get('/productos', function(req, res, next) {
 	request('http://localhost:8080/catalogo/', function(error, response, body) {
-		var catalogo = JSON.parse(body);
+		let catalogo = (body)? JSON.parse(body) : {data:{}};
 		res.render('admin/productos', {title: 'Catalogo de Productos', catalogo: catalogo.data});
 		console.log(catalogo.data);
 	});
@@ -88,24 +93,36 @@ router.post('/crearProducto', function(req, res, next){
 	};
 	res.redirect('/admin/productos');
 });
-// DELETE PRODUCTO
-router.get('/producto/delete/:id', function(req, res, next) {
-	var id = req.params.id;
-	request.delete('http://localhost:8080/catalogo/'+id).form({"id" : id}),
-		function optionalCallback(err, httpResponse, body){
-			if (err) {
-    		return console.error('Delete failed:', err);
-  			}
-  			console.log('Delete successful!  Server responded with:', body);
-	};
-	res.redirect('/admin/productos');
-});
-// PRODUCTO/EDIT/:ID
+// GET - PRODUCTO/EDIT/:ID
 router.get('/producto/edit/:id', function(req, res, next) {
-	var id = req.params.id;
+	console.log('en GET Producto edit');
+	const id = req.params.id;
+	console.log('id:', id);
 	request('http://localhost:8080/catalogo/'+id, function(error, response, body) {
+		console.log('de vuelta con prouctos');
+		if(error){
+			return res.send({
+				message: 'Error en producto edit',
+				data: null
+			});
+		}
 		var producto = JSON.parse(body);
-        res.render('edit_producto', {producto: producto.data});
+		console.log('producto:', producto);
+		console.log('producto.data:', producto.data);
+    	return res.render('admin/edit_producto', {title: 'Editar Producto', producto: producto.data});
     });
 });
+// POST - PRODUCTO/EDIT/:ID
+router.post('/producto/edit/:id', (req, res, next) => {
+	console.log('EN EDIT PRODUCT ' + req.params.id);
+	request.put('http://localhost:8080/catalogo/'+req.params.id).form({"nombre": req.body.nombre, "precio": req.body.precio}),
+	function optionalCallback(err, httpResponse, body){
+		if (err) {
+			return console.error('edition failed:', err);
+		}
+		console.log('success in edit');
+	}
+	res.redirect('/admin/productos');
+});
+
 module.exports = router;

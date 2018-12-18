@@ -70,7 +70,7 @@ router.post('/carrito/agregar', function(req, res, next){
 	res.redirect('/dashboard');
 });
 //GET - PEDIDOS
-router.get('/pedidos', function(req, res, next){
+router.get('/pedidos', function(req, res, next) {
 	var id = req.user.id;
 	request('http://localhost:8080/pedidos/usuario/'+id, function(error, response, body) {
 		var pedidos = JSON.parse(body);
@@ -79,10 +79,10 @@ router.get('/pedidos', function(req, res, next){
     });
 	//res.render('inicio', {title: 'Inicio', pedidos: array.data});
 });
-
 //Crear Pedido
-
 router.post('/pedido', function(req, res, next){
+	console.log('en POST dashboard/pedido');
+	console.log('req.body:', req.body);
 	var id_usuario = req.user.id;
 	var fecha = req.body.fecha;
 	var detalle = req.body.detalle;
@@ -93,57 +93,78 @@ router.post('/pedido', function(req, res, next){
 		if(err) {
 			return console.error('Upload de pedido fallo: ', err);
 		}
-    };	
-
+  };
+    request.post('http://localhost:8080/pedidos/carrito/'+id_usuario).form(productos_global),
+    function optionalCallback(err, httpResponse, body){
+    	if(err){
+    		return console.error('Fallo envio de carrito: ', err);
+    	}
+    };
+	request('http://localhost:8080/catalogo/vaciar/carrito').form({"id_usuario": id_usuario}),
+      function optionalCallback(err, httpResponse, body) {
+        if (err) {
+          return console.error('No se pudo vaciar el carrito:', err);
+        }
+        console.log('Se pudo vaciar el carrio! Server respondio :', body);
+    };
     res.redirect('/dashboard');
 });
-
-
-
+// FUNCTION postProductIntoPedido
+function postProductIntoPedido(id, producto) {
+	var id_producto = producto.id_producto;
+	var total = producto.total;
+	var cantidad = producto.cantidad;
+	var nombre_producto = producto.nombre_producto;
+	request.post('http://localhost:8080/pedidos/producto')
+	.form({"id_producto": id_producto, "id_pedido":id,"total":total,
+	"cantidad": cantidad,"nombre_producto":nombre_producto}),
+	function(err, httpResponse, body){
+		return httpResponse;
+	};
+};
+// GET - /PEDIDO/DELETE/:id
 router.get('/pedido/delete/:id', function(req, res, next){
 	var id = req.params.id;
 	request.delete('http://localhost:8080/pedidos/'+id,
 		function optionalCallback(err, httpResponse, body){
 			if (err) {
-    		return console.error('Delete failed:', err);
-  			}
-  			console.log('Delete successful!  Server responded with:', body);
-  			res.redirect('/dashboard/pedidos');
-		}
-	);
-
-	
-}); 
-
-
+				return console.error('Delete failed:', err);
+  		}
+			console.log('Delete successful!  Server responded with:', body);
+			res.redirect('/dashboard/pedidos');
+		});
+});
+//GET - /PEDIDO/EDIT/:id
+router.get('/pedido/edit/:id', function(req, res, next) {
+	var id = req.params.id;
+	request('http://localhost:8080/pedidos/'+id, function(error, response, body) {
+		var pedido = JSON.parse(body);
+		res.render('edit_pedido', {pedido: pedido.data});
+  });
+});
 // POST - /PEDIDO/UPDATE
-
-router.post('/pedido/update', function(req, res, next){
+router.post('/pedido/update', function(req, res, next) {
 	var id = req.body.id;
 	var detalle = req.body.detalle;
 	var fecha = req.body.fecha;
-
 	request.put('http://localhost:8080/pedidos/'+id).form({"detalle":detalle, "fecha" :fecha}),
 	function optionalCallback(err, httpResponse, body) {
   		if (err) {
     		return console.error('upload failed:', err);
   		}
   		console.log('Upload successful!  Server responded with:', body);
-  		
 	};
-
 	res.redirect('/dashboard/pedidos');
-	
 });
-
 //POST - CREAR PEDIDO
-router.post('/crearPedido', function(req, res, next){
+router.post('/crearPedido', function(req, res, next) {
 	var total = req.body.total;
 	var id_cliente = req.body.id_cliente;
 	var cliente = req.body.cliente;
 	var detalle = req.body.detalle;
 	var fecha = req.body.fecha;
-	request.post('http://localhost:8080/pedidos/').form({"total":total, "detalle":detalle, "fecha" :fecha, "ID_CLIENTE" : id_cliente, "nombre_cliente" : cliente}),
+	request.post('http://localhost:8080/pedidos/').form({"total":total, "detalle":detalle,
+	"fecha" :fecha, "ID_CLIENTE" : id_cliente, "nombre_cliente" : cliente}),
 	function optionalCallback(err, httpResponse, body) {
   		if (err) {
     		return console.error('upload failed:', err);
