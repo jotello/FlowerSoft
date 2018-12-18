@@ -99,14 +99,13 @@ function getAllPedidos(req, res, next) {
               pedidos = [];
             }
       }
-
+      console.log('en function THEN');
       pedidos.push = function() { Array.prototype.push.apply(this, arguments);  processQ();};
       for(var i =0; i < data.length; i++){
         var id_pedido = data[i].id;
         console.log('Trabajando con el pedido '+id_pedido);
         getProductosByPedidoNative(id_pedido, data[i]);
       }
-
 
     })
     .catch(function (err) {
