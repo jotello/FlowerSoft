@@ -69,10 +69,7 @@ function getProductosByPedidoNative(id_pedido, pedido){
   db.any('SELECT * FROM pedidoxproducto WHERE id_pedido = $1', id_pedido)
     .then(function (data) {
       console.log('Tiene estos productos: '+ data.length);
-      const p = {
-        'pedido': pedido,
-        'productos': data 
-      }
+      var p = {'pedido': pedido, 'productos': data};
       pedidos.push(p);
       return true;
     })
@@ -93,7 +90,7 @@ function getAllPedidos(req, res, next) {
               res.status(200)
                 .json({
                   status: 'success',
-                  data: pedidos,
+                  data: data,
                   message: 'Retrieved ALL pedidos'
                 });
               pedidos = [];
