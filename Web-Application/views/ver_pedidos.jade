@@ -23,7 +23,38 @@ include templates/default
               each item in pedidos
                 script(type='text/javascript').
                     $(document).ready(function(){
-                        var id_pedido = #{item.id}
+                    var id_pedido = #{item.id}
+                     var idTabla = 'table'+id_pedido;
+                        function myFunction(i, id, total, cantidad, nombre_producto) {                       
+                            
+                            var table = document.getElementById(idTabla);
+                            var row = table.insertRow(i);
+                            var cell1 = row.insertCell(0);
+                            var cell2 = row.insertCell(1);
+                            var cell3 = row.insertCell(2);
+                            var cell4 = row.insertCell(3);
+                            cell1.innerHTML = id;
+                            cell2.innerHTML = nombre_producto;
+                            cell3.innerHTML = cantidad;
+                            cell4.innerHTML = total;
+
+                        }
+                        var idRead = 'read'+id_pedido;
+
+                        document.getElementById(idRead).addEventListener('click', function(){
+                            const url =  'http://localhost:8080/pedidos/productos/'+id_pedido;
+                            $.get(url, function(data, status){
+                              var productos = JSON.parse(data).data;
+                              for(var i=0; i < productos.length ; i++){
+                                var id = productos[i].id_producto;
+                                var total = productos[i].total;
+                                var cantidad = productos[i].cantidad;
+                                var nombre_producto = productos[i].nombre_producto;
+                                myFunction(i, id, total, cantidad, nombre_producto);
+                              }
+                            })                          
+                        });
+                        
                         var idDelete ='confirmarBtnDelete'+id_pedido;
                         var idFecha = 'fecha'+id_pedido ;
                         var idDetalle = 'detalle'+id_pedido ;
@@ -72,7 +103,7 @@ include templates/default
                               h3.modal-title Productos en el Pedido #{item.id}
                             .modal-body
                               .table-responsive
-                                table#mytable.table.table-bordred.table-striped
+                                table.table.table-bordred.table-striped(id = 'table#{item.id}')
                                   thead
                                     tr
                                       th ID
