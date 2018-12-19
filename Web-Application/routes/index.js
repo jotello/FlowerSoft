@@ -134,9 +134,9 @@ router.get('/profile', seschk.checkLogged, (req, res, next) => {
 		}
 	}, 
 	function(error, response, body) {
-		console.log('usuarios body:', body);
+		console.log('usuario body:', body);
 		const user = (body)? JSON.parse(body).data : {};
-    console.log('usuarios:', user);
+    console.log('usuario:', user);
     title = 'Perfil';
     (req.user.rol === 'admin')? res.render('admin/perfil', {title, user}) 
     : res.render('cliente/perfil', {title, user});

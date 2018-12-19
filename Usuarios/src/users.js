@@ -186,7 +186,7 @@ router.get('/:id', checkCredentials, (req, res) => {
         if(!user) {
             return res.status(404).send({
                 message: notFoundMessage,
-                data: false
+                data: null
             });
         }
         res.status(200).json({
@@ -211,49 +211,62 @@ router.delete('/:id', (req, res) => {
 });
 //PUT
 router.put('/:id', (req, res) => {
-    console.log('En put:', req.params.id);
+    console.log('EN PUT USUARIOS: id:', req.params.id);
+    console.log('req.body:', req.body);
+    const data = req.body;
+    console.log('data:', data);
     User.findUserById(req.params.id, (err, user) => {
         if (err) {
-            console.log('err:', err);
+            console.log('err en busqueda de base de datos:', err);
             return res.status(500).send({
-                message: 'db search error',
-                data: false
+                message: 'Error de búsqueda en base de datos',
+                data: err
             });
         }
         console.log('user:', user);
         if(!user) {
             return res.status(404).send({
                 message: notFoundMessage,
-                data: false
+                data: null
             });
         }
-        const { error }= Joi.validate(req.body, User.joiSchema.put);
+        const { error } = Joi.validate(data, User.joiSchema.put);
         if (error) {
+            console.log('body error:', error);
             return res.status(400).send({
                 message: badRequestMessage,
                 data: error
             });
         }
         let emailChanged = false;
-        if(req.body.email && req.body.email != user.email)  {
-            User.findUserByEmail(req.body.email, (err, user) => {
+        if(data.email && data.email !== user.email)  {
+            User.findUserByEmail(data.email, (err, user) => {
                 if (err) {
-                    throw  err;
+                    console.log('error finding user with email in PUT:', err);
+                    return res.status(400).send({
+                        message: 'error al buscar usuario por email',
+                        data: error
+                    });
                 }
                 if (user) {
                     return res.status(400).send({
                         message: emailExistMessage,
-                        data: false
+                        data: null
                     });
                 }
             });
             emailChanged = true;
         }
         console.log('emailChanged', emailChanged);
-        User.updateUserById(req.params.id, req.body, emailChanged, (err, raw) => {
+        User.updateUserById(req.params.id, data, emailChanged, (err, raw) => {
             console.log('raw:', raw);
-            if (err) throw err;
-
+            if (err){
+                console.log('error al actualizar usuario:', err);
+                return res.stauts(500).send({
+                    message: 'error al actualizar usuario',
+                    data: error
+                });
+            }
             return res.status(200).send({
                 message : 'OK',
                 data: user

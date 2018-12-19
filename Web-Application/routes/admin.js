@@ -181,5 +181,32 @@ router.get('/delete/usuario/:id', (req, res) => {
 		}
 	res.redirect('/admin/usuarios');
 });
+//POST - EDITAR PERFIL
+router.post('/editarPerfil', (req, res) => {
+	console.log('En Editar Perfil');
+	console.log('req.body:', req.body);
+	const id = req.body.id;
+	const b = req.body;
+	console.log('id:', id);
+	request.put('http://localhost:8080/users/'+id).form({
+			rut: b.rut,
+			names: b.names,
+			family_name: b.family_name,
+			email: b.email,
+			rol: b.rol
+		}),
+		(err, httpResponse, body) => {
+			console.log('de vuelta');
+			if(err) {
+				return res.render('error', {title:'error', 
+					message:'error en editarPerfil, al volver', 
+					error: err
+				});
+			}
+			console.log('status:', httpResponse.statusCode);
+			console.log('body:', body);
+		}
+	res.redirect('/profile');
+});
 //MODULE.EXPORTS
 module.exports = router;
