@@ -1,0 +1,17 @@
+include templates/default
+    include templates/nav_admin
+    head
+        title=title
+    body
+        center
+            .row
+                .col-sm-6.col-md-4
+                .thumbnail.admin
+                    img(src='#{producto.imagen}', alt='...').img-responsive
+                    .caption
+                    h3 #{producto.nombre}
+                    h4 Categoría: #{producto.tipo}
+                    p.description #{producto.descripcion}
+                    .clearfix
+                        .price Precio: #{producto.precio} $
+                    

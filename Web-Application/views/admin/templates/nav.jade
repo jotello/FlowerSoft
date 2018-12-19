@@ -12,24 +12,24 @@ nav.navbar.navbar-default
         // Collect the nav links, forms, and other content for toggling
         #bs-example-navbar-collapse-1.collapse.navbar-collapse.container-fluid
           ul.nav.navbar-nav.navbar-right
-            li
-              a(href='#')
-                i.fas.fa-shopping-cart
-                |  Ver Productos
+            li.active
+              a(href='admin/')
+                i.fas.fa-truck
+                |  Pedidos
             li.dropdown
-              a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+              a.dropdown-toggle(data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
                 i.fas.fa-user
-                |  Cuenta
+                |  Productos
                 span.caret
               ul.dropdown-menu
                 li
-                  a(href='/admin/crear/producto') Crear Producto
+                  a(href='#') Crear Producto
                 li
-                  a(href='/admin/crear/pedido') Crear Pedido
+                  a(href='#') Another action
                 li
-                  a(href='/admin') Ver Pedidos
+                  a(href='#') Something else here
                 li.divider(role='separator')
                 li
-                  a(href='/logout') Salir
+                  a(href='#') Separated link
         // /.navbar-collapse
         // /.container-fluid

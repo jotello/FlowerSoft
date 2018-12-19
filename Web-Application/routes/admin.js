@@ -69,6 +69,19 @@ router.get('/productos', function(req, res, next) {
 		console.log(catalogo.data);
 	});
 });
+//GET - PRODUCTO/:ID
+router.get('/producto/detalles/:id', (req, res) => {
+	console.log('En detalles producto: id->', req.params.id);
+	request('http://localhost:8080/catalogo/' + req.params.id, function(error, response, body) {
+		console.log("body:", body);
+		const producto = (body)? JSON.parse(body).data : null;
+		if(!producto) {
+			return res.render('error', {title: 'error', error: 'no existe el producto'});
+		}
+		console.log("Producto: ", producto);
+		return res.render('admin/producto_detalles', {title: 'Detalles Producto: ' + producto.nombre, producto: producto});
+	});
+});
 // GET - CREAR/PRODUCTO
 router.get('/crear/producto', function(req, res, next) {
 		console.log('rendering admin/crear_producto');
@@ -124,5 +137,76 @@ router.post('/producto/edit/:id', (req, res, next) => {
 	}
 	res.redirect('/admin/productos');
 });
-
+// POST - PRODUCTO/DELETE/:ID
+router.get('/delete/producto/:id', (req, res, next) => {
+	console.log('EN GET PRODUCTO DELETE');
+	console.log("id:", req.params.id);
+	request.delete('http://localhost:8080/catalogo/'+req.params.id).form({"id": req.params.id}),
+		function optionalCallback(err, httpResponse, body) {
+			if (err) {
+				console.log('err:', err);
+				return res.render('error', {message: 'error en delete de producto', error: err});
+			}
+			console.log('éxito: body:', body); 
+		}
+	res.redirect('/admin/productos');
+});
+//USUARIOS
+// GET - USUARIOS
+router.get('/usuarios', (req, res) => {
+	console.log('EN GET USUARIOS');	
+	console.log('token:', global.wat);
+	request('http://localhost:8080/users/', {
+		'auth': {
+			'bearer': global.wat
+		}
+	}, 
+	function(error, response, body) {
+		console.log('usuarios body:', body);
+		const usuarios = (body)? JSON.parse(body) : {data:{}};
+		console.log('usuarios:', usuarios);
+		return res.render('admin/usuarios', {title: 'Lista de usuarios', usuarios: usuarios.data});
+	});
+});
+// DELETE - USUARIOS
+router.get('/delete/usuario/:id', (req, res) => {
+	console.log('EN DELETE USUARIO');
+	request.delete('http://localhost:8080/users/'+req.params.id),
+		(err, httpResponse, body) => {
+			if(err) {
+				console.log('err:', err);
+				return res.render('error:', {message: 'error en delete de usuario', error: err});
+			}
+			console.log('éxito body:', body);
+		}
+	res.redirect('/admin/usuarios');
+});
+//POST - EDITAR PERFIL
+router.post('/editarPerfil', (req, res) => {
+	console.log('En Editar Perfil');
+	console.log('req.body:', req.body);
+	const id = req.body.id;
+	const b = req.body;
+	console.log('id:', id);
+	request.put('http://localhost:8080/users/'+id).form({
+			rut: b.rut,
+			names: b.names,
+			family_name: b.family_name,
+			email: b.email,
+			rol: b.rol
+		}),
+		(err, httpResponse, body) => {
+			console.log('de vuelta');
+			if(err) {
+				return res.render('error', {title:'error', 
+					message:'error en editarPerfil, al volver', 
+					error: err
+				});
+			}
+			console.log('status:', httpResponse.statusCode);
+			console.log('body:', body);
+		}
+	res.redirect('/profile');
+});
+//MODULE.EXPORTS
 module.exports = router;

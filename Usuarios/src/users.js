@@ -133,12 +133,13 @@ router.post('/', (req, res) => {
                 (err, response, body) => {
                 console.log('EN SAGA');
                 if(err) {
-                console.log("error:", err);
-                return res.status(500).json({
-                    message: 'error al conectar con 3006/api/dada_user\nrevisar bases de datos',
-                    data: null
-                });
+                    console.log("error:", err);
+                    return res.status(500).json({
+                        message: 'error al conectar con 3006/api/dada_user\nrevisar bases de datos',
+                        data: null
+                    });
                 }
+                console.log()
                 //Éxito en todas las operaciones
                 console.log("\tagregado");
                 return res.status(200).json({
@@ -149,14 +150,29 @@ router.post('/', (req, res) => {
         });
     });
 });
-//GET
+//GET - ALL
 router.get('/', checkCredentials, (req, res) => {
     console.log("EN GET DE USERS");
-    const data = JSON.parse(req.userData);
+    User.findAllUsers((err, users) => {
+        if(err) {
+            console.log('error:', err);
+            return res.status(500).send({
+                message: 'error en get de todos los usuarios',
+                data: null
+            });
+        }
+        return res.status(200).send({
+            message: 'OK',
+            data: users
+        });
+    });
+});
+//GET /:ID
+router.get('/:id', checkCredentials, (req, res) => {
+    console.log("EN GET DE USER/:ID");
+    console.log('req.userData:', req.userData);
+    const data = req.userData;
     console.log("user data:", data);
-    if(response.statusCode === 403) {
-        return res.status(403).send(data.message);
-    }
     const id = data.id;
     console.log('id:', id);
     User.findUserById(id, (err, user) => {
@@ -170,11 +186,11 @@ router.get('/', checkCredentials, (req, res) => {
         if(!user) {
             return res.status(404).send({
                 message: notFoundMessage,
-                data: false
+                data: null
             });
         }
         res.status(200).json({
-            message: success,
+            message: 'OK',
             data: user
         });
     });
@@ -183,11 +199,11 @@ router.get('/', checkCredentials, (req, res) => {
 router.delete('/:id', (req, res) => {
     User.deleteUserById(req.params.id, (err, user) =>{
         if(!user) {
-            res.send(200).send({
+            res.status(200).send({
                 eliminados: 1
             });
         } else {
-            res.send(200).send({
+            res.status(200).send({
                 eliminados: 0
             });
         }
@@ -195,49 +211,62 @@ router.delete('/:id', (req, res) => {
 });
 //PUT
 router.put('/:id', (req, res) => {
-    console.log('En put:', req.params.id);
+    console.log('EN PUT USUARIOS: id:', req.params.id);
+    console.log('req.body:', req.body);
+    const data = req.body;
+    console.log('data:', data);
     User.findUserById(req.params.id, (err, user) => {
         if (err) {
-            console.log('err:', err);
+            console.log('err en busqueda de base de datos:', err);
             return res.status(500).send({
-                message: 'db search error',
-                data: false
-            })
+                message: 'Error de búsqueda en base de datos',
+                data: err
+            });
         }
         console.log('user:', user);
         if(!user) {
             return res.status(404).send({
                 message: notFoundMessage,
-                data: false
+                data: null
             });
         }
-        const { error }= Joi.validate(req.body, User.joiSchema.put);
+        const { error } = Joi.validate(data, User.joiSchema.put);
         if (error) {
+            console.log('body error:', error);
             return res.status(400).send({
                 message: badRequestMessage,
                 data: error
             });
         }
         let emailChanged = false;
-        if(req.body.email && req.body.email != user.email)  {
-            User.findUserByEmail(req.body.email, (err, user) => {
+        if(data.email && data.email !== user.email)  {
+            User.findUserByEmail(data.email, (err, user) => {
                 if (err) {
-                    throw  err;
+                    console.log('error finding user with email in PUT:', err);
+                    return res.status(400).send({
+                        message: 'error al buscar usuario por email',
+                        data: error
+                    });
                 }
                 if (user) {
                     return res.status(400).send({
                         message: emailExistMessage,
-                        data: false
+                        data: null
                     });
                 }
             });
             emailChanged = true;
         }
         console.log('emailChanged', emailChanged);
-        User.updateUserById(req.params.id, req.body, emailChanged, (err, raw) => {
+        User.updateUserById(req.params.id, data, emailChanged, (err, raw) => {
             console.log('raw:', raw);
-            if (err) throw err;
-
+            if (err){
+                console.log('error al actualizar usuario:', err);
+                return res.stauts(500).send({
+                    message: 'error al actualizar usuario',
+                    data: error
+                });
+            }
             return res.status(200).send({
                 message : 'OK',
                 data: user
@@ -277,6 +306,7 @@ router.get('/auth/check_credentials', (req, res) => {
 // FUNCTION - checkCredentials
 function checkCredentials(req, res, next) {
     console.log("CHECKING CREDENTIALS MIDDLEWARE");
+    console.log('req.headers["authorization"]', req.headers['authorization']);
     request.post('http://localhost:3003/api/auth/check_credentials', {
         'auth': {
           'bearer': req.headers['authorization'].split(' ')[1]

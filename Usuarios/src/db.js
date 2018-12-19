@@ -108,6 +108,7 @@ module.exports.findAllUsers = function (callback) {
  };
 
  module.exports.updateUserById = function(id, changeQuery, callback) {
+     console.log('Update Usuario');
     query = {_id: id};
 
     if(changeQuery.password) {
