@@ -12,8 +12,8 @@ nav.navbar.navbar-default
         // Collect the nav links, forms, and other content for toggling
         #bs-example-navbar-collapse-1.collapse.navbar-collapse.container-fluid
           ul.nav.navbar-nav.navbar-right
-            li.active
-              a(href='#')
+            li.dropdown
+              a.dropdown-toggle(href="#", data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
                 i.fas.fa-truck
                 |  Pedidos
                 span.caret
@@ -25,10 +25,27 @@ nav.navbar.navbar-default
                   a(href='/admin/crear/pedido')
                     i.fas.fa-plus.circle
                     |  Crear Pedido
-            li.active
-              a(href='/admin/productos/')
+            li.dropdown
+              a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
                 i.fas.fa-clipboard-list
                 |  Productos
+                span.caret
+              ul.dropdown-menu
+                li
+                  a(href="/admin/productos") Ver Productos
+                li.divider(role="separator")
+                li
+                  a(href="/admin/crear/producto")
+                    i.fas.fa-plus.circle
+                    |  Crear Producto
+            li.dropdown
+              a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+                i.fas.fa-user
+                |  Usuarios
+                span.carret
+              ul.dropdown-menu
+                li
+                  a(href="/admin/usuarios") Ver Usuarios
             li.dropdown
               a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
                 i.fas.fa-user
@@ -36,11 +53,16 @@ nav.navbar.navbar-default
                 span.caret
               ul.dropdown-menu
                 li
+                  a(href='/profile') Perfil
+                li.divider(role='separator')
+                li
                   a(href='/admin/crear/producto') Crear Producto
                 li
                   a(href='/admin/crear/pedido') Crear Pedido
                 li
                   a(href='/admin/productos/') Ver Productos
+                li
+                  a(href='/admin') Ver Pedidos
                 li.divider(role='separator')
                 li
                   a(href='/logout') Salir

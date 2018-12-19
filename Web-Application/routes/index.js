@@ -126,10 +126,21 @@ router.post('/registro', (req, res, next) => {
 
 //GET PROFILE
 router.get('/profile', seschk.checkLogged, (req, res, next) => {
-  res.status(200).json({
-    message: 'Ok',
-    data: req.user
-  });
+  console.log('req.user:', req.user);
+
+	request('http://localhost:8080/users/' + req.user.id, {
+		'auth': {
+			'bearer': global.wat
+		}
+	}, 
+	function(error, response, body) {
+		console.log('usuarios body:', body);
+		const user = (body)? JSON.parse(body).data : {};
+    console.log('usuarios:', user);
+    title = 'Perfil';
+    (req.user.rol === 'admin')? res.render('admin/perfil', {title, user}) 
+    : res.render('cliente/perfil', {title, user});
+	});
 })
 
 module.exports.router = router;

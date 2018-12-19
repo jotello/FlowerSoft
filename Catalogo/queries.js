@@ -79,6 +79,7 @@ function updateCatalogo(req, res, next) {
 }
 
 function deleteCatalogo(req, res, next) {
+   console.log('req.body.id:', req.body.id);
 var query = connection.query('DELETE FROM catalogo WHERE id = ? ',[req.body.id],
  function(error, result){
    if(error){

@@ -1,0 +1,26 @@
+include templates/default
+    include templates/nav_admin
+
+    .container-fluid
+      h4 Lista de Usuarios
+      .table-responsive
+        table#mytable.table.table-bordred.table-striped
+          thead
+            tr
+              th Nro.
+              th Rut
+              th Nombres
+              th Apellidos
+              th Rol
+              th Eliminar
+          tbody
+            each item in usuarios
+              tr
+              td #{item._id}
+              td #{item.rut}
+              td #{item.names}
+              td #{item.family_name}
+              td #{item.rol}
+              td
+                a.btn.btn-primary-btn-xs(href='/admin/delete/usuario/#{item._id}', type='button', onclick='window.location.reload()') 
+                  span.glyphicon.glyphicon-trash

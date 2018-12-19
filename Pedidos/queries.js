@@ -87,30 +87,19 @@ function getAllPedidos(req, res, next) {
   console.log('en GET ALL PEDIDOS');
   db.any('select * from Pedido')
     .then(function (data) {
-      function processQ() {
-        // ... this will be called on each .push
-        if(pedidos.length == data.length){
-              res.status(200)
-                .json({
-                  status: 'success',
-                  data: pedidos,
-                  message: 'Retrieved ALL pedidos'
-                });
-              pedidos = [];
-            }
-      }
       console.log('en function THEN');
-      pedidos.push = function() { Array.prototype.push.apply(this, arguments);  processQ();};
-      for(var i =0; i < data.length; i++){
-        var id_pedido = data[i].id;
-        console.log('Trabajando con el pedido '+id_pedido);
-        getProductosByPedidoNative(id_pedido, data[i]);
-      }
-
+      console.log('data: ', data);
+      res.status(200)
+      .json({
+        status: 'success',
+        data: data,
+        message: 'Retrieved ALL pedidos'
+      });
     })
     .catch(function (err) {
       return next(err);
     });
+    console.log('retornando');
 }
 
 function getSinglePedido(req, res, next) {

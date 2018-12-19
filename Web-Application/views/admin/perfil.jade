@@ -1,0 +1,9 @@
+include templates/default
+  include templates/nav_admin
+
+  body
+    center
+      input(type="text", name="rut", value=user.rut)
+      input(type="text", name="nombre", value=user.names)
+      input(type="text", name="apellido", value=user.family_name)
+      input(type="text", name="rol", value=user.rol)

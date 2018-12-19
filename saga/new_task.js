@@ -101,6 +101,7 @@ exports.update_carro= function (producto, id){
 }
 
 exports.new_user= function (req, res, next){
+	console.log('En Saga new_user');
 	//id, rut, nombre,apellido, rol, password
 	id=req.body.id;
 	rut=req.body.rut;
@@ -110,6 +111,7 @@ exports.new_user= function (req, res, next){
 	password=req.body.password;
 	
 	amqp.connect('amqp://localhost', function(err, conn) {
+		console.log('conn:', conn);
 	  conn.createChannel(function(err, ch) {
 	    var q = 'usuarios';
 	    var msg = process.argv.slice(2).join(' ') || "Se ha agregado un nuevo usuario con id: "+ id +", rut: " +rut+", nombre: " +nombre+ ", apellido: "+apellido+ ", rol: "+rol+ ", contrasena: "+password;
