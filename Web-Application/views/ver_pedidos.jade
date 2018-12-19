@@ -9,7 +9,7 @@ include templates/default
         .col-md-12
           h4 Pedidos actuales:
           .table-responsive
-            table#mytable.table.table-bordred.table-striped
+            table.table.table-bordred.table-striped
               thead
                 tr
                   th ID
@@ -23,7 +23,39 @@ include templates/default
               each item in pedidos
                 script(type='text/javascript').
                     $(document).ready(function(){
-                        var id_pedido = #{item.pedido.id}
+                     var id_pedido = #{item.id};
+                     var idTabla = 'table'+id_pedido;
+                        function myFunction(i, id, total, cantidad, nombre_producto) {                       
+                            
+                            var table = document.getElementById(idTabla);
+                            var row = table.insertRow((i+1));
+                            var cell1 = row.insertCell(0);
+                            var cell2 = row.insertCell(1);
+                            var cell3 = row.insertCell(2);
+                            var cell4 = row.insertCell(3);
+                            cell1.innerHTML = id;
+                            cell2.innerHTML = nombre_producto;
+                            cell3.innerHTML = cantidad;
+                            cell4.innerHTML = total;
+
+                        }
+                        var idRead = 'read'+id_pedido;
+
+                        document.getElementById(idRead).addEventListener('click', function(){
+                            const url =  'http://localhost:3005/dashboard/pedidos/productos/'+id_pedido;
+                            $.get(url, function(data, status){
+                              console.log(data);
+                              var productos = data.data;
+                              for(var i=0; i < productos.length ; i++){
+                                var id = productos[i].id_producto;
+                                var total = productos[i].total;
+                                var cantidad = productos[i].cantidad;
+                                var nombre_producto = productos[i].nombre_producto;
+                                myFunction(i, id, total, cantidad, nombre_producto);
+                              }
+                            });                          
+                        });
+                        
                         var idDelete ='confirmarBtnDelete'+id_pedido;
                         var idFecha = 'fecha'+id_pedido ;
                         var idDetalle = 'detalle'+id_pedido ;
@@ -35,6 +67,7 @@ include templates/default
                         });
                         
                         document.getElementById(idEdit).addEventListener('click', function(){
+
                             
                             var fecha = document.getElementById(idFecha).value;
                             
@@ -48,7 +81,12 @@ include templates/default
                             };
                             $.post(url, data, function(data, status){
                                 window.location.href = 'http://localhost:3005/dashboard/pedidos' ;
-                                console.log('${data} and status is ${status}')
+                                const Url = 'http://localhost:8080/pedidos/productos/'+id_pedido;
+                                $.get(Url, function(result, status){
+                                  var resultado = result;
+                                  console.log(resultado);
+                                  
+                                });
                             }); 
                                                   
                         });
@@ -56,23 +94,23 @@ include templates/default
 
                       }) 
                 tr
-                  td #{item.pedido.id}
-                  td #{item.pedido.total}
-                  td #{item.pedido.detalle}
-                  td #{item.pedido.fecha_entrega}
+                  td #{item.id}
+                  td #{item.total}
+                  td #{item.detalle}
+                  td #{item.fecha_entrega}
                   td 
                     p(data-placement='top', data-toggle='tooltip', title='Productos')
-                      button.btn.btn-primary.btn-xs(id = 'read#{item.pedido.id}', data-target='#products#{item.pedido.id}', role='button', type='button', data-toggle='modal')
+                      button.btn.btn-primary.btn-xs(id = 'read#{item.id}', data-target='#products#{item.id}', role='button', type='button', data-toggle='modal')
                         span.glyphicon.glyphicon-zoom-in
-                      div.modal.fade.product_view(id = 'products#{item.pedido.id}')
+                      div.modal.fade.product_view(id = 'products#{item.id}')
                         .modal-dialog
                           .modal-content
                             .modal-header
                               button.close(type='button', data-dismiss='modal') ×
-                              h3.modal-title Productos en el Pedido #{item.pedido.id}
+                              h3.modal-title Productos en el Pedido #{item.id}
                             .modal-body
                               .table-responsive
-                                table#mytable.table.table-bordred.table-striped
+                                table.table.table-bordred.table-striped(id = 'table#{item.id}')
                                   thead
                                     tr
                                       th ID
@@ -80,12 +118,6 @@ include templates/default
                                       th Cantidad
                                       th Total
                                   tbody
-                                  each p in item.productos
-                                    tr
-                                      td #{p.id_producto}
-                                      td #{p.nombre_producto}
-                                      td #{p.cantidad}
-                                      td #{p.total}
 
                                   
                                        
@@ -94,9 +126,9 @@ include templates/default
 
                   td
                     p(data-placement='top', data-toggle='tooltip', title='Edit')
-                      button.btn.btn-primary.btn-xs(data-target='#edit#{item.pedido.id}', role='button', type='button', data-toggle='modal')
+                      button.btn.btn-primary.btn-xs(data-target='#edit#{item.id}', role='button', type='button', data-toggle='modal')
                         span.glyphicon.glyphicon-pencil
-                      div.modal.fade.product_view(id = 'edit#{item.pedido.id}')
+                      div.modal.fade.product_view(id = 'edit#{item.id}')
                         .modal-dialog
                           .modal-content
                             .modal-header
@@ -110,19 +142,19 @@ include templates/default
                                       .form-group
                                         label Ingrese la nueva fecha de entrega:
                                         .input-group
-                                          input(id = 'fecha#{item.pedido.id}', placeholder='#{item.pedido.fecha_entrega}', type='text', onfocus="(this.type='date')")
+                                          input(id = 'fecha#{item.id}', placeholder='#{item.fecha_entrega}', type='text', onfocus="(this.type='date')")
                                         label Puede editar los detalles en el pedido:
                                         .input-group
-                                          input(id = 'detalle#{item.pedido.id}', type='text', name = 'detalle', placeholder= '#{item.pedido.detalle}')
+                                          input(id = 'detalle#{item.id}', type='text', name = 'detalle', placeholder= '#{item.detalle}')
                                          p
-                                          a.btn.btn-success.pull-right(id = 'confirmarBtnEdit#{item.pedido.id}', role='button', type='button') Confirmar
+                                          a.btn.btn-success.pull-right(id = 'confirmarBtnEdit#{item.id}', role='button', type='button') Confirmar
                                          
                                     
                   td
                     p(data-placement='top', data-toggle='tooltip', title='Delete')
-                      button.btn.btn-danger.btn-xs(data-target='#delete#{item.pedido.id}', role='button', type='button', data-toggle='modal')
+                      button.btn.btn-danger.btn-xs(data-target='#delete#{item.id}', role='button', type='button', data-toggle='modal')
                         span.glyphicon.glyphicon-trash
-                      div.modal.fade.product_view(id = 'delete#{item.pedido.id}')
+                      div.modal.fade.product_view(id = 'delete#{item.id}')
                         .modal-dialog
                           .modal-content
                             .modal-header
@@ -134,9 +166,9 @@ include templates/default
                                   aside.col-sm-7
                                     article.card-body.p-5
                                       dl.item-property
-                                        h3 ¿Estas seguro que quieres eliminar el pedido #{item.pedido.id}?
+                                        h3 ¿Estas seguro que quieres eliminar el pedido #{item.id}?
                                         dd
                                           p
-                                            a.btn.btn-success.pull-right(id = 'confirmarBtnDelete#{item.pedido.id}', role='button', type='button') Confirmar
+                                            a.btn.btn-success.pull-right(id = 'confirmarBtnDelete#{item.id}', role='button', type='button') Confirmar
       
              

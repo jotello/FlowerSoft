@@ -79,6 +79,18 @@ router.get('/pedidos', function(req, res, next) {
     });
 	//res.render('inicio', {title: 'Inicio', pedidos: array.data});
 });
+//GET -PRODUCTOS DE UN  PEDIDO
+router.get('/pedidos/productos/:id', function(req, res, next) {
+	var id = req.user.id;
+	var id_pedido = req.params.id;
+	request('http://localhost:8080/pedidos/productos/'+id_pedido, function(error, response, body) {
+		var productos = JSON.parse(body);
+		console.log("Respuesta por productos:"+productos.status);
+		console.log('Cantidad de productos: '+productos.data.length);
+        res.json({data: productos.data, status: 'successful'});
+    });
+	//res.render('inicio', {title: 'Inicio', pedidos: array.data});
+});
 //Crear Pedido
 router.post('/pedido', function(req, res, next){
 	console.log('en POST dashboard/pedido');
