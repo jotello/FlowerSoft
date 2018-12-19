@@ -215,6 +215,8 @@ router.put('/:id', (req, res) => {
     console.log('req.body:', req.body);
     const data = req.body;
     console.log('data:', data);
+    const id = parseInt(req.params.id);
+    console.log("id:", id, "type:", typeof id);
     User.findUserById(req.params.id, (err, user) => {
         if (err) {
             console.log('err en busqueda de base de datos:', err);
@@ -238,27 +240,9 @@ router.put('/:id', (req, res) => {
                 data: error
             });
         }
-        let emailChanged = false;
-        if(data.email && data.email !== user.email)  {
-            User.findUserByEmail(data.email, (err, user) => {
-                if (err) {
-                    console.log('error finding user with email in PUT:', err);
-                    return res.status(400).send({
-                        message: 'error al buscar usuario por email',
-                        data: error
-                    });
-                }
-                if (user) {
-                    return res.status(400).send({
-                        message: emailExistMessage,
-                        data: null
-                    });
-                }
-            });
-            emailChanged = true;
-        }
-        console.log('emailChanged', emailChanged);
-        User.updateUserById(req.params.id, data, emailChanged, (err, raw) => {
+        console.log('data:', data);
+        console.log('user._id:', user._id);
+        User.updateUserById(user._id, data, false, (err, raw) => {
             console.log('raw:', raw);
             if (err){
                 console.log('error al actualizar usuario:', err);

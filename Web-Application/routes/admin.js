@@ -185,9 +185,10 @@ router.get('/delete/usuario/:id', (req, res) => {
 router.post('/editarPerfil', (req, res) => {
 	console.log('En Editar Perfil');
 	console.log('req.body:', req.body);
-	const id = req.body.id;
 	const b = req.body;
-	console.log('id:', id);
+	const id = req.user.id;
+	console.log('user:', req.user);
+	console.log('req.user.id:', req.user.id);
 	request.put('http://localhost:8080/users/'+id).form({
 			rut: b.rut,
 			names: b.names,
@@ -195,7 +196,7 @@ router.post('/editarPerfil', (req, res) => {
 			email: b.email,
 			rol: b.rol
 		}),
-		(err, httpResponse, body) => {
+		function optionalCallback(err, httpResponse, body) {
 			console.log('de vuelta');
 			if(err) {
 				return res.render('error', {title:'error', 

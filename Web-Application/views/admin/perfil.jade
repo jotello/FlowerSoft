@@ -15,7 +15,7 @@ include templates/default
               label(for="Apellidos") Apellidos              
               input.form-control(type='text', name='family_name', value='#{user.family_name}', required='', autofocus='')
               label(for="Email") Email
-              input.form-control(type='text', name='email', value='#{user.email}', required='', autofocus='') 
+              input.form-control(type='text', name='email', value='#{user.email}', required='', autofocus='', readonly) 
               label(for="Rol") Rol              
               input.form-control(type='text', name='rol', value='#{user.rol}', required='', autofocus='', readonly) 
               input.form-conrol(type="text", name="id", value='#{user._id}', hidden, readonly)            

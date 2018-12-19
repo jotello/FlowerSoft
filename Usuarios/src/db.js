@@ -108,9 +108,10 @@ module.exports.findAllUsers = function (callback) {
  };
 
  module.exports.updateUserById = function(id, changeQuery, callback) {
-     console.log('Update Usuario');
+     console.log('Update Usuario por ID');
     query = {_id: id};
-
+    console.log("query:", query);
+    console.log("changeQuery:", changeQuery);
     if(changeQuery.password) {
         bcrypt.genSalt(10, (err, salt) => {
             if(err) throw err;
@@ -120,41 +121,26 @@ module.exports.findAllUsers = function (callback) {
                 if (err) throw err;
 
                 changeQuery.password = hash;
-                User.updateOne(query, changeQuery, callback);
+                updateQuery = {
+                    $set: {
+                        'rut' : changeQuery.rut,
+                        'names': changeQuery.names,
+                        'family_name': changeQuery.family_name,
+                        'email': changeQuery.email,
+                        'rol': changeQuery.rol
+                    }
+                };
+                console.log('updateQuery:', updateQuery);                
+                User.updateOne(query, updateQuery, callback);
             });
         });
     }
     else {
-        User.updateOne(query, changeQuery, callback);
+        console.log('updateQuery:', updateQuery);
+        console.log('updating?');
+        User.findByIdAndUpdate(id, changeQuery, callback);
     }
  }
-
- module.exports.updateUserByProfileName = function (profile_name, changeQuery, emailChanged, callback) {
-    query = {profile_name: profile_name};
-
-    if(emailChanged) {
-       changeQuery.profile_name = this.makeProfileName(changeQuery.email);
-       console.log('profile name changed:', changeQuery.profile_name);
-    }
-
-    console.log('changeQuery', changeQuery);
-    if(changeQuery.password) {
-        bcrypt.genSalt(10, (err, salt) => {
-            if(err) throw err;
-
-            bcrypt.hash(changeQuery.password, salt, (err, hash) => {
-                console.log('hash:', hash);
-                if (err) throw err;
-
-                changeQuery.password = hash;
-                User.updateOne(query, changeQuery, callback);
-            });
-        });
-    }
-    else {
-        User.updateOne(query, changeQuery, callback);
-    }
- };
 
  module.exports.updateUserByEmail = async function (email, changeQuery, callback) {
     query = {email: email};
