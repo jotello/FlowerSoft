@@ -130,4 +130,12 @@ exports.new_user= function (req, res, next){
 		}	
 		
     };
+
+    request.post('http://localhost:3004/api/catalogo/carrito/usuarios'),form({"id": id, "rut": rut, "nombre": nombre, "apellido": apellido, "rol":rol, "password": password}),
+	function optionalCallback(err, httpResponse, body){
+		if(err) {
+			return console.error('Upload de pedido fallo: ', err);
+		}	
+		
+    };
 }

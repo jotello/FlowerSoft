@@ -27,7 +27,8 @@ module.exports = {
   deleteCarrito: deleteCarrito,
   updateCarrito: updateCarrito,
   vaciarCarrito: vaciarCarrito,
-  selectCarrito: selectCarrito
+  selectCarrito: selectCarrito,
+  createUsuario: createUsuario
 };
 
 //Catalogo
@@ -182,4 +183,17 @@ var query = connection.query('SELECT * FROM Carrito WHERE id_usuario = ?', [pars
 
       }
    });
+}
+
+function createUsuario(req, res, next) {
+  var query = connection.query('INSERT INTO Usuario(ID, rut, nombre, apellido, rol, password) VALUES(?, ?, ?, ?, ?,?)',
+   [req.body.id, req.body.rut, req.body.nombre, req.body.apellido, req.body.rol, req.body.password],
+   function(error, result){
+   if(error){
+      throw error;
+   }else{
+      console.log(result);
+      res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
+   }
+ });
 }

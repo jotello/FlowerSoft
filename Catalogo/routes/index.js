@@ -16,6 +16,7 @@ router.post('/api/catalogo', db.insertCatalogo);
 router.put('/api/catalogo/:id', db.updateCatalogo);
 router.delete('/api/catalogo/:id', db.deleteCatalogo);
 //Usuario
+router.post('/api/catalogo/carrito/usuarios', db.createUsuario);
 //Carrito
 router.get('/api/catalogo/carrito/:id', db.selectCarrito);
 router.post('/api/catalogo/carrito/:id', db.insertCarrito);
