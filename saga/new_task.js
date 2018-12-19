@@ -110,6 +110,7 @@ exports.new_user= function (req, res, next){
 	apellido=req.body.apellido;
 	rol=req.body.rol;
 	password=req.body.password;
+	email=req.body.email;
 	
 	amqp.connect('amqp://localhost', function(err, conn) {
 		//console.log('conn:', conn);
@@ -124,7 +125,7 @@ exports.new_user= function (req, res, next){
 	  //setTimeout(function() { conn.close(); process.exit(0) }, 500);
 	});
 
-	request.post({url:'http://localhost:3002/api/pedidos/usuarios',form: {"id": id, "rut": rut, "nombre": nombre, "apellido": apellido, "rol":rol, "password": password}},
+	request.post({url:'http://localhost:3002/api/pedidos/usuarios',form: {"id": id, "rut": rut, "nombre": nombre, "apellido": apellido, "rol":rol, "password": password, "email": email}},
 	function optionalCallback(err, httpResponse, body){
 		console.log("hola");
 		if(err) {
