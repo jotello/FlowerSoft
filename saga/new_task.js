@@ -103,6 +103,7 @@ exports.update_carro= function (producto, id){
 exports.new_user= function (req, res, next){
 	console.log('En Saga new_user');
 	//id, rut, nombre,apellido, rol, password
+	//console.log("body saga:", req.body);
 	id=req.body.id;
 	rut=req.body.rut;
 	nombre=req.body.nombre;
@@ -111,7 +112,7 @@ exports.new_user= function (req, res, next){
 	password=req.body.password;
 	
 	amqp.connect('amqp://localhost', function(err, conn) {
-		console.log('conn:', conn);
+		//console.log('conn:', conn);
 	  conn.createChannel(function(err, ch) {
 	    var q = 'usuarios';
 	    var msg = process.argv.slice(2).join(' ') || "Se ha agregado un nuevo usuario con id: "+ id +", rut: " +rut+", nombre: " +nombre+ ", apellido: "+apellido+ ", rol: "+rol+ ", contrasena: "+password;
@@ -120,22 +121,23 @@ exports.new_user= function (req, res, next){
 	    ch.sendToQueue(q, new Buffer(msg), {persistent: true});
 	    console.log(" [x] Sent '%s'", msg);
 	  });
-	  setTimeout(function() { conn.close(); process.exit(0) }, 500);
+	  //setTimeout(function() { conn.close(); process.exit(0) }, 500);
 	});
 
-	request.post('http://localhost:3002/api/pedidos/usuarios'),form({"id": id, "rut": rut, "nombre": nombre, "apellido": apellido, "rol":rol, "password": password}),
+	request.post({url:'http://localhost:3002/api/pedidos/usuarios',form: {"id": id, "rut": rut, "nombre": nombre, "apellido": apellido, "rol":rol, "password": password}},
 	function optionalCallback(err, httpResponse, body){
+		console.log("hola");
 		if(err) {
 			return console.error('Upload de pedido fallo: ', err);
 		}	
 		
-    };
+    });
 
-    request.post('http://localhost:3004/api/catalogo/carrito/usuarios'),form({"id": id, "rut": rut, "nombre": nombre, "apellido": apellido, "rol":rol, "password": password}),
+    /*request.post('http://localhost:3004/api/catalogo/carrito/usuarios'),form({"id": id, "rut": rut, "nombre": nombre, "apellido": apellido, "rol":rol, "password": password}),
 	function optionalCallback(err, httpResponse, body){
 		if(err) {
 			return console.error('Upload de pedido fallo: ', err);
 		}	
 		
-    };
+    };*/
 }
