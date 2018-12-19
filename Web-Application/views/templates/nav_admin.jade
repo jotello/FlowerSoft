@@ -7,29 +7,43 @@ nav.navbar.navbar-default
             span.icon-bar
             span.icon-bar
             span.icon-bar
-          a.navbar-brand(href='#') FlowerSoft
+          a.navbar-brand(href='/admin') FlowerSoft
 
         // Collect the nav links, forms, and other content for toggling
         #bs-example-navbar-collapse-1.collapse.navbar-collapse.container-fluid
           ul.nav.navbar-nav.navbar-right
-            li.active
-              a(href='admin/')
+            li.dropdown
+              a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
                 i.fas.fa-truck
                 |  Pedidos
+                span.caret
+              ul.dropdown-menu
+                li
+                  a(href='admin/') Ver pedidos
+                li.divider(role='separator')
+                li
+                  a(href='admin/crear/pedido')
+                    i.fas.fa-plus-circle
+                    |  Crear Pedido
             li.dropdown
-              a.dropdown-toggle(data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
-                i.fas.fa-user
+              a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+                i.fas.fa-clipboard-list
                 |  Productos
                 span.caret
               ul.dropdown-menu
                 li
-                  a(href='#') Crear Producto
-                li
-                  a(href='#') Another action
-                li
-                  a(href='#') Something else here
+                  a(href='/admin/productos') Ver productos
                 li.divider(role='separator')
                 li
-                  a(href='#') Separated link
-        // /.navbar-collapse
-        // /.container-fluid
+                  a(href='/admin/crear/producto') Crear Producto
+            li.dropdown
+              a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+                i.fas.fa-user
+                |  Cuenta
+                span.caret
+              ul.dropdown-menu
+                li
+                  a(href='/admin') Ver Pedidos
+                li.divider(role='separator')
+                li
+                  a(href='/logout') Salir

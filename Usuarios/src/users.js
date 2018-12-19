@@ -130,7 +130,7 @@ router.post('/', (req, res) => {
             request.post({url: 'http://localhost:3006/api/data_user',
                 form: {id: user._id, rut: user.rut, nombre: user.names, apellido: user.family_name,
                 rol: user.rol, email: user.email, password: user.password}},
-                (err, response, body) => {
+                function(err, response, body) {
                 console.log('EN SAGA');
                 if(err) {
                     console.log("error:", err);
@@ -139,7 +139,7 @@ router.post('/', (req, res) => {
                         data: null
                     });
                 }
-                console.log()
+                //console.log(req.body)
                 //Éxito en todas las operaciones
                 console.log("\tagregado");
                 return res.status(200).json({
@@ -147,6 +147,11 @@ router.post('/', (req, res) => {
                     data: user
                 });
             });
+
+            /*request('http://localhost:3006/api/data_user/', function(err, resp, body){
+                var usuario = JSON.parse(body).data;
+
+            });*/
         });
     });
 });
