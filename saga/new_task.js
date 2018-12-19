@@ -134,7 +134,7 @@ exports.new_user= function (req, res, next){
 		
     });
 
-		request.post({url:'http://localhost:3004/api/catalogo/carrito/usuarios',form: {"id": id, "rut": rut, "nombre": nombre, "apellido": apellido, "rol":rol, "password": password, "email": email}},
+		request.post({url:'http://localhost:3004/api/catalogo/carrito/usuarios',form: {"id": id, "rut": rut, "nombre": nombre, "password": password, "email": email}},
 		function optionalCallback(err, httpResponse, body){
 			console.log("hola");
 			if(err) {
