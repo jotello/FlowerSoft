@@ -75,7 +75,20 @@ router.get('/pedidos', function(req, res, next) {
 	request('http://localhost:8080/pedidos/usuario/'+id, function(error, response, body) {
 		var pedidos = JSON.parse(body);
 		console.log('Cantidad de pedidos: '+pedidos.data.length);
-        res.render('ver_pedidos', {title: 'Lista de pedidos', pedidos: pedidos.data});
+		request('http://localhost:8080/catalogo/carrito/'+id, function(err, resp, body){
+			var productos = JSON.parse(body).data;
+			var productos_global = productos;
+
+			if(productos.length > 0){
+				var mensaje_ctr = '('+ productos.length +')';
+				res.render('ver_pedidos', {title: 'Lista de pedidos', pedidos: pedidos.data, contador: mensaje_ctr});
+
+			} else{
+				res.render('ver_pedidos', {title: 'Lista de pedidos', pedidos: pedidos.data});
+			}
+            
+		});
+   
     });
 	//res.render('inicio', {title: 'Inicio', pedidos: array.data});
 });
@@ -105,7 +118,7 @@ router.post('/pedido', function(req, res, next){
 		if(err) {
 			return console.error('Upload de pedido fallo: ', err);
 		}
-  };
+  	};
     request.post('http://localhost:8080/pedidos/carrito/'+id_usuario).form(productos_global),
     function optionalCallback(err, httpResponse, body){
     	if(err){
