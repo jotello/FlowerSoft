@@ -186,8 +186,8 @@ var query = connection.query('SELECT * FROM Carrito WHERE id_usuario = ?', [pars
 }
 
 function createUsuario(req, res, next) {
-  var query = connection.query('INSERT INTO Usuario(ID, rut, nombre, apellido, rol, password) VALUES(?, ?, ?, ?, ?,?)',
-   [req.body.id, req.body.rut, req.body.nombre, req.body.apellido, req.body.rol, req.body.password],
+  var query = connection.query('INSERT INTO Usuario(ID, rut, nombre, email, password) VALUES(?, ?, ?, ?, ?)',
+   [req.body.id, req.body.rut, req.body.nombre, req.body.email, req.body.password],
    function(error, result){
    if(error){
       throw error;

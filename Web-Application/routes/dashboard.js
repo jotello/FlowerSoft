@@ -119,19 +119,8 @@ router.post('/pedido', function(req, res, next){
 			return console.error('Upload de pedido fallo: ', err);
 		}
   	};
-    request.post('http://localhost:8080/pedidos/carrito/'+id_usuario).form(productos_global),
-    function optionalCallback(err, httpResponse, body){
-    	if(err){
-    		return console.error('Fallo envio de carrito: ', err);
-    	}
-    };
-	request('http://localhost:8080/catalogo/vaciar/carrito').form({"id_usuario": id_usuario}),
-      function optionalCallback(err, httpResponse, body) {
-        if (err) {
-          return console.error('No se pudo vaciar el carrito:', err);
-        }
-        console.log('Se pudo vaciar el carrio! Server respondio :', body);
-    };
+    
+	
     res.redirect('/dashboard');
 });
 // FUNCTION postProductIntoPedido

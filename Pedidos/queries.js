@@ -203,10 +203,8 @@ function createPedido(req, res, next) {
   console.log('EN CREATE PEDIDO');
   console.log('req.body:', req.body);
   console.log('id_usuario?:', req.body.id_usuario);
-  console.log('id_cliente?:', req.body.id_cliente);
-  var ID_CLIENTE = parseInt(((id_usuario)? req.body.id_usuario : req.body.id_cliente));
+  var ID_CLIENTE = parseInt(req.body.id_usuario);
   console.log('ID_CLIENTE:', ID_CLIENTE);
-  console.log(ID_CLIENTE);
   var total = parseInt(req.body.total);
   var detalle = String(req.body.detalle);
   var fecha = String(req.body.fecha);
@@ -231,7 +229,7 @@ function createPedido(req, res, next) {
                   .then(function() {
                     console.log('Relacion entre usuario y pedido lista.')
                     //Finalmente relacionamos los productos al pedido y vaciamos el carrito del usuario
-
+                    insertCarrito(id_pedido, ID_CLIENTE);
                   })
                   .catch(function(err) {
                     return next(err);
@@ -264,7 +262,7 @@ function createPedido(req, res, next) {
 function createUsuario(req, res, next) {
   console.log('creando pedidos/usuario');
   console.log("req.body:", req.body);
-  db.none('INSERT INTO Usuario (ID, rut, nombre, apellido, rol, email, password)' +
+  db.none('INSERT INTO Usuario (id, rut, nombre, apellido, rol, email, password)' +
       ' VALUES (${id}, ${rut}, ${nombre}, ${apellido}, ${rol}, ${email}, ${password})',req.body)
       .then(function () {
         res.status(200)
