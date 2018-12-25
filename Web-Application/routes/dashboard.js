@@ -3,9 +3,11 @@ var router = express.Router();
 var request = require('request');
 var productos_global = '';
 
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
 	var id_usuario = req.user.id;
+	
 	console.log('en get the dashboard');
 	request('http://localhost:8080/catalogo/', function(error, response, body) {
 		if(error) {
@@ -35,6 +37,40 @@ router.get('/', function(req, res, next) {
 		});
   });
 });
+
+router.get('/', function(req, res, next) {
+	var id_usuario = req.user.id;
+	
+	console.log('en get the dashboard');
+	request('http://localhost:8080/replicaCatalogo/', function(error, response, body) {
+		if(error) {
+			console.log('error', error);
+			return res.status(500).json({
+					message: 'error en request a localhost:8080/replicaCatalogo',
+					data: null
+			});
+		}
+		console.log('BODY:', body);
+		if(body === 'Bad gateway.') {
+			return res.render('error', {error: 'Bad gateway en\nhttp://localhost:8080/replicaCatalogo/'});
+		}
+		var catalogo = JSON.parse(body);
+		request('http://localhost:8080/replicaCatalogo/carrito/'+id_usuario, function(err, resp, body){
+			var productos = JSON.parse(body).data;
+			var productos_global = productos;
+
+			if(productos.length > 0){
+				var mensaje_ctr = '('+ productos.length +')';
+				res.render('dashboard', {title: 'Inicio', catalogo: catalogo.data, contador: mensaje_ctr});
+
+			} else{
+				res.render('dashboard', {title: 'Inicio', catalogo: catalogo.data});
+			}
+            console.log(catalogo.data);
+		});
+  });
+});
+
 // GET - CARRITO
 router.get('/carrito', function(req,res, next){
 	var id_usuario = req.user.id;
