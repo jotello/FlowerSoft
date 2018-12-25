@@ -19,7 +19,7 @@ router.get('/', function(req, res, next) {
 		}
 		console.log('BODY:', body);
 		if(body === 'Bad gateway.') {
-			return res.render('error', {error: 'Bad gateway en\nhttp://localhost:8080/catalogo/'});
+			return res.redirect('/dashboard/get/replica');
 		}
 		var catalogo = JSON.parse(body);
 		request('http://localhost:8080/catalogo/carrito/'+id_usuario, function(err, resp, body){
@@ -37,11 +37,11 @@ router.get('/', function(req, res, next) {
 		});
   });
 });
-
-router.get('/', function(req, res, next) {
+//GET REPLICA CATALOGO
+router.get('/get/replica', function(req, res, next) {
 	var id_usuario = req.user.id;
 	
-	console.log('en get the dashboard');
+	console.log('en get replica the dashboard');
 	request('http://localhost:8080/replicaCatalogo/', function(error, response, body) {
 		if(error) {
 			console.log('error', error);
@@ -52,7 +52,7 @@ router.get('/', function(req, res, next) {
 		}
 		console.log('BODY:', body);
 		if(body === 'Bad gateway.') {
-			return res.render('error', {error: 'Bad gateway en\nhttp://localhost:8080/replicaCatalogo/'});
+			return res.render('error', {message:'Bad gateway en\nhttp://localhost:8080/replicaCatalogo/', error:{status:500, stack:{}}});
 		}
 		var catalogo = JSON.parse(body);
 		request('http://localhost:8080/replicaCatalogo/carrito/'+id_usuario, function(err, resp, body){
@@ -70,7 +70,6 @@ router.get('/', function(req, res, next) {
 		});
   });
 });
-
 // GET - CARRITO
 router.get('/carrito', function(req,res, next){
 	var id_usuario = req.user.id;

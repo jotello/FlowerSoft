@@ -140,6 +140,6 @@ exports.new_user= function (req, res, next){
 			if(err) {
 				return console.error('Upload de pedido fallo: ', err);
 			}	
-			
-			});
+
+		});
 }
