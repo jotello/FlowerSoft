@@ -1,6 +1,7 @@
 var mysql = require('mysql');
 //var amqp = require('amqplib/callback_api');
 //var tarea = require('./new_task');
+const request = require('request');
 
 
 var connection = mysql.createConnection({
@@ -119,12 +120,21 @@ function insertCarrito(req, res, next) {
    //TODO: Checkear si el producto esta en el carrito, si es asi, añadir cantidad y total al registro
    var query = connection.query('INSERT INTO Carrito(id_usuario, id_producto, nombre_producto, cantidad, total) VALUES(?, ?, ?, ?, ?)',
    [req.params.id, req.body.id_producto, req.body.nombre_producto, req.body.cantidad, req.body.total],
-   function(error, result){
+   function(error, result) {
    if(error){
       throw error;
    }else{
       console.log(result);
-      res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
+      
+      request.post('http://localhost:8080/replicaCatalogo/carrito/'+parseInt(req.params.id)).form({"id_producto" : parseInt(req.body.id_producto),
+		"nombre_producto": req.body.nombre_producto, "cantidad" :parseInt(req.body.cantidad), "total" : parseInt(req.body.total)}),
+	   function optionalCallback(err, httpResponse, body) {
+  		   if (err) {
+			   console.error('upload failed:', err);
+			   return res.render('error', {title:'Error', message:'Error en replica carrito agregar', error:err});
+         }
+         res.send(JSON.stringify({"status": 200, "error": null, "data": result}));	  
+      }
    }
  });
 }
@@ -137,7 +147,16 @@ var query = connection.query('UPDATE Carrito SET cantidad =? , total =? WHERE id
       throw error;
    }else{
       console.log(result);
-      res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
+      request.put('http://localhost:8080/replicaCatalogo/carrito/'+parseInt(req.params.id)).form({ "cantidad" :parseInt(req.body.cantidad), 
+      "total" : parseInt(req.body.total),
+      "id_producto" : parseInt(req.body.id_producto)}),
+	   function optionalCallback(err, httpResponse, body) {
+  		   if (err) {
+			   console.error('update failed:', err);
+			   return res.render('error', {title:'Error', message:'Error en replica carrito actualizar', error:err});
+         }
+         res.send(JSON.stringify({"status": 200, "error": null, "data": result}));	  
+      }
    }
  }
 );
@@ -152,7 +171,15 @@ var query = connection.query('DELETE FROM Carrito WHERE id_producto = ? AND id_u
       throw error;
    }else{
       console.log(result);
-      res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
+      request.delete('http://localhost:8080/replicaCatalogo/carrito/'+parseInt(req.params.id)).form(
+         {"id_usuario":req.body.id_usuario}),
+	   function optionalCallback(err, httpResponse, body) {
+  		   if (err) {
+			   console.error('upload failed:', err);
+			   return res.render('error', {title:'Error', message:'Error en replica carrito agregar', error:err});
+         }
+         res.send(JSON.stringify({"status": 200, "error": null, "data": result}));	  
+      }
    }
  }
 );
@@ -167,7 +194,15 @@ function vaciarCarrito(req, res, next) {
         throw error;
      }else{
         console.log(result);
-        res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
+        request.delete('http://localhost:8080/replicaCatalogo/vaciar/carrito').form(
+         {"id_usuario":req.body.id_usuario}),
+	      function optionalCallback(err, httpResponse, body) {
+  		      if (err) {
+			      console.error('upload failed:', err);
+			      return res.render('error', {title:'Error', message:'Error en replica carrito agregar', error:err});
+            }
+            res.send(JSON.stringify({"status": 200, "error": null, "data": result}));	  
+         }
      }
    });
 }

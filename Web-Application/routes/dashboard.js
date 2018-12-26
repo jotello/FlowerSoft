@@ -3,28 +3,46 @@ var router = express.Router();
 var request = require('request');
 var productos_global = '';
 
+const badgateway = "Bad gateway.";
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+	console.log('en get the dashboard');
+	let service;
+	if (global.leader) {
+		service = global.catalogoLeader;
+	} else {
+		service = global.catalogoFollower;
+	}
+	console.log('SERVICE:', service);
 	var id_usuario = req.user.id;
 	
-	console.log('en get the dashboard');
-	request('http://localhost:8080/catalogo/', function(error, response, body) {
+	request(service, function(error, response, body) {
 		if(error) {
 			console.log('error', error);
 			return res.status(500).json({
-					message: 'error en request a localhost:8080/catalogo',
+					message: 'error en request a ' + service,
 					data: null
 			});
 		}
 		console.log('BODY:', body);
-		if(body === 'Bad gateway.') {
-			return res.redirect('/dashboard/get/replica');
+		if(body === badgateway) {
+			if (global.leader) {
+				global.leader = false;
+				return res.redirect('/dashboard');
+			}
+			else {
+				return res.render('error', {title:'Error', message:'no hay servicio', error:{statck:{}}});
+			}
 		}
 		var catalogo = JSON.parse(body);
-		request('http://localhost:8080/catalogo/carrito/'+id_usuario, function(err, resp, body){
+		request(service + 'carrito/'+id_usuario, function(err, resp, body){
 			var productos = JSON.parse(body).data;
 			var productos_global = productos;
+
+			console.log('productos:', productos);
+			console.log('productos.length:', productos.length);
 
 			if(productos.length > 0){
 				var mensaje_ctr = '('+ productos.length +')';
@@ -38,7 +56,7 @@ router.get('/', function(req, res, next) {
   });
 });
 //GET REPLICA CATALOGO
-router.get('/get/replica', function(req, res, next) {
+router.get('/replica/get', function(req, res, next) {
 	var id_usuario = req.user.id;
 	
 	console.log('en get replica the dashboard');
@@ -72,8 +90,48 @@ router.get('/get/replica', function(req, res, next) {
 });
 // GET - CARRITO
 router.get('/carrito', function(req,res, next){
+	console.log('en get dashboard/carrito');
+	let service;
+	if(global.leader) {
+		service = global.catalogoLeader;
+	}
+	else {
+		service = global.catalogoFollower;
+	}
+	console.log('SERVICE:', service);
 	var id_usuario = req.user.id;
-	request('http://localhost:8080/catalogo/carrito/'+ id_usuario, function(err, resp, bod){
+	request(service + 'carrito/'+ id_usuario, function(err, resp, bod) {
+
+		if (bod === badgateway) {
+			if (global.leader) {
+				global.leader = false;
+				return res.redirect('/dashboard/carrito');
+			} else {
+				return res.render('error', {title:'Error', message:'No hay servicio', error:{stack:{}}});
+			}
+		}
+		console.log('bod:', bod);
+		var productos = JSON.parse(bod).data;
+		console.log('producto:', productos);
+		var ctd = '('+productos.length+')';
+		console.log('ctd:', ctd);
+		console.log('productos.length:', productos.length);
+		if(productos.length > 0){
+			var total = 0;
+			for(i=0; i<= (productos.length - 1) ; i++){
+				total = total + productos[i].total;
+			}
+			res.render('ver_carrito', {title: 'Carrito de reserva', productos: productos, contador: ctd, total: total});
+		} else{
+			console.log('sin productos, renderizando');
+			res.render('ver_carrito', {title: 'Carrito de reserva', productos: productos, contador: 0, total: 0, mensaje: 'Sin productos en el carrito'});
+		}
+	});
+});
+// GET - REPLICA CARRITO
+router.get('/replica/carrito', function(req,res, next){
+	var id_usuario = req.user.id;
+	request('http://localhost:8080/replicaCatalogo/carrito/'+ id_usuario, function(err, resp, bod){
 			var productos = JSON.parse(bod).data;
 			var ctd = '('+productos.length+')';
 			if(productos.length > 0){
@@ -89,19 +147,36 @@ router.get('/carrito', function(req,res, next){
 });
 // POST - CARRITO/AGREGAR
 router.post('/carrito/agregar', function(req, res, next){
+	let service;
+	if(global.leader === true) {
+		service = global.catalogoLeader;
+	}
+	else {
+		service = global.catalogoFollower;
+	}
+	console.log('en CARRITO/AGREGAR');
 	var id_usuario = req.user.id;
 	var id_producto = req.body.id_producto;
 	var nombre_producto = req.body.nombre_producto;
 	var cantidad = req.body.cantidad;
 	var total = req.body.total;
-	request.post('http://localhost:8080/catalogo/carrito/'+parseInt(id_usuario)).form({"id_producto" : parseInt(id_producto),
+	request.post(service + 'carrito/'+parseInt(id_usuario)).form({"id_producto" : parseInt(id_producto),
 		"nombre_producto": nombre_producto, "cantidad" :parseInt(cantidad), "total" : parseInt(total)}),
 	function optionalCallback(err, httpResponse, body) {
   		if (err) {
-    		return console.error('upload failed:', err);
-  		}
-  		console.log('Upload successful!  Server responded with:', body);
-	};
+			console.error('upload failed:', err);
+			return res.render('error', {title:'Error', message:'Error en carrito agregar', error:err});
+		}
+		console.log('BODY:', body);
+		if(body === badgateway && global.leader) {
+			global.leader = false;
+			request.post(global.catalogoFollower + 'carrito/'+parseInt(id_usuario)).form({"id_producto" : parseInt(id_producto),
+			"nombre_producto": nombre_producto, "cantidad" :parseInt(cantidad), "total" : parseInt(total)}),
+			function optionalCallback(err, httpResponse, body) {
+				console.log('exito?:', body); 
+			}
+		}
+	}
 	res.redirect('/dashboard');
 });
 //GET - PEDIDOS
@@ -110,7 +185,20 @@ router.get('/pedidos', function(req, res, next) {
 	request('http://localhost:8080/pedidos/usuario/'+id, function(error, response, body) {
 		var pedidos = JSON.parse(body);
 		console.log('Cantidad de pedidos: '+pedidos.data.length);
-		request('http://localhost:8080/catalogo/carrito/'+id, function(err, resp, body){
+
+		if (global.leader) {
+			service = global.catalogoLeader;
+		} else {
+			service = global.catalogoFollower;
+		}
+
+		request(service + 'carrito/'+id, function(err, resp, body){
+
+			if (body === 'Bad gateway' && global.leader) {
+				global.leader = false;
+				res.redirect('/dashboard/pedidos');
+			}
+
 			var productos = JSON.parse(body).data;
 			var productos_global = productos;
 

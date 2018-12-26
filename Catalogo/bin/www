@@ -8,6 +8,7 @@ var app = require('../app');
 var debug = require('debug')('prueba:server');
 var http = require('http');
 var amqp = require('amqplib/callback_api');
+const request = require('request');
 
 /**
  * Get port from environment and store in Express.
@@ -103,4 +104,13 @@ amqp.connect('amqp://localhost', function(err, conn) {
     ch.sendToQueue(q, new Buffer('nuevo'));
     console.log(msg);
   });
+});
+
+request.post({url:'http://localhost:3005/catalogoLider', form:{leader:true}},
+function optionalCallback(error, response, body) {
+  if (error) {
+    console.log('error:', error);
+  } else {
+    console.log('body:', body);
+  }
 });

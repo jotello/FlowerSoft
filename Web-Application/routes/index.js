@@ -143,4 +143,14 @@ router.get('/profile', seschk.checkLogged, (req, res, next) => {
 	});
 })
 
+router.post('/catalogoLider', (req, res) => {
+  console.log('en catalogoLider');
+  global.leader = req.body.leader;
+  console.log('global.leader:', global.leader);
+  res.status(200).send({
+    message: 'OK',
+    leader: global.leader
+  });
+})
+
 module.exports.router = router;

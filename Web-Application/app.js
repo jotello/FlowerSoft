@@ -13,6 +13,10 @@ var app = express();
 global.wat = null;
 global.rol = null;
 global.id = null;
+global.leader = true;
+
+global.catalogoLeader = "http://localhost:8080/catalogo/"
+global.catalogoFollower = "http://localhost:8080/replicaCatalogo/"
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
