@@ -28,7 +28,8 @@ module.exports = {
   updateCarrito: updateCarrito,
   vaciarCarrito: vaciarCarrito,
   selectCarrito: selectCarrito,
-  createUsuario: createUsuario
+  createUsuario: createUsuario,
+  traspasarCambios: traspasarCambios
 };
 
 //Catalogo
@@ -54,11 +55,25 @@ var query = connection.query('INSERT INTO catalogo(nombre, tipo, descripcion, im
    if(error){
       throw error;
    }else{
+      /*var query3 = connection.query('INSERT INTO posts SET ?', {title:'catalogo'},
+      function (error, results, fields){
+         if(error) throw error;
+         const id = results.insertId;
+      });*/
       console.log(result);
-      res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
+      console.log('insertedId:', result.insertId);
+      var query2 = connection.query('INSERT INTO Cambios_Catalogo(tipo_query, id_catalogo, tipo, nombre, descripcion, imagen, precio) ' +
+      'VALUES (?, ?, ?, ?, ?, ?, ?)',['insert', result.insertId, req.body.tipo, req.body.nombre, req.body.descripcion, req.body.imagen, req.body.precio],
+      function(error, results2) {
+         if(error) {
+            throw error;
+         } else {
+            console.log(results2);
+            res.send(JSON.stringify({"status": 200, "error": null, "data": {result:result, results2:results2}}));
+         }
+      });
    }
- }
-);
+ });
 //console.log(tarea.insert(req.body.nombre));
 }
 
@@ -196,4 +211,17 @@ function createUsuario(req, res, next) {
       res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
    }
  });
+}
+
+//Traspasar cambios
+function traspasarCambios(req, res, next) {
+   var query = connection.query('SELECT * FROM Cambios_Catalogo;', 
+   function(error, result) {
+      console.log('result:', result);
+      if(error) {
+         console.log('error:', error);
+      }
+      res.json({data:result});
+   });
+
 }

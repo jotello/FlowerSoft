@@ -30,6 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/dashboard', seschk.checkLogged);
 app.use('/admin', seschk.checkAdmin);
+app.use('/admin', seschk.checkService);
 app.use('/', indexRouter.router);
 app.use('/dashboard', dashRouter);
 app.use('/admin', adminRouter);

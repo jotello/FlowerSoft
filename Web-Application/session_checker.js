@@ -68,3 +68,16 @@ module.exports.checkAdmin = function (req, res, next) {
 		return next();
 	  });
 }
+
+module.exports.checkService = function(req, res, next) {
+	console.log('CHECKING SERVICE');
+	let service;
+	if (global.leader) {
+		service = global.catalogoLeader;
+	} else {
+		service = global.catalogoFollower;
+	}
+	req.currentService = service;
+	console.log('req.currentService:', req.currentService);
+	next();
+}

@@ -10,6 +10,8 @@ var http = require('http');
 var amqp = require('amqplib/callback_api');
 const request = require('request');
 
+const db = require('../queries.js');
+
 /**
  * Get port from environment and store in Express.
  */
@@ -105,6 +107,21 @@ amqp.connect('amqp://localhost', function(err, conn) {
     console.log(msg);
   });
 });
+
+/*
+request.post({url: 'http://localhost:3007/traspasarCambios', form:{
+
+}},
+function optionalCallback(error, response, body) {
+  console.log('result body:', body);
+  console.log(typeof(body));
+  if(body) {
+    const data = JSON.parse(body).data;
+    const length = data.length;
+    db.incorporarDatos(data, length);
+  }
+});
+*/
 
 request.post({url:'http://localhost:3005/catalogoLider', form:{leader:true}},
 function optionalCallback(error, response, body) {

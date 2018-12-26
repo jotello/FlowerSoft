@@ -29,7 +29,8 @@ module.exports = {
   updateCarrito: updateCarrito,
   vaciarCarrito: vaciarCarrito,
   selectCarrito: selectCarrito,
-  createUsuario: createUsuario
+  createUsuario: createUsuario,
+  incorporarDatos: incorporarDatos
 };
 
 //Catalogo
@@ -56,6 +57,17 @@ var query = connection.query('INSERT INTO catalogo(nombre, tipo, descripcion, im
       throw error;
    }else{
       console.log(result);
+      
+      request.post('http://localhost:8080/replicaCatalogo/').form({"nombre" : req.body.nombre,
+		"tipo": req.body.tipo, "descripcion" :req.body.descripcion, "imagen":req.body.imagen, "precio":req.body.precio}),
+	   function optionalCallback(err, httpResponse, body) {
+  		   if (err) {
+			   console.error('upload failed:', err);
+			   return res.render('error', {title:'Error', message:'Error en replica insertar', error:err});
+         }
+         res.send(JSON.stringify({"status": 200, "error": null, "data": result}));	  
+      }
+
       res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
    }
  }
@@ -231,4 +243,26 @@ function createUsuario(req, res, next) {
       res.send(JSON.stringify({"status": 200, "error": null, "data": result}));
    }
  });
+}
+
+function insertCatalogoNoRes(element) {
+   console.log('inserting element:', element);
+   const query = connection.query('INSERT INTO catalogo(id, tipo, nombre, descripcion, imagen, precio) VALUES(?, ?, ?, ?, ?, ?)',
+   [element.id_catalogo, element.tipo, element.nombre, element.descripcion, element.imagen, element.precio],
+   function(err, results) {
+      if (err) {
+         console.log('err:', err);
+         throw err;
+      }
+      console.log('results:', results);
+   });
+}
+
+function incorporarDatos(data, length) {
+   console.log('Datos en incorporar:', data);
+   for(let i = 0; i < length; i++) {
+     if(data[i].tipo_query === 'insert') {
+         insertCatalogoNoRes(data[i]);
+     }
+   }
 }

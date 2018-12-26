@@ -25,14 +25,7 @@ router.put('/api/replicaCatalogo/carrito/:id', db.updateCarrito);
 router.delete('/api/replicaCatalogo/carrito/:id', db.deleteCarrito);
 router.get('/api/replicaCatalogo/vaciar/carrito', db.vaciarCarrito);
 
-//
-router.post('/dejarLiderazgo', (req, res, next) => {
-  if (req.hostname !== 'localhost::3002') {
-    return res.status(200).send({});
-  }
-
-  //traspasar todos los cambios al lider
-
-});
+//Servicio Lider
+router.post('/traspasarCambios', db.traspasarCambios);
 
 module.exports = router;
